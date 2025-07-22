@@ -52,7 +52,7 @@ public class EquipmentUtils
 
 		return (stack.isIn(ItemTags.WEAPON_ENCHANTABLE) ||
 			   isSword(stack) || isAxe(stack)) &&
-			   stack.contains(DataComponentTypes.WEAPON);
+			   stack.has(DataComponentTypes.WEAPON);
 	}
 
 	public static boolean isSword(ItemStack stack)
@@ -103,7 +103,7 @@ public class EquipmentUtils
 		return (stack.isIn(ItemTags.MINING_ENCHANTABLE) ||
 			   isPickAxe(stack) || isAxe(stack) ||
 			   isHoe(stack) || isShovel(stack)) &&
-			   stack.contains(DataComponentTypes.TOOL);
+			   stack.has(DataComponentTypes.TOOL);
 	}
 
 	public static boolean isPickAxe(ItemStack stack)
@@ -146,7 +146,7 @@ public class EquipmentUtils
 			return Pair.of(-1, 0.0f);
 		}
 
-		if (stack.contains(DataComponentTypes.WEAPON))
+		if (stack.has(DataComponentTypes.WEAPON))
 		{
 			WeaponComponent weaponComponent = stack.get(DataComponentTypes.WEAPON);
 
@@ -169,7 +169,7 @@ public class EquipmentUtils
 			return Pair.of(damage, speed);
 		}
 
-		if (stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 
@@ -199,7 +199,7 @@ public class EquipmentUtils
 			return false;
 		}
 
-		if (stack.contains(DataComponentTypes.TOOL))
+		if (stack.has(DataComponentTypes.TOOL))
 		{
 			ToolComponent toolComponent = stack.get(DataComponentTypes.TOOL);
 
@@ -216,7 +216,7 @@ public class EquipmentUtils
 			return -1;
 		}
 
-		if (stack.contains(DataComponentTypes.TOOL))
+		if (stack.has(DataComponentTypes.TOOL))
 		{
 			ToolComponent toolComponent = stack.get(DataComponentTypes.TOOL);
 
@@ -251,8 +251,8 @@ public class EquipmentUtils
 			return false;
 		}
 
-		if (stack.contains(DataComponentTypes.EQUIPPABLE) &&
-			stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.EQUIPPABLE) &&
+			stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 
@@ -280,8 +280,8 @@ public class EquipmentUtils
 			return false;
 		}
 
-		if (stack.contains(DataComponentTypes.EQUIPPABLE) &&
-			stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.EQUIPPABLE) &&
+			stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 			AttributeModifierSlot attributeSlot = AttributeModifierSlot.forEquipmentSlot(slot);
@@ -319,8 +319,8 @@ public class EquipmentUtils
 			return false;
 		}
 
-		if (stack.contains(DataComponentTypes.EQUIPPABLE) &&
-			stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.EQUIPPABLE) &&
+			stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 			EquippableComponent equip = stack.get(DataComponentTypes.EQUIPPABLE);
@@ -352,8 +352,8 @@ public class EquipmentUtils
 			return false;
 		}
 
-		if (stack.contains(DataComponentTypes.EQUIPPABLE) &&
-			stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.EQUIPPABLE) &&
+			stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 			EquippableComponent equip = stack.get(DataComponentTypes.EQUIPPABLE);
@@ -385,8 +385,8 @@ public class EquipmentUtils
 			return null;
 		}
 
-		if (stack.contains(DataComponentTypes.EQUIPPABLE) &&
-			stack.contains(DataComponentTypes.ATTRIBUTE_MODIFIERS))
+		if (stack.has(DataComponentTypes.EQUIPPABLE) &&
+			stack.has(DataComponentTypes.ATTRIBUTE_MODIFIERS))
 		{
 			AttributeModifiersComponent attrib = stack.get(DataComponentTypes.ATTRIBUTE_MODIFIERS);
 
