@@ -2,7 +2,7 @@
 
 <img height="100" src="src/main/resources/icon.png" width="100"/>
 
-# MaFgLib
+# MaFgLib for NeoForge
 
 MaLiLib unofficial NeoForge port.
 
@@ -17,7 +17,7 @@ MaLiLib unofficial NeoForge port.
 
 </div></center>
 
-MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods Forge port. It contains some common code previously
+MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods NeoForge port. It contains some common code previously
 duplicated in most of the mods, such as multi-key capable keybinds, configuration GUIs etc.
 
 [Original Repo Readme](Original-README.md)
