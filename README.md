@@ -1,6 +1,6 @@
-<div style="text-align: center;">
+<center><div align="center">
 
-<img height="100" src="src/main/resources/assets/malilib/icon.png" width="100"/>
+<img height="100" src="src/main/resources/icon.png" width="100"/>
 
 # MaFgLib
 
@@ -15,10 +15,12 @@ MaLiLib unofficial NeoForge port.
 <img alt="curseforge" height="56" src="https://cdn.jsdelivr.net/npm/@intergrav/devins-badges@3/assets/cozy/available/curseforge_vector.svg">
 </a>
 
-</div>
+</div></center>
 
 MaFgLib (or MaLiLib-Forge) is a library mod used by Masa's mods Forge port. It contains some common code previously
 duplicated in most of the mods, such as multi-key capable keybinds, configuration GUIs etc.
+
+[Original Repo Readme](Original-README.md)
 
 ## How to use in Minecraft
 See [malilib wiki](https://github.com/maruohon/malilib/wiki)
