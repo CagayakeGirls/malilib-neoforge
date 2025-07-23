@@ -6,7 +6,7 @@ import net.irisshaders.iris.api.v0.IrisProgram;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.render.MaLiLibPipelines;
-import team.cagayakegirls.mafglib.ModPlatform;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 public class IrisCompat
 {

@@ -4,7 +4,7 @@ import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.data.DataOutput;
 import net.minecraft.registry.RegistryWrapper;
-import team.cagayakegirls.mafglib.DataGenProvider;
+import team.cagayakegirls.mafglib.utils.DataGenProvider;
 
 public class ItemTagDataGenerator extends DataGenProvider.ItemTags
 {

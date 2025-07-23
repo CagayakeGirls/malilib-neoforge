@@ -1,6 +1,7 @@
 plugins {
 	id 'team.cagayakegirls.scripts'
 	id 'dev.architectury.loom'
+	id 'com.hypherionmc.modutils.modpublisher' version '2.+'
 	id 'maven-publish'
 }
 
@@ -138,4 +139,23 @@ publishing {
 			url = "$projectDir/../../CommonMaven"
 		}
 	}
+}
+
+publisher {
+	apiKeys {
+		modrinth System.getenv("MODRINTH_TOKEN")
+		curseforge System.getenv("CURSEFORGE_TOKEN")
+	}
+
+	setCurseID("SKI34J7B")
+	setModrinthID("910766")
+	setVersionType("alpha")
+	setChangelog(file("CHANGELOG.md").getText("UTF-8"))
+	setVersion("${project.version}")
+	setDisplayName("${project.version}")
+	setGameVersions("1.21.8")
+	setLoaders(loom.platform.get().id())
+	setCurseEnvironment("client")
+	setArtifact(remapJar)
+	addAdditionalFile(sourcesJar)
 }
