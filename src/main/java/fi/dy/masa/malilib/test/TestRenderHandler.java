@@ -293,7 +293,7 @@ public class TestRenderHandler implements IRenderer
                 profiler.pop();
             }
         }
-        else if (stack.getComponents().contains(DataComponentTypes.CONTAINER) && InventoryUtils.shulkerBoxHasItems(stack))
+        else if (stack.getComponents().has(DataComponentTypes.CONTAINER) && InventoryUtils.shulkerBoxHasItems(stack))
         {
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {
@@ -302,7 +302,7 @@ public class TestRenderHandler implements IRenderer
                 profiler.pop();
             }
         }
-        else if (stack.getComponents().contains(DataComponentTypes.BUNDLE_CONTENTS) && InventoryUtils.bundleHasItems(stack))
+        else if (stack.getComponents().has(DataComponentTypes.BUNDLE_CONTENTS) && InventoryUtils.bundleHasItems(stack))
         {
             if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue() && GuiBase.isShiftDown())
             {

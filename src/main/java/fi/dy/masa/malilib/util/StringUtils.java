@@ -13,6 +13,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
+
+import net.neoforged.neoforgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;
 
 import net.minecraft.client.MinecraftClient;
@@ -32,6 +34,7 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.util.time.DurationFormat;
+import team.cagayakegirls.mafglib.ModPlatform;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -68,11 +71,11 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        for (net.fabricmc.loader.api.ModContainer container : net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods())
+        for (IModInfo modInfo : ModPlatform.getAllMods())
         {
-            if (container.getMetadata().getId().equals(modId))
+            if (modInfo.getModId().equals(modId))
             {
-                return container.getMetadata().getVersion().getFriendlyString();
+                return modInfo.getVersion().toString();
             }
         }
 

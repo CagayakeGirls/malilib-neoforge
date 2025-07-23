@@ -1,0 +1,44 @@
+modLoader="javafml"
+loaderVersion="${fml_version_range}"
+license="LGPLv3"
+issueTrackerURL="${mod_link}/issues"
+
+[[mods]]
+modId="${mod_id}"
+version="${mod_version}"
+displayName="${mod_name}"
+displayURL="${mod_link}"
+logoFile="icon.png"
+credits="masa"
+authors="TexTrue, CagayakeGirls"
+description='''
+MaLiLib unofficial NeoForge port. Library mod for the NeoForge port of masa's mods.
+'''
+
+[[mods]]
+modId="malilib"
+version="${mod_version}"
+displayName="MaLiLib Stub"
+logoFile="icon.png"
+credits="masa"
+authors="TexTrue, CagayakeGirls"
+description='''
+MaLiLib Stub.
+'''
+
+[[mixins]]
+config="mixins.malilib.json"
+
+[[dependencies."${mod_id}"]]
+modId="neoforge"
+type="required"
+versionRange="${neoforge_version_range}"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies."${mod_id}"]]
+modId="minecraft"
+type="required"
+versionRange="${minecraft_version_range}"
+ordering="NONE"
+side="BOTH"
