@@ -147,9 +147,9 @@ publisher {
 		curseforge System.getenv("CURSEFORGE_TOKEN")
 	}
 
-	setCurseID("SKI34J7B")
-	setModrinthID("910766")
-	setVersionType("alpha")
+	setCurseID("${project.curseforge_id}")
+	setModrinthID("${project.modrinth_id}")
+	setVersionType("${project.version_type}")
 	setChangelog(file("CHANGELOG.md").getText("UTF-8"))
 	setVersion("${project.version}")
 	setDisplayName("${project.version}")
