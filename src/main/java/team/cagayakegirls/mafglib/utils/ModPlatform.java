@@ -1,4 +1,4 @@
-package team.cagayakegirls.mafglib;
+package team.cagayakegirls.mafglib.utils;
 
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;

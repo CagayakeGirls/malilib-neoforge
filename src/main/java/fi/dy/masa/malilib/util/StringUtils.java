@@ -34,7 +34,7 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.util.time.DurationFormat;
-import team.cagayakegirls.mafglib.ModPlatform;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 /**
  * File has been merged with Post-Rewrite StringUtils

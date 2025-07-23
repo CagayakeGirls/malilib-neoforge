@@ -5,7 +5,7 @@ import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.moddiscovery.ModInfo;
 import net.neoforged.neoforgespi.language.IModInfo;
-import team.cagayakegirls.mafglib.ModPlatform;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 import java.nio.file.Path;
 import java.util.List;

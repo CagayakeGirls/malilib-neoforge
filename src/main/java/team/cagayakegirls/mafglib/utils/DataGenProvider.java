@@ -1,10 +1,11 @@
-package team.cagayakegirls.mafglib;
+package team.cagayakegirls.mafglib.utils;
 
 import net.minecraft.block.Block;
 import net.minecraft.data.DataOutput;
 import net.minecraft.data.tag.ItemTagProvider;
 import net.minecraft.registry.RegistryWrapper;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
+import team.cagayakegirls.mafglib.MaFgLib;
 
 import java.util.concurrent.CompletableFuture;
 
