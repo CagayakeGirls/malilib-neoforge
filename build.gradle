@@ -48,7 +48,7 @@ dependencies {
 base {
 	group = project.group + "." + project.mod_id
 	archivesName = project.mod_file_name
-	version = "${project.version}+mc${minecraft_version}"
+	version = "${project.mod_version}+mc${project.minecraft_version_out}"
 
 	if (version.endsWith('-dev')) {
 		version += "." + new Date().format('yyyyMMdd.HHmmss')
@@ -77,7 +77,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 			fml_version_range      : fml_version_range,
 			mod_id                 : mod_id,
 			mod_name               : mod_name,
-			mod_version            : "${project.version}+mc${minecraft_version}",
+			mod_version            : "${project.version}",
 			mod_link               : mod_link
 	]
 	inputs.properties replaceProperties
