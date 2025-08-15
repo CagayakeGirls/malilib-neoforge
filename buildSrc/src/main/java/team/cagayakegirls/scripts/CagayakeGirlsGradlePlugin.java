@@ -19,6 +19,7 @@ public final class CagayakeGirlsGradlePlugin implements Plugin<PluginAware> {
             case Project project -> {
                 project.getExtensions().create("forgifiedFabricApi", ForgifiedFabricApiExtension.class);
                 project.getExtensions().create("cagayakeGirls", CagayakeGirlsGradleExtension.class);
+                project.getExtensions().create("girlMappings", MappingsExtension.class);
 
                 additionalRepositories(project.getRepositories());
             }
