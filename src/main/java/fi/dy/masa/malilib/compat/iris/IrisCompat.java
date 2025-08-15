@@ -4,11 +4,9 @@ import java.util.Objects;
 import net.irisshaders.iris.api.v0.IrisApi;
 import net.irisshaders.iris.api.v0.IrisProgram;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.render.MaLiLibPipelines;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 public class IrisCompat
 {
@@ -22,18 +20,16 @@ public class IrisCompat
 
     static
     {
-        FabricLoader.getInstance().getAllMods().stream().toList().forEach((mc ->
+        ModPlatform.getAllMods().stream().toList().forEach((modInfo ->
         {
-            ModMetadata meta = mc.getMetadata();
-
-            if (Objects.equals(meta.getId(), SODIUM_ID))
+            if (Objects.equals(modInfo.getModId(), SODIUM_ID))
             {
-                sodiumVersion = meta.getVersion().getFriendlyString();
+                sodiumVersion = modInfo.getVersion().toString();
                 isSodiumLoaded = true;
             }
-            else if (Objects.equals(meta.getId(), IRIS_ID))
+            else if (Objects.equals(modInfo.getModId(), IRIS_ID))
             {
-                irisVersion = meta.getVersion().getFriendlyString();
+                irisVersion = modInfo.getVersion().toString();
                 isIrisLoaded = true;
             }
         }));

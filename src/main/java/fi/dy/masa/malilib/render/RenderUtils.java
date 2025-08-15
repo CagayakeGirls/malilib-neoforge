@@ -1652,7 +1652,7 @@ public class RenderUtils
     {
         DefaultedList<ItemStack> items;
 
-        if (stack.getComponents().contains(DataComponentTypes.CONTAINER))
+        if (stack.getComponents().has(DataComponentTypes.CONTAINER))
         {
             //items = InventoryUtils.getStoredItems(stack, ShulkerBoxBlockEntity.INVENTORY_SIZE);
             items = InventoryUtils.getStoredItems(stack, -1);
@@ -1736,7 +1736,7 @@ public class RenderUtils
     {
         DefaultedList<ItemStack> items;
 
-        if (stack.getComponents().contains(DataComponentTypes.BUNDLE_CONTENTS))
+        if (stack.getComponents().has(DataComponentTypes.BUNDLE_CONTENTS))
         {
             int count = InventoryUtils.bundleCountItems(stack);
             items = InventoryUtils.getBundleItems(stack, count);
