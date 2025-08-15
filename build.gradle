@@ -31,7 +31,7 @@ loom {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-	mappings girlMappings.yarnWithPatch(project.mappings_version, "1.21+build.4")
+	mappings extraMappings.yarnWithPatch(project.mappings_version, "1.21+build.4")
 	neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
 
