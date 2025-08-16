@@ -3,17 +3,18 @@ package fi.dy.masa.malilib.datagen;
 import java.util.concurrent.CompletableFuture;
 
 import net.minecraft.block.Blocks;
+import net.minecraft.data.DataOutput;
 import net.minecraft.registry.RegistryWrapper;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
-import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 
 import fi.dy.masa.malilib.data.MaLiLibTag;
+import net.neoforged.neoforge.common.data.ExistingFileHelper;
+import team.cagayakegirls.mafglib.utils.DataGenProvider;
 
-public class BlockTagDataGenerator extends FabricTagProvider.BlockTagProvider
+public class BlockTagDataGenerator extends DataGenProvider.BlockTags
 {
-    public BlockTagDataGenerator(FabricDataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture)
+    public BlockTagDataGenerator(DataOutput output, CompletableFuture<RegistryWrapper.WrapperLookup> registriesFuture, ExistingFileHelper existingFileHelper)
     {
-        super(output, registriesFuture);
+        super(output, registriesFuture, existingFileHelper);
     }
 
     @Override
