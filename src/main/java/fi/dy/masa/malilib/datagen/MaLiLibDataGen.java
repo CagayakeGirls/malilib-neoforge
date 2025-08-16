@@ -5,10 +5,11 @@ import net.minecraft.registry.ServerDynamicRegistryType;
 import net.minecraft.resource.ResourceType;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 import team.cagayakegirls.mafglib.MaFgLib;
-import team.cagayakegirls.mafglib.utils.RuntimePackHelper;
+import org.thinkingstudio.mafglib.helper.RuntimePackHelper;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("removal")
 public class MaLiLibDataGen
 {
     public static void onInitializeDataGenerator(AddPackFindersEvent event)

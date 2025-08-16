@@ -1,4 +1,4 @@
-package team.cagayakegirls.mafglib.utils;
+package org.thinkingstudio.mafglib.helper;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Stopwatch;
@@ -36,12 +36,13 @@ import org.slf4j.Logger;
 /**
  * <p>
  * RuntimePackHelper is a helper for creating runtime resource packs.
- * Architectury Loom does not support runtime resource packs, so this is a workaround.
+ * Architectury Loom does not support NeoForge's DataGen on 1.21.1~1.21.3, so this is a workaround.
  * </p>
  *
  * code form <a href="https://github.com/DragonsPlusMinecraft/CreateDragonsPlus/blob/main/src/main/java/plus/dragons/createdragonsplus/data/runtime/RuntimePackResources.java">CreateDragonsPlus-RuntimePackResources</a>
  * under <a href="https://github.com/DragonsPlusMinecraft/CreateDragonsPlus/blob/main/LICENSE.txt">LGPL-v3</a>
  */
+@Deprecated(since = "1.21.4", forRemoval = true)
 public final class RuntimePackHelper implements ResourcePack, ResourcePackProvider, PackFactory, DataWriter {
     private static final Logger LOGGER = LogUtils.getLogger();
     private static final Joiner PATH_JOINER = Joiner.on("/");

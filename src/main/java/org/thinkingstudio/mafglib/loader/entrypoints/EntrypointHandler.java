@@ -8,6 +8,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
 import java.util.Optional;
 
+@SuppressWarnings("removal")
 public class EntrypointHandler {
     public static void init(IEventBus modEventBus) {
         modEventBus.addListener(FMLClientSetupEvent.class, event -> {
