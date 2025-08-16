@@ -8,6 +8,7 @@ import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
+import org.thinkingstudio.mafglib.loader.entrypoints.EntrypointHandler;
 
 @Mod(value = MaFgLib.MOD_ID, dist = Dist.CLIENT)
 public class MaFgLib {
@@ -17,5 +18,6 @@ public class MaFgLib {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
         new MaLiLib().onInitialize();
         modEventBus.addListener(MaLiLibDataGen::onInitializeDataGenerator);
+        EntrypointHandler.init(modEventBus);
     }
 }
