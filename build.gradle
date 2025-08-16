@@ -131,5 +131,34 @@ publishing {
 		maven {
 			url = "$projectDir/../../CommonMaven"
 		}
+
+		maven {
+			name = "KTTMaven"
+			url = "https://maven.kessokuteatime.work/releases"
+
+			credentials {
+				username = System.getenv("KTT_MAVEN_USERNAME")
+				password = System.getenv("KTT_MAVEN_TOKEN")
+			}
+		}
 	}
+}
+
+publisher {
+	apiKeys {
+		modrinth System.getenv("MODRINTH_TOKEN")
+		curseforge System.getenv("CURSEFORGE_TOKEN")
+	}
+
+	setCurseID("${project.curseforge_id}")
+	setModrinthID("${project.modrinth_id}")
+	setVersionType("${project.version_type}")
+	setChangelog(file("CHANGELOG.md").getText("UTF-8"))
+	setVersion("${project.version}")
+	setDisplayName("${project.version}")
+	setGameVersions("1.21.1")
+	setLoaders(loom.platform.get().id())
+	setCurseEnvironment("client")
+	setArtifact(remapJar)
+	addAdditionalFile(sourcesJar)
 }
