@@ -37,8 +37,8 @@ public final class CagayakeGirlsGradlePlugin implements Plugin<PluginAware> {
             repo.setUrl("https://maven.neoforged.net/releases/");
         });
         repositories.maven(repo -> {
-            repo.setName("ThinkingStudio Maven");
-            repo.setUrl("https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/");
+            repo.setName("KTTMavenSnapshots");
+            repo.setUrl("https://maven.kessokuteatime.work/snapshots/");
         });
     }
 }
