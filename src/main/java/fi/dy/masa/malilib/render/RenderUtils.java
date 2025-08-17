@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
@@ -262,7 +263,7 @@ public class RenderUtils
     @ApiStatus.Internal
     public static void registerSpecialGuiRenderers(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc)
     {
-        ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> builder = new ImmutableMap.Builder<>();
+        ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, PictureInPictureRendererPool<?>> builder = new ImmutableMap.Builder<>();
 
         // Build new ImmutableMap
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
@@ -283,7 +284,7 @@ public class RenderUtils
         }
     }
 
-    public static void dumpBuilderMap(Map<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> entries)
+    public static void dumpBuilderMap(Map<Class<? extends SpecialGuiElementRenderState>, PictureInPictureRendererPool<?>> entries)
     {
         System.out.print("DUMP SpecialGuiRenderers()\n");
 

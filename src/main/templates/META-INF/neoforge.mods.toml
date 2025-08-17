@@ -19,7 +19,7 @@ MaLiLib unofficial NeoForge port. Library mod for the NeoForge port of masa's mo
 modId="malilib"
 version="${mod_version}"
 displayName="MaLiLib Stub"
-logoFile="icon.png"
+logoFile="assets/malilib/icon.png"
 credits="masa"
 authors="TexTrue, CagayakeGirls"
 description='''
