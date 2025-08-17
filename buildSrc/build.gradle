@@ -12,7 +12,7 @@ repositories {
 dependencies {
     gradleApi()
 
-    implementation("dev.architectury:architectury-loom:${readLoomVersion()}")
+    implementation("dev.architectury:architectury-loom:1.10-SNAPSHOT")
 }
 
 gradlePlugin {
@@ -22,12 +22,4 @@ gradlePlugin {
             implementationClass = "team.cagayakegirls.scripts.CagayakeGirlsGradlePlugin"
         }
     }
-}
-
-def readLoomVersion() {
-    // cannot access directly during buildSrc configuration
-    Properties properties = new Properties()
-    // also can't use rootProject, it's buildSrc some reason
-    properties.load(project.file("../gradle.properties").newReader())
-    return properties.get("loom_version")
 }
