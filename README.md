@@ -39,6 +39,18 @@ dependencies {
 }
 ```
 
+or use KessokuTeaTime maven (only 0.4.1 and above)
+
+```gradle
+repositories {
+    maven { url 'https://maven.kessokuteatime.work/releases' }
+}
+
+dependencies {
+    modImplementation "team.cagayakegirls.mafglib:mafglib:${mafglib_version}"
+}
+```
+
 > Note: "${mafglib_version}" can be found in [Modrinth](https://modrinth.com/mod/mafglib)
 
 ## Compiling
