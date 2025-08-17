@@ -100,7 +100,7 @@ public abstract class ForgifiedFabricApiExtension {
                         .defaultCache()
                         .downloadPath(mavenPom.toPath());
             } else {
-                extension.download(String.format("https://dl.cloudsmith.io/public/thinkingstudio/forgifiedfabricapi/maven/org/sinytra/forgified-fabric-api/%2$s/%1$s/%2$s-%1$s.pom", version, name))
+                extension.download(String.format("https://maven.kessokuteatime.work/snapshots/org/sinytra/forgified-fabric-api/%2$s/%1$s/%2$s-%1$s.pom", version, name))
                         .defaultCache()
                         .downloadPath(mavenPom.toPath());
             }
