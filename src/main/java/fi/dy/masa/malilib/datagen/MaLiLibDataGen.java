@@ -1,16 +1,29 @@
 package fi.dy.masa.malilib.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
+import net.minecraft.registry.RegistryWrapper;
+import net.minecraft.registry.ServerDynamicRegistryType;
+import net.minecraft.resource.ResourceType;
+import net.neoforged.neoforge.event.AddPackFindersEvent;
+import org.thinkingstudio.mafglib.helper.RuntimePackHelper;
+import team.cagayakegirls.mafglib.MaFgLib;
 
-public class MaLiLibDataGen implements DataGeneratorEntrypoint
+import java.util.concurrent.CompletableFuture;
+
+@SuppressWarnings("removal")
+public class MaLiLibDataGen
 {
-    @Override
-    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator)
+    public static void onInitializeDataGenerator(AddPackFindersEvent event)
     {
-        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
-
-        pack.addProvider(BlockTagDataGenerator::new);
-        //pack.addProvider(ItemTagGenerator::new);
+        var type = event.getPackType();
+        var lookupProvider = CompletableFuture.<RegistryWrapper.WrapperLookup>completedFuture(ServerDynamicRegistryType.createCombinedDynamicRegistries().getCombinedRegistryManager());
+        if (type == ResourceType.SERVER_DATA) {
+            var pack = RuntimePackHelper.simpleRuntimePack(MaFgLib.MOD_ID, type);
+            var output = pack.getPackOutput();
+            var existingFileHelper = pack.getExistingFileHelper();
+            var blockTag = new BlockTagDataGenerator(output, lookupProvider, existingFileHelper);
+            pack.addDataProvider(blockTag);
+            //pack.addDataProvider(new ItemTagGenerator(output, lookupProvider, blockTag, existingFileHelper))
+            event.addRepositorySource(pack);
+        }
     }
 }
