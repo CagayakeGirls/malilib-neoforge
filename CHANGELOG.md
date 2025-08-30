@@ -1,3 +1,2 @@
 ## Changelog
-- fix about `GuiRenderer` mixins
-- change malilib stub icon
+- sync upstream `1.21.8-0.25.5`
