@@ -1,16 +1,17 @@
 package fi.dy.masa.malilib.datagen;
 
-import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
-import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
-public class MaLiLibDataGen implements DataGeneratorEntrypoint
+import net.neoforged.neoforge.data.event.GatherDataEvent;
+
+public class MaLiLibDataGen
 {
-    @Override
-    public void onInitializeDataGenerator(FabricDataGenerator fabricDataGenerator)
+    public static void onInitializeDataGenerator(GatherDataEvent.Client event)
     {
-        FabricDataGenerator.Pack pack = fabricDataGenerator.createPack();
+        var generator = event.getGenerator();
+        var output = generator.getPackOutput();
+        var lookupProvider = event.getLookupProvider();
 
-        pack.addProvider(BlockTagDataGenerator::new);
-        //pack.addProvider(ItemTagGenerator::new);
+        event.addProvider(new BlockTagDataGenerator(output, lookupProvider));
+        //pack.addProvider(new ItemTagGenerator(output, lookupProvider));
     }
 }

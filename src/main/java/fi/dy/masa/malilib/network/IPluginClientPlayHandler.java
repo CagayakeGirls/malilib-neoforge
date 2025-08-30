@@ -218,7 +218,7 @@ public interface IPluginClientPlayHandler<T extends CustomPayload> extends Clien
 
             if (handler.accepts(packet))
             {
-                handler.sendPacket(packet);
+                handler.send(packet);
                 return true;
             }
         }
