@@ -20,6 +20,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.client.resource.language.I18n;
+import net.neoforged.neoforgespi.language.IModInfo;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.JsonOps;
@@ -42,6 +43,7 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.util.time.DurationFormat;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -78,11 +80,11 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        for (net.fabricmc.loader.api.ModContainer container : net.fabricmc.loader.api.FabricLoader.getInstance().getAllMods())
+        for (IModInfo modInfo : ModPlatform.getAllMods())
         {
-            if (container.getMetadata().getId().equals(modId))
+            if (modInfo.getModId().equals(modId))
             {
-                return container.getMetadata().getVersion().getFriendlyString();
+                return modInfo.getVersion().toString();
             }
         }
 

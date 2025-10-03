@@ -1350,7 +1350,7 @@ public class InventoryUtils
      */
     public static boolean hasStoredBlockEntityData(ItemStack stack)
     {
-        return stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA);
+        return stack.has(DataComponentTypes.BLOCK_ENTITY_DATA);
     }
 
     /**
@@ -1361,7 +1361,7 @@ public class InventoryUtils
      */
     public static NbtCompound getStoredBlockEntityNbt(ItemStack stack)
     {
-        if (stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA))
+        if (stack.has(DataComponentTypes.BLOCK_ENTITY_DATA))
         {
             TypedEntityData<BlockEntityType<?>> component = stack.get(DataComponentTypes.BLOCK_ENTITY_DATA);
 

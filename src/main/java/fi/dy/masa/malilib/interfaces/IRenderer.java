@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.interfaces;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.joml.Matrix4f;
 
 import net.minecraft.client.MinecraftClient;
@@ -121,5 +122,5 @@ public interface IRenderer
      * @param mc ()
      * @param builder ()
      */
-    default void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> builder) { }
+    default void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, PictureInPictureRendererPool<?>> builder) { }
 }

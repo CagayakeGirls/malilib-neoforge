@@ -8,6 +8,7 @@ import com.google.common.collect.ImmutableMap;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.SpecialGuiElementRenderer;
 import net.minecraft.client.gui.render.state.special.SpecialGuiElementRenderState;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
 
@@ -511,8 +512,9 @@ public class RenderEventHandler implements IRenderDispatcher
         profiler.pop();
     }
 
+    //public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> builder)
     @ApiStatus.Internal
-    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, SpecialGuiElementRenderer<?>> builder)
+    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, VertexConsumerProvider.Immediate immediate, MinecraftClient mc, ImmutableMap.Builder<Class<? extends SpecialGuiElementRenderState>, PictureInPictureRendererPool<?>> builder)
     {
         MaLiLib.LOGGER.warn("onRegisterSpecialGuiRenderer():");
 
