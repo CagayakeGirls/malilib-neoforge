@@ -37,7 +37,7 @@ base {
 	archivesName = project.mod_file_name
 	version = "${project.mod_version}+mc${project.minecraft_version_out}"
 
-    if (version.endsWith('-dev')) {
+	if (version.endsWith('-dev')) {
 		version += "." + new Date().format('yyyyMMdd.HHmmss')
 	}
 }
