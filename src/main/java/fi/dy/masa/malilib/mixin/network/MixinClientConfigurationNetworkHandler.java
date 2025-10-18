@@ -14,7 +14,7 @@ import fi.dy.masa.malilib.event.WorldLoadHandler;
 public class MixinClientConfigurationNetworkHandler
 {
     @Inject(method = "onReady", at = @At(value = "INVOKE",
-            target = "Lnet/neoforged/bus/api/IEventBus;post(Lnet/neoforged/bus/api/Event;)Lnet/neoforged/bus/api/Event;",
+            target = "Lnet/minecraft/network/ClientConnection;transitionInbound(Lnet/minecraft/network/state/NetworkState;Lnet/minecraft/network/listener/PacketListener;)V",
             shift = At.Shift.BEFORE)
     )
     private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, @Local DynamicRegistryManager.Immutable immutable)
