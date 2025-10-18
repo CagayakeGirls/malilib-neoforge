@@ -17,7 +17,7 @@ public class MixinClientConfigurationNetworkHandler
             target = "Lnet/minecraft/network/ClientConnection;transitionInbound(Lnet/minecraft/network/state/NetworkState;Lnet/minecraft/network/listener/PacketListener;)V",
             shift = At.Shift.BEFORE)
     )
-    private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, @Local DynamicRegistryManager.Immutable immutable)
+    private void malilib_onPlayLogin(ReadyS2CPacket packet, CallbackInfo ci, @Local(name = "registryaccess$frozen") DynamicRegistryManager.Immutable immutable)
     {
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadImmutable(immutable);
     }
