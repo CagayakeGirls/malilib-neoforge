@@ -1887,7 +1887,7 @@ public class InventoryUtils
 	@ApiStatus.Experimental
 	public static CompoundData getStoredBlockEntityDataTag(ItemStack stack)
 	{
-		if (stack.contains(DataComponentTypes.BLOCK_ENTITY_DATA))
+		if (stack.has(DataComponentTypes.BLOCK_ENTITY_DATA))
 		{
 			TypedEntityData<BlockEntityType<?>> component = stack.get(DataComponentTypes.BLOCK_ENTITY_DATA);
 
