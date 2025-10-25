@@ -1,7 +1,10 @@
 package fi.dy.masa.malilib.util.data.tag;
 
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
+import fi.dy.masa.malilib.util.data.tag.converter.DataConverterNbt;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
+import fi.dy.masa.malilib.util.log.AnsiLogger;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -12,8 +15,17 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import javax.annotation.Nullable;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DynamicOps;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtOps;
+
 public class CompoundData extends BaseData implements DataView
 {
+	private static final AnsiLogger LOGGER = new AnsiLogger(CompoundData.class, true, true);
+
     public static final String TAG_NAME = "TAG_Compound";
     private static final Pattern SIMPLE_VALUE = Pattern.compile("[A-Za-z0-9._+-]+");
 
@@ -62,6 +74,8 @@ public class CompoundData extends BaseData implements DataView
 
         int hasType = data.getType();
 
+//		LOGGER.debug("contains: req [{}], has [{}]", requestedType, hasType);
+
         if (hasType == requestedType)
         {
             return true;
@@ -85,10 +99,25 @@ public class CompoundData extends BaseData implements DataView
     {
         BaseData data = this.values.get(key);
 
+		if (data != null)
+		{
+			LOGGER.debug("containsList: req [{}], has [{}]", listEntryType, ((ListData) data).getContainedType());
+		}
+		else
+		{
+			LOGGER.debug("containsList: req [{}], has: [NULL]", listEntryType);
+		}
+
         return data != null &&
                data.getType() == Constants.NBT.TAG_LIST &&
                ((ListData) data).getContainedType() == listEntryType;
     }
+
+	@Override
+	public boolean containsLenient(String key)
+	{
+		return this.values.containsKey(key);
+	}
 
     public boolean remove(String key)
     {
@@ -255,12 +284,24 @@ public class CompoundData extends BaseData implements DataView
     }
 
     @Override
-    public ListData getList(String key, int containedType)
+    public ListData getList(String key)
     {
         BaseData data = this.values.get(key);
-        return data != null && data.getType() == Constants.NBT.TAG_LIST ? (ListData) data : new ListData(containedType);
+        return data != null && data.getType() == Constants.NBT.TAG_LIST ? (ListData) data : new ListData();
     }
 
+	@Override
+	public <T> Optional<T> getCodec(String key, Codec<T> codec, DynamicOps<NbtElement> ops)
+	{
+		BaseData data = this.values.get(key);
+
+		return data == null
+		       ? Optional.empty()
+		       : codec.parse(ops, DataConverterNbt.toVanillaNbt(data))
+		              .resultOrPartial(
+							  e -> MaLiLib.LOGGER.error("Failed to get field ({}={}): {}", key, data.toString(), e)
+		              );
+	}
 
     public CompoundData putBoolean(String key, boolean value)
     {
@@ -334,7 +375,22 @@ public class CompoundData extends BaseData implements DataView
         return this;
     }
 
-    @Override
+	public <T> CompoundData putCodec(String key, Codec<T> codec, @Nullable T value)
+	{
+		return this.putCodec(key, codec, NbtOps.INSTANCE, value);
+	}
+
+	public <T> CompoundData putCodec(String key, Codec<T> codec, DynamicOps<NbtElement> ops, @Nullable T value)
+	{
+		if (value != null)
+		{
+			this.values.put(key, DataConverterNbt.fromVanillaNbt(codec.encodeStart(ops, value).getOrThrow()));
+		}
+
+		return this;
+	}
+
+	@Override
     public CompoundData copy()
     {
         CompoundData copy = new CompoundData();
@@ -368,6 +424,24 @@ public class CompoundData extends BaseData implements DataView
         return sb.append('}').toString();
     }
 
+	@Override
+	public boolean equals(Object o)
+	{
+		if (o instanceof CompoundData data)
+		{
+			boolean result = false;
+
+			for (String key : this.getKeys())
+			{
+				result = this.values.get(key).equals(data.values.get(key));
+			}
+
+			return result;
+		}
+
+		return false;
+	}
+
     @Override
     public void write(DataOutput output) throws IOException
     {
@@ -400,7 +474,18 @@ public class CompoundData extends BaseData implements DataView
 
             String key = input.readUTF();
             sizeTracker.increment(2 + key.length());
-            BaseData data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
+	        BaseData data;
+
+	        try
+	        {
+		        data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
+	        }
+
+	        catch (IOException e)
+	        {
+		        MaLiLib.LOGGER.warn("Failed to read data for compound member {}", key);
+		        throw e;
+	        }
 
             if (data == null)
             {

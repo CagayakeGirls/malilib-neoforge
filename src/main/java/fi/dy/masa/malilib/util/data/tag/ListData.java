@@ -6,33 +6,54 @@ import java.io.IOException;
 import java.util.ArrayList;
 import com.google.common.collect.Lists;
 
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
 
 public class ListData extends BaseData
 {
     public static final String TAG_NAME = "TAG_List";
-
     protected final ArrayList<BaseData> list;
-    protected final int containedType;
 
-    public ListData(int containedType)
+    public ListData()
     {
-        this(containedType, new ArrayList<>());
+        this(new ArrayList<>());
     }
 
-    public ListData(int containedType, ArrayList<BaseData> list)
+    public ListData(ArrayList<BaseData> list)
     {
         super(Constants.NBT.TAG_LIST, TAG_NAME);
 
-        this.containedType = containedType;
         this.list = list;
     }
 
-    public int getContainedType()
-    {
-        return this.containedType;
-    }
+	// Fixes incompatibilities with Vanilla; since a Vanilla NbtList
+	// calculates the Contained Type based on the data added to it.
+	public int getContainedType()
+	{
+		int type = Constants.NBT.TAG_END;
+
+		for (BaseData entry : this.list)
+		{
+			int dataType = entry.type;
+
+			if (type == Constants.NBT.TAG_END)
+			{
+				type = dataType;
+			}
+			else if (type != dataType)
+			{
+				return Constants.NBT.TAG_COMPOUND;
+			}
+		}
+
+		return type;
+	}
+
+	public boolean isEmpty()
+	{
+		return this.list.isEmpty();
+	}
 
     public int size()
     {
@@ -57,7 +78,10 @@ public class ListData extends BaseData
 
     public boolean add(BaseData entry)
     {
-        if (entry.getType() != this.containedType)
+		int type =this.getContainedType();
+
+        if (type != Constants.NBT.TAG_END &&
+	        entry.getType() != type)
         {
             return false;
         }
@@ -73,7 +97,7 @@ public class ListData extends BaseData
 
     public byte getByteAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_BYTE)
+        if (this.list.get(index).type == Constants.NBT.TAG_BYTE)
         {
             return ((ByteData) this.list.get(index)).value;
         }
@@ -83,7 +107,7 @@ public class ListData extends BaseData
 
     public short getShortAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_SHORT)
+        if (this.list.get(index).type == Constants.NBT.TAG_SHORT)
         {
             return ((ShortData) this.list.get(index)).value;
         }
@@ -93,7 +117,7 @@ public class ListData extends BaseData
 
     public int getIntAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_INT)
+        if (this.list.get(index).type == Constants.NBT.TAG_INT)
         {
             return ((IntData) this.list.get(index)).value;
         }
@@ -103,7 +127,7 @@ public class ListData extends BaseData
 
     public long getLongAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_LONG)
+        if (this.list.get(index).type == Constants.NBT.TAG_LONG)
         {
             return ((LongData) this.list.get(index)).value;
         }
@@ -113,7 +137,7 @@ public class ListData extends BaseData
 
     public float getFloatAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_FLOAT)
+        if (this.list.get(index).type == Constants.NBT.TAG_FLOAT)
         {
             return ((FloatData) this.list.get(index)).value;
         }
@@ -123,7 +147,7 @@ public class ListData extends BaseData
 
     public double getDoubleAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_DOUBLE)
+        if (this.list.get(index).type == Constants.NBT.TAG_DOUBLE)
         {
             return ((DoubleData) this.list.get(index)).value;
         }
@@ -133,7 +157,7 @@ public class ListData extends BaseData
 
     public CompoundData getCompoundAt(int index)
     {
-        if (this.containedType == Constants.NBT.TAG_COMPOUND)
+        if (this.list.get(index).type == Constants.NBT.TAG_COMPOUND)
         {
             return (CompoundData) this.list.get(index);
         }
@@ -142,9 +166,9 @@ public class ListData extends BaseData
     }
 
     @Override
-    public BaseData copy()
+    public ListData copy()
     {
-        ListData copy = new ListData(this.containedType);
+        ListData copy = new ListData();
 
         for (BaseData data : this.list)
         {
@@ -172,10 +196,10 @@ public class ListData extends BaseData
         return sb.append(']').toString();
     }
 
-    @Override
+	@Override
     public void write(DataOutput output) throws IOException
     {
-        int containedType = this.list.isEmpty() ? Constants.NBT.TAG_END : this.containedType;
+        int containedType = this.list.isEmpty() ? Constants.NBT.TAG_END : this.getContainedType();
         int listSize = this.list.size();
 
         output.writeByte(containedType);
@@ -207,7 +231,17 @@ public class ListData extends BaseData
 
         for (int i = 0; i < len; ++i)
         {
-            BaseData data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
+            BaseData data;
+
+			try
+			{
+				data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
+			}
+			catch (IOException e)
+			{
+				MaLiLib.LOGGER.warn("Failed to read data for list member at index {}", i);
+				throw e;
+			}
 
             if (data == null)
             {
@@ -217,6 +251,6 @@ public class ListData extends BaseData
             list.add(data);
         }
 
-        return new ListData(tagType, list);
+        return new ListData(list);
     }
 }
