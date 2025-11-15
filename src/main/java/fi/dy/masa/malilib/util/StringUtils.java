@@ -78,7 +78,7 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        for (IModInfo modInfo : ModPlatform.getAllMods())
+        for (net.neoforged.neoforgespi.language.IModInfo modInfo : ModPlatform.getAllMods())
         {
             if (modInfo.getModId().equals(modId))
             {
