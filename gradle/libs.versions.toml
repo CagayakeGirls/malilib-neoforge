@@ -5,7 +5,6 @@ range-neoforge = "[21.9,)"
 
 version-env = "client"
 version-type = "release"
-version-supports = "1.21.9, 1.21.10"
 
 platformId-curseforge = "910766"
 platformId-modrinth = "SKI34J7B"
