@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.mixin.network;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;

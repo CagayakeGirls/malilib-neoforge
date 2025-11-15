@@ -1,14 +1,14 @@
 package fi.dy.masa.malilib.mixin.screen;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
-import net.minecraft.screen.slot.Slot;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fi.dy.masa.malilib.event.RenderEventHandler;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.screen.slot.Slot;
 
 @Mixin(InventoryScreen.class)
 public class MixinInventoryScreen

@@ -1,16 +1,14 @@
 package fi.dy.masa.malilib.data;
 
 import com.google.common.collect.ImmutableList;
-
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-
-import fi.dy.masa.malilib.MaLiLib;
-import fi.dy.masa.malilib.MaLiLibReference;
 
 // TODO (Migrate to CachedBlockTags)
 @Deprecated(forRemoval = true)

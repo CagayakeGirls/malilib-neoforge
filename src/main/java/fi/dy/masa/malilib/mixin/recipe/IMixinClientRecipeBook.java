@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.mixin.recipe;
 
 import java.util.Map;
-
 import net.minecraft.client.recipebook.ClientRecipeBook;
 import net.minecraft.recipe.NetworkRecipeId;
 import net.minecraft.recipe.RecipeDisplayEntry;

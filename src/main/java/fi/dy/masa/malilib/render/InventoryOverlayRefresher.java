@@ -1,8 +1,7 @@
 package fi.dy.masa.malilib.render;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface InventoryOverlayRefresher

@@ -5,10 +5,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector4f;
 
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.render.*;
-import net.minecraft.client.util.ObjectAllocator;
-import net.minecraft.util.profiler.Profiler;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -17,6 +13,16 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import fi.dy.masa.malilib.event.RenderEventHandler;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.render.BufferBuilderStorage;
+import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.DefaultFramebufferSet;
+import net.minecraft.client.render.FrameGraphBuilder;
+import net.minecraft.client.render.Frustum;
+import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.render.WorldRenderer;
+import net.minecraft.client.util.ObjectAllocator;
+import net.minecraft.util.profiler.Profiler;
 
 @Mixin(value = WorldRenderer.class)
 public abstract class MixinWorldRenderer
@@ -29,9 +35,9 @@ public abstract class MixinWorldRenderer
 //            at = @At(value = "INVOKE",
 //                     target = "Lnet/minecraft/client/render/WorldRenderer;renderParticles(Lnet/minecraft/client/render/FrameGraphBuilder;Lnet/minecraft/client/render/Camera;FLnet/minecraft/client/render/Fog;)V",
 //                     shift = At.Shift.BEFORE))
-//    private void malilib_onRenderWorldPreParticles(ObjectAllocator allocator, RenderTickCounter tickCounter, boolean renderBlockOutline,
+//    private void malilib_onRenderWorldPreParticles(GraphicsResourceAllocator allocator, DeltaTracker tickCounter, boolean renderBlockOutline,
 //                                                 Camera camera, Matrix4f positionMatrix, Matrix4f projectionMatrix, GpuBufferSlice fog, Vector4f fogColor, boolean shouldRenderSky, CallbackInfo ci,
-//                                                 @Local Profiler profiler,
+//                                                 @Local ProfilerFiller profiler,
 //                                                 @Local Frustum frustum,
 //                                                 @Local FrameGraphBuilder frameGraphBuilder)
 //    //@Local(ordinal = 0) int i, @Local(ordinal = 1) int j, @Local PostEffectProcessor postEffectProcessor)

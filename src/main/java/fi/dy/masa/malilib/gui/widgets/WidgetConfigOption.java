@@ -1,11 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.*;
 import fi.dy.masa.malilib.config.gui.*;
 import fi.dy.masa.malilib.config.gui.ConfigOptionListenerResetConfig.ConfigResetterButton;
@@ -80,7 +78,10 @@ public class WidgetConfigOption extends WidgetConfigOptionBase<ConfigOptionWrapp
                 }
             }
 
-            this.addConfigOption(x, y, labelWidth, configWidth, config);
+			if (config != null)
+			{
+				this.addConfigOption(x, y, labelWidth, configWidth, config);
+			}
         }
         else
         {

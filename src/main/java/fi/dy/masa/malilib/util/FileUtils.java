@@ -299,9 +299,7 @@ public class FileUtils
                 file = fileCan;
             }
         }
-        catch (IOException e)
-        {
-        }
+        catch (IOException ignored) { }
 
         return file;
     }

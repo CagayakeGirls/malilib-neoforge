@@ -1,14 +1,13 @@
 package fi.dy.masa.malilib.util;
 
-import com.google.common.collect.ImmutableList;
-import io.netty.buffer.ByteBuf;
-
+import javax.annotation.Nonnull;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
+import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 
 public enum Quadrant implements IConfigOptionListEntry, StringIdentifiable
@@ -30,7 +29,7 @@ public enum Quadrant implements IConfigOptionListEntry, StringIdentifiable
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.configString;
     }

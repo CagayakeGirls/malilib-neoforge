@@ -1,18 +1,18 @@
 package fi.dy.masa.malilib.network;
 
 import javax.annotation.Nullable;
-import java.util.HashMap;
-import java.util.Map;
-import io.netty.buffer.Unpooled;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
+import java.util.HashMap;
+import java.util.Map;
+import io.netty.buffer.Unpooled;
 
 /**
  * Network packet splitter code from QuickCarpet by skyrising
  * @author skyrising
- *
+ * -
  * Updated by Sakura to work with newer versions by changing the Reading Session keys,
  * and using the HANDLER interface to send packets via the Payload system
  */

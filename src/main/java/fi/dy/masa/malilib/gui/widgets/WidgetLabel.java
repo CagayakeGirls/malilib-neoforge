@@ -3,9 +3,7 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
 

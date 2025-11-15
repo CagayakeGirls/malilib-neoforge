@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import com.google.common.collect.ImmutableMap;
 import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.joml.Matrix4f;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.Framebuffer;
 import net.minecraft.client.gui.DrawContext;

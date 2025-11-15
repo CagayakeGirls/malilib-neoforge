@@ -1,11 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.function.IntConsumer;
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigColor;
 import fi.dy.masa.malilib.config.options.ConfigColor;
 import fi.dy.masa.malilib.gui.GuiBase;

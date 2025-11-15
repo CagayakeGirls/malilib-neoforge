@@ -1,11 +1,10 @@
 package fi.dy.masa.malilib.gui;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.Identifier;
-
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.render.RenderUtils;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.util.Identifier;
 
 public enum MaLiLibIcons implements IGuiIcon
 {

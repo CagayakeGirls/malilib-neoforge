@@ -1,14 +1,12 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-import org.joml.Matrix3x2fStack;
-
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-
+import org.joml.Matrix3x2fStack;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;

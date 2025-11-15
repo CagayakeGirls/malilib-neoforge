@@ -1,12 +1,11 @@
 package fi.dy.masa.malilib.gui.widgets;
 
+import fi.dy.masa.malilib.gui.interfaces.ISliderCallback;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-
-import fi.dy.masa.malilib.gui.interfaces.ISliderCallback;
 
 public class WidgetSlider extends WidgetBase
 {

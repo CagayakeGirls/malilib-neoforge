@@ -10,9 +10,10 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.StringUtils;
-import net.minecraft.util.StringIdentifiable;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.util.StringIdentifiable;
 
 public class KeybindSettings
 {
@@ -236,7 +237,7 @@ public class KeybindSettings
         }
 
         @Override
-        public String asString()
+        public @Nonnull String asString()
         {
             return this.configString;
         }

@@ -3,13 +3,11 @@ package fi.dy.masa.malilib.util.nbt;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import com.google.common.collect.Lists;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-
+import com.google.common.collect.Lists;
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.util.data.Constants;
 
 /**

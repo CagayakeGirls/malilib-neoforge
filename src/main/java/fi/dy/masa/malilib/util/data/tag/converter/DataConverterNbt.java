@@ -1,14 +1,13 @@
 package fi.dy.masa.malilib.util.data.tag.converter;
 
-import fi.dy.masa.malilib.MaLiLib;
-import fi.dy.masa.malilib.util.data.Constants;
-import fi.dy.masa.malilib.util.data.tag.*;
-import fi.dy.masa.malilib.util.log.AnsiLogger;
+import javax.annotation.Nullable;
+import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.nbt.*;
 
-import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.util.data.Constants;
+import fi.dy.masa.malilib.util.data.tag.*;
 
 @ApiStatus.Experimental
 public class DataConverterNbt

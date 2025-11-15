@@ -1,11 +1,9 @@
 package fi.dy.masa.malilib.gui;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.KeyInput;
-
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.config.IConfigColorList;
 import fi.dy.masa.malilib.gui.interfaces.IConfigGui;

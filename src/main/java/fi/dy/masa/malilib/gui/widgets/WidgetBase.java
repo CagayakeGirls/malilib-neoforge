@@ -1,14 +1,13 @@
 package fi.dy.masa.malilib.gui.widgets;
 
+import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.render.RenderUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.render.RenderUtils;
 
 public abstract class WidgetBase
 {

@@ -5,10 +5,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import fi.dy.masa.malilib.event.WorldLoadHandler;
 import net.minecraft.client.network.ClientConfigurationNetworkHandler;
 import net.minecraft.network.packet.s2c.config.ReadyS2CPacket;
 import net.minecraft.registry.DynamicRegistryManager;
-import fi.dy.masa.malilib.event.WorldLoadHandler;
 
 @Mixin(ClientConfigurationNetworkHandler.class)
 public class MixinClientConfigurationNetworkHandler

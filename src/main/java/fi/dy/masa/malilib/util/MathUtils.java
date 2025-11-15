@@ -486,7 +486,7 @@ public class MathUtils
 
     public static long getCoordinateRandom(int x, int y, int z)
     {
-        long l = (long) (x * 3129871) ^ (long) z * 116129781L ^ (long) y;
+        long l = (long) (x * 3129871L) ^ (long) z * 116129781L ^ (long) y;
         return l * l * 42317861L + l * 11L;
     }
 

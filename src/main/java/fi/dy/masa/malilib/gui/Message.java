@@ -2,9 +2,7 @@ package fi.dy.masa.malilib.gui;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.util.StringUtils;
 
 public class Message

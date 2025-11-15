@@ -3,11 +3,6 @@ package fi.dy.masa.malilib.data;
 import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.MinecraftClient;
@@ -18,7 +13,10 @@ import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.util.Identifier;
-
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 import fi.dy.masa.malilib.MaLiLib;
 import org.apache.commons.lang3.tuple.Pair;
 

@@ -1,15 +1,14 @@
 package fi.dy.masa.malilib.util.position;
 
 import java.util.function.IntFunction;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
 import net.minecraft.util.function.ValueLists;
 import net.minecraft.util.math.Direction;
-
+import io.netty.buffer.ByteBuf;
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -61,7 +60,7 @@ public enum BlockMirror implements IConfigOptionListEntry, StringIdentifiable
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.name;
     }

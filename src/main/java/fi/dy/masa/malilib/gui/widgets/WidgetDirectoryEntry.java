@@ -1,8 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.gui.interfaces.IDirectoryNavigator;
 import fi.dy.masa.malilib.gui.interfaces.IFileBrowserIconProvider;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
@@ -10,6 +7,8 @@ import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntry;
 import fi.dy.masa.malilib.gui.widgets.WidgetFileBrowserBase.DirectoryEntryType;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.FileNameUtils;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.DrawContext;
 
 public class WidgetDirectoryEntry extends WidgetListEntryBase<DirectoryEntry>
 {

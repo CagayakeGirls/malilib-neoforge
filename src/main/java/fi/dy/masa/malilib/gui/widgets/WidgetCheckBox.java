@@ -2,11 +2,9 @@ package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.List;
 import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
-
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
 import fi.dy.masa.malilib.gui.interfaces.ISelectionListener;
 import fi.dy.masa.malilib.render.RenderUtils;

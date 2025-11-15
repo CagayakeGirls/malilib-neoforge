@@ -3,17 +3,14 @@ package fi.dy.masa.malilib.util;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.OpenOption;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.gson.*;
-
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
-
+import com.google.gson.*;
 import fi.dy.masa.malilib.MaLiLib;
 
 /**

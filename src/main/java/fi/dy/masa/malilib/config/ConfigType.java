@@ -1,13 +1,13 @@
 package fi.dy.masa.malilib.config;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import io.netty.buffer.ByteBuf;
-
-import com.mojang.serialization.Codec;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
+import io.netty.buffer.ByteBuf;
 
+import com.mojang.serialization.Codec;
 import fi.dy.masa.malilib.config.options.*;
 
 public enum ConfigType implements StringIdentifiable
@@ -38,7 +38,7 @@ public enum ConfigType implements StringIdentifiable
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.name;
     }

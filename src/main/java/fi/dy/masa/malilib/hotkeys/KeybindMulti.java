@@ -2,17 +2,15 @@ package fi.dy.masa.malilib.hotkeys;
 
 import java.util.*;
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
-import org.lwjgl.glfw.GLFW;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
-
+import org.jetbrains.annotations.ApiStatus;
+import org.lwjgl.glfw.GLFW;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.Message;

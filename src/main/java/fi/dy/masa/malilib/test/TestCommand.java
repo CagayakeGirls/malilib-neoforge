@@ -1,10 +1,8 @@
 package fi.dy.masa.malilib.test;
 
 import java.util.List;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
-
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.interfaces.IClientCommandListener;
 import fi.dy.masa.malilib.util.time.TimeTestExample;

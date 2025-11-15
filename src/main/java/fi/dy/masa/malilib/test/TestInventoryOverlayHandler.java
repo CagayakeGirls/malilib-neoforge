@@ -3,7 +3,25 @@ package fi.dy.masa.malilib.test;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
+import fi.dy.masa.malilib.MaLiLibReference;
+import fi.dy.masa.malilib.interfaces.IDataSyncer;
+import fi.dy.masa.malilib.interfaces.IInventoryOverlayHandler;
+import fi.dy.masa.malilib.mixin.entity.IMixinAbstractHorseEntity;
+import fi.dy.masa.malilib.render.InventoryOverlay;
+import fi.dy.masa.malilib.render.InventoryOverlayContext;
+import fi.dy.masa.malilib.render.InventoryOverlayRefresher;
+import fi.dy.masa.malilib.util.EntityUtils;
+import fi.dy.masa.malilib.util.InventoryUtils;
+import fi.dy.masa.malilib.util.WorldUtils;
+import fi.dy.masa.malilib.util.data.Constants;
+import fi.dy.masa.malilib.util.data.DataBlockUtils;
+import fi.dy.masa.malilib.util.data.DataEntityUtils;
+import fi.dy.masa.malilib.util.data.tag.CompoundData;
+import fi.dy.masa.malilib.util.data.tag.converter.DataConverterNbt;
+import fi.dy.masa.malilib.util.game.RayTraceUtils;
+import fi.dy.masa.malilib.util.nbt.*;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockEntityProvider;
 import net.minecraft.block.BlockState;
@@ -31,26 +49,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.profiler.Profiler;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-
-import fi.dy.masa.malilib.MaLiLib;
-import fi.dy.masa.malilib.MaLiLibConfigs;
-import fi.dy.masa.malilib.MaLiLibReference;
-import fi.dy.masa.malilib.interfaces.IDataSyncer;
-import fi.dy.masa.malilib.interfaces.IInventoryOverlayHandler;
-import fi.dy.masa.malilib.mixin.entity.IMixinAbstractHorseEntity;
-import fi.dy.masa.malilib.render.InventoryOverlay;
-import fi.dy.masa.malilib.render.InventoryOverlayContext;
-import fi.dy.masa.malilib.render.InventoryOverlayRefresher;
-import fi.dy.masa.malilib.util.EntityUtils;
-import fi.dy.masa.malilib.util.InventoryUtils;
-import fi.dy.masa.malilib.util.WorldUtils;
-import fi.dy.masa.malilib.util.data.Constants;
-import fi.dy.masa.malilib.util.data.DataBlockUtils;
-import fi.dy.masa.malilib.util.data.DataEntityUtils;
-import fi.dy.masa.malilib.util.data.tag.CompoundData;
-import fi.dy.masa.malilib.util.data.tag.converter.DataConverterNbt;
-import fi.dy.masa.malilib.util.game.RayTraceUtils;
-import fi.dy.masa.malilib.util.nbt.*;
 
 @ApiStatus.Experimental
 public class TestInventoryOverlayHandler implements IInventoryOverlayHandler

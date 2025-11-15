@@ -2,8 +2,6 @@ package fi.dy.masa.malilib.gui;
 
 import java.awt.*;
 import javax.annotation.Nullable;
-import org.joml.Matrix3x2f;
-
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -11,7 +9,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.input.KeyInput;
 import net.minecraft.client.texture.TextureSetup;
 import net.minecraft.util.math.MathHelper;
-
+import org.joml.Matrix3x2f;
 import fi.dy.masa.malilib.config.IConfigColor;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;

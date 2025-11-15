@@ -2,11 +2,9 @@ package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;
 import fi.dy.masa.malilib.gui.wrappers.TextFieldWrapper;
 import fi.dy.masa.malilib.util.KeyCodes;

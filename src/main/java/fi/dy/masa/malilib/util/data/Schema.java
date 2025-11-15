@@ -3,13 +3,14 @@ package fi.dy.masa.malilib.util.data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableList;
-import io.netty.buffer.ByteBuf;
-
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
+import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 
 /**
  * A Utility Table of Minecraft Data Versions and their respective Version strings.
@@ -22,6 +23,7 @@ public enum Schema implements IEnumCodecProvider
     // TODO --> Add Schema Versions to this as versions get released
     // Minecraft Data Versions
     SCHEMA_FUTURE  (9999, "FUTURE"),
+	SCHEMA_25W46A  (4662, "25w46a"),
 	SCHEMA_25W41A  (4657, "25w41a"),
 	SCHEMA_1_21_10 (4556, "1.21.10"),
 	SCHEMA_1_21_09 (4554, "1.21.9"),
@@ -141,15 +143,15 @@ public enum Schema implements IEnumCodecProvider
     public static final PacketCodec<ByteBuf, Schema> PACKET_CODEC = new PacketCodec<>()
     {
         @Override
-        public void encode(ByteBuf buf, Schema value)
+        public void encode(@Nonnull ByteBuf buf, Schema value)
         {
             PacketCodecs.INTEGER.encode(buf, value.schemaId);
         }
 
         @Override
-        public Schema decode(ByteBuf buf)
+        public @Nonnull Schema decode(@Nonnull ByteBuf buf)
         {
-            return Schema.getSchemaByDataVersion(PacketCodecs.INTEGER.decode(buf));
+            return Objects.requireNonNull(Schema.getSchemaByDataVersion(PacketCodecs.INTEGER.decode(buf)));
         }
     };
     public static final ImmutableList<Schema> VALUES = ImmutableList.copyOf(values());
@@ -216,7 +218,7 @@ public enum Schema implements IEnumCodecProvider
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.str;
     }

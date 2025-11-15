@@ -1,13 +1,12 @@
 package fi.dy.masa.malilib.test;
 
+import javax.annotation.Nonnull;
+import net.minecraft.util.StringIdentifiable;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.util.StringIdentifiable;
-
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.ConfigType;
@@ -107,7 +106,7 @@ public enum ConfigTestEnum implements IHotkeyTogglable, IConfigNotifiable<IConfi
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.name;
     }

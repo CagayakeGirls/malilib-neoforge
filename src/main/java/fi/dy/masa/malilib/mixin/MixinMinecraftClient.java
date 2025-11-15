@@ -1,14 +1,6 @@
 package fi.dy.masa.malilib.mixin;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import fi.dy.masa.malilib.MaLiLib;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.RunArgs;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.server.SaveLoader;
-import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -27,6 +19,13 @@ import fi.dy.masa.malilib.test.ConfigTestEnum;
 import fi.dy.masa.malilib.test.TestSelector;
 
 import java.nio.file.Path;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.RunArgs;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.world.ClientWorld;
+import net.minecraft.resource.ResourcePackManager;
+import net.minecraft.server.SaveLoader;
+import net.minecraft.world.level.storage.LevelStorage;
 
 @Mixin(MinecraftClient.class)
 public abstract class MixinMinecraftClient
@@ -56,7 +55,7 @@ public abstract class MixinMinecraftClient
             shift = At.Shift.BEFORE))
     private void malilib_onStartIntegratedServer(LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader, boolean newWorld, CallbackInfo ci)
     {
-        MaLiLib.debugLog("malilib_onStartIntegratedServer(): Get DynamicRegistry from IntegratedServer");
+        //MaLiLib.printDebug("malilib_onStartIntegratedServer(): Get DynamicRegistry from IntegratedServer");
         ((WorldLoadHandler) WorldLoadHandler.getInstance()).onWorldLoadImmutable(saveLoader.combinedDynamicRegistries().getCombinedRegistryManager());
     }
 

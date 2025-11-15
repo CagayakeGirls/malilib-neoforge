@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.mixin.render;
 
 import com.llamalad7.mixinextras.sugar.Local;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.render.BufferBuilderStorage;

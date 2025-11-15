@@ -1,14 +1,6 @@
 package fi.dy.masa.malilib.util;
 
-import java.util.Optional;
 import javax.annotation.Nullable;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
-import io.netty.buffer.ByteBuf;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -17,7 +9,13 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Direction.Axis;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
+import io.netty.buffer.ByteBuf;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IRangeChangeListener;
 

@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.util.time;
 
 import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.server.MinecraftServer;
 

@@ -4,10 +4,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
-
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.interfaces.IClientCommandListener;
 import fi.dy.masa.malilib.interfaces.ICommandDispatcher;

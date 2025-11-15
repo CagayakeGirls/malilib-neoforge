@@ -1,13 +1,12 @@
-package fi.dy.masa.malilib.test.gui;
+package fi.dy.masa.malilib.test.gui.widgets;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Blocks;
-
+import org.jetbrains.annotations.Nullable;
 import fi.dy.masa.malilib.gui.widgets.WidgetListBase;
+import fi.dy.masa.malilib.test.gui.GuiTestList;
 
 public class WidgetTestList extends WidgetListBase<GuiTestList.Entry, WidgetTestListEntry>
 {

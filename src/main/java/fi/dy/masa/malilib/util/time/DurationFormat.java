@@ -1,10 +1,9 @@
 package fi.dy.masa.malilib.util.time;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import com.google.common.collect.ImmutableList;
-
 import net.minecraft.util.StringIdentifiable;
-
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 import fi.dy.masa.malilib.util.time.formatter.DurationFmt;
@@ -35,7 +34,7 @@ public enum DurationFormat implements IConfigOptionListEntry, StringIdentifiable
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.configString;
     }

@@ -3,8 +3,6 @@ package fi.dy.masa.malilib.util.game;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
@@ -20,7 +18,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.RaycastContext;
 import net.minecraft.world.World;
-
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.util.LayerRange;
 import fi.dy.masa.malilib.util.MathUtils;
 

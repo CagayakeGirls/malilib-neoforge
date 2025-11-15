@@ -1,14 +1,14 @@
 package fi.dy.masa.malilib.test;
 
 import java.util.List;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import net.minecraft.util.StringIdentifiable;
 import com.google.common.collect.ImmutableList;
 import org.jetbrains.annotations.ApiStatus;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.util.StringIdentifiable;
-
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.IConfigLockedListEntry;
 import fi.dy.masa.malilib.config.IConfigLockedListType;
@@ -113,7 +113,7 @@ public class ConfigTestLockedList implements IConfigLockedListType
         }
 
         @Override
-        public String asString()
+        public @Nonnull String asString()
         {
             return this.configKey;
         }

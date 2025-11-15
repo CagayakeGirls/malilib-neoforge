@@ -1,10 +1,9 @@
 package fi.dy.masa.malilib.util.game;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * Post-ReWrite code

@@ -3,14 +3,11 @@ package fi.dy.masa.malilib.event;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-
-import fi.dy.masa.malilib.data.CachedTagManager;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.registry.DynamicRegistryManager;
-
+import fi.dy.masa.malilib.data.CachedTagManager;
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.interfaces.IWorldLoadListener;
 import fi.dy.masa.malilib.util.game.RecipeBookUtils;

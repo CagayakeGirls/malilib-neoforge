@@ -1,12 +1,11 @@
 package fi.dy.masa.malilib.data;
 
 import fi.dy.masa.malilib.MaLiLibReference;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.block.Blocks;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.tag.BlockTags;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Caches Block/Item Tags as if they are real Vanilla Block/Item tags.

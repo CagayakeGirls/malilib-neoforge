@@ -2,10 +2,8 @@ package fi.dy.masa.malilib.render;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.util.Identifier;
-
 import fi.dy.masa.malilib.gui.Message;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 

@@ -13,8 +13,13 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
-import net.minecraft.storage.*;
+import net.minecraft.storage.NbtReadView;
+import net.minecraft.storage.NbtWriteView;
+import net.minecraft.storage.ReadContext;
+import net.minecraft.storage.ReadView;
+import net.minecraft.storage.WriteView;
 import net.minecraft.util.ErrorReporter;
+import net.minecraft.world.level.storage.*;
 
 import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.mixin.nbt.IMixinNbtReadView;

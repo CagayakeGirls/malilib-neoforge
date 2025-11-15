@@ -2133,10 +2133,10 @@ public class RenderUtils
 
     public static void renderModelInGui(DrawContext drawContext, int x, int y, BlockState state)
     {
-        renderModelInGui(drawContext, x, y, 16, 0f, state, 0.625f);
+        renderModelInGui(drawContext, x, y, 16, state, 0.625f);
     }
 
-    public static void renderModelInGui(DrawContext drawContext, int x, int y, int size, float zLevel, BlockState state, float scale)
+    public static void renderModelInGui(DrawContext drawContext, int x, int y, int size, BlockState state, float scale)
     {
         if (state.getBlock() == Blocks.AIR)
         {
@@ -2148,101 +2148,10 @@ public class RenderUtils
 //                state,
 //                x, y,
 //                size,
-//                zLevel, scale,
+//                scale,
 //                RenderUtils.peekLastScissor(drawContext))
 //        );
-
-//        MatrixStack matrices = new MatrixStack();
-////        Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
-////        matrix4fStack.pushMatrix();
-//
-////        GpuTextureView texture = bindGpuTextureView(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-//
-//        matrices.push();
-//        //setupGuiTransform(x, y, model.hasDepth(), zLevel);
-////        setupGuiTransform(matrices, x, y, zLevel);
-//        matrices.translate((float) (x + 8.0), (float) (y + 8.0), (float) (zLevel + 100.0));
-//        matrices.scale((float) 16, (float) -16, (float) 16);
-//        Quaternionf rot = new Quaternionf().rotationXYZ(30 * (float) (Math.PI / 180.0), 225 * (float) (Math.PI / 180.0), 0.0F);
-////        matrix4fStack.rotateX(matrix4fRotateFix(30));
-////        matrix4fStack.rotateY(matrix4fRotateFix(225));
-//        matrices.multiply(rot);
-//        matrices.scale(scale, scale, scale);
-//
-//        renderBlockModel(drawContext, matrices, model, state);
-//        //blend(false);
-////        matrix4fStack.popMatrix();
-//        matrices.pop();
     }
-
-//    public static void setupGuiTransform(MatrixStack matrices, int xPosition, int yPosition, float zLevel)
-//    {
-//        matrices.translate((float) (xPosition + 8.0), (float) (yPosition + 8.0), (float) (zLevel + 100.0));
-//        matrices.scale((float) 16, (float) -16, (float) 16);
-//    }
-//
-//    public static void renderBlockModel(DrawContext drawContext, MatrixStack matrices, BlockStateModel model, BlockState state)
-//    {
-////        Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
-////        matrix4fStack.pushMatrix();
-////
-////        matrix4fStack.translate((float) -0.5, (float) -0.5, (float) -0.5);
-////        int color = 0xFFFFFFFF;
-//
-//        RenderContext ctx = new RenderContext(() -> "malilib:renderBlockModel", RenderPipelines.SOLID);
-//        BufferBuilder builder = ctx.getBuilder();
-//
-//        renderModel(model, state, matrices, builder);
-//
-//        try
-//        {
-//            BuiltBuffer meshData = builder.endNullable();
-//
-//            if (meshData != null)
-//            {
-//                ctx.draw(meshData, false);
-//                meshData.close();
-//            }
-//
-//            ctx.close();
-//        }
-//        catch (Exception err)
-//        {
-//            MaLiLib.LOGGER.error("renderBlockModel(): Draw Exception; {}", err.getMessage());
-//        }
-//
-////        matrix4fStack.popMatrix();
-//    }
-
-    /*
-    private static void renderQuad(BufferBuilder buffer, BakedQuad quad, BlockState state, int color)
-    {
-        buffer.putVertexData(quad.getVertexData());
-        buffer.setQuadColor(color);
-
-        if (quad.hasColor())
-        {
-            BlockColors blockColors = mc().getBlockColorMap();
-            int m = blockColors.getColorMultiplier(state, null, null, quad.getColorIndex());
-
-            float r = (float) (m >>> 16 & 0xFF) / 255F;
-            float g = (float) (m >>>  8 & 0xFF) / 255F;
-            float b = (float) (m        & 0xFF) / 255F;
-            buffer.multiplyColor(r, g, b, 4);
-            buffer.multiplyColor(r, g, b, 3);
-            buffer.multiplyColor(r, g, b, 2);
-            buffer.multiplyColor(r, g, b, 1);
-        }
-
-        putQuadNormal(buffer, quad);
-    }
-
-    private static void putQuadNormal(BufferBuilder renderer, BakedQuad quad)
-    {
-        Vec3i direction = quad.getFace().getVector();
-        renderer.normal(direction.getX(), direction.getY(), direction.getZ());
-    }
-    */
 
     private static void renderModel(BlockStateModel model, BlockState state,
                                     MatrixStack matrices, BufferBuilder builder)
@@ -2597,8 +2506,9 @@ public class RenderUtils
 
     public static void renderAreaSides(BlockPos pos1, BlockPos pos2, Color4f color, Matrix4f matrix4f, boolean shouldResort)
     {
+		boolean culling = shouldCull(pos1, pos2);
         // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_2
-        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH);
+        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", culling ? MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_3 : MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_NO_CULL);
         BufferBuilder buffer = ctx.getBuilder();
 
         renderAreaSidesBatched(pos1, pos2, color, 0.002, buffer);
@@ -2816,4 +2726,57 @@ public class RenderUtils
             MaLiLib.LOGGER.error("drawAreaOutlineNoCorners(): Draw Exception; {}", err.getMessage());
         }
     }
+
+	public static boolean shouldCull(BlockPos pos1, BlockPos pos2)
+	{
+		return shouldCull(new Box(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
+	}
+
+	public static boolean shouldCull(Vec3d pos1, Vec3d pos2)
+	{
+		return shouldCull(new Box(pos1, pos2));
+	}
+
+	/**
+	 * The POSITION_COLOR Bottom Side causes Z fighting at certain distances;
+	 * If and only if the Side collides with a Block surface.
+	 * Calculate `withCull` if and only if the bottom side
+	 * is Air that meets with Non-Air.  We are only considering the Center Block Pos here.
+	 * NOTE that this causes a noticable "shift" in how the selection box appears when
+	 * Enabling culling; so we should only do so in this case; and only to stop "Z Fighting" .
+	 * @param bb
+	 * @return
+	 */
+	public static boolean shouldCull(Box bb)
+	{
+		Entity camera = mc().getCameraEntity();
+		final Vec3d minPos = bb.getMinPos();
+		final Vec3d maxPos = bb.getMaxPos();
+		Vec3d mid = bb.getCenter();
+		BlockPos pos;
+
+		if (minPos.getY() < maxPos.getY())
+		{
+			pos = new BlockPos((int) mid.x, (int) minPos.y, (int) mid.z);
+		}
+		else
+		{
+			pos = new BlockPos((int) mid.x, (int) maxPos.y, (int) mid.z);
+		}
+
+		if (mc().world != null)
+		{
+			// Calculate only if the Down Direction is a Block, while above it is Air.
+			BlockState state = mc().world.getBlockState(pos);
+			BlockState stateDown = mc().world.getBlockState(pos.offset(Direction.DOWN));
+
+			if (camera != null && state.isAir() && !stateDown.isAir())
+			{
+				// Causes Z fighting on the floor (~24 Block distance)
+				return camera.getEntityPos().distanceTo(mid) >= 23;
+			}
+		}
+
+		return false;
+	}
 }

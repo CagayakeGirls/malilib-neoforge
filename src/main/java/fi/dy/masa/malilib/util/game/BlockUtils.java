@@ -4,9 +4,6 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.base.Splitter;
-import fi.dy.masa.malilib.data.CachedTagUtils;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.registry.entry.RegistryEntryList;
 import org.apache.commons.lang3.tuple.Pair;
 
 import net.minecraft.block.Block;
@@ -21,16 +18,19 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.entry.RegistryEntryList;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.*;
 import net.minecraft.state.property.Properties;
 import net.minecraft.storage.NbtWriteView;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 
+import fi.dy.masa.malilib.data.CachedTagUtils;
 import fi.dy.masa.malilib.util.StringUtils;
-import fi.dy.masa.malilib.util.data.ResourceLocation;
 import fi.dy.masa.malilib.util.game.wrap.RegistryUtils;
 import fi.dy.masa.malilib.util.nbt.NbtView;
 
@@ -51,7 +51,7 @@ public class BlockUtils
     {
         int index = str.indexOf("["); // [prop=value]
         String blockName = index != -1 ? str.substring(0, index) : str;
-        ResourceLocation id = ResourceLocation.of(blockName);
+        Identifier id = Identifier.of(blockName);
 
         if (RegistryUtils.getBlockById(id) != null)
         {

@@ -1,9 +1,5 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.client.gui.Click;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.input.KeyInput;
-
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.gui.button.ConfigButtonKeybind;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
@@ -13,6 +9,9 @@ import fi.dy.masa.malilib.hotkeys.KeybindMulti;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings;
 import fi.dy.masa.malilib.hotkeys.KeybindSettings.Context;
 import fi.dy.masa.malilib.util.KeyCodes;
+import net.minecraft.client.gui.Click;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.input.KeyInput;
 
 public class WidgetSearchBarConfigs extends WidgetSearchBar
 {

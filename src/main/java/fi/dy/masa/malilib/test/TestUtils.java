@@ -2,9 +2,6 @@ package fi.dy.masa.malilib.test;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.entity.Entity;
@@ -12,7 +9,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.util.EntityUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
 

@@ -1,8 +1,7 @@
 package fi.dy.masa.malilib.util.data;
 
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.util.StringIdentifiable;
+import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Experimental
 public interface IEnumCodecProvider extends StringIdentifiable

@@ -1,9 +1,9 @@
 package fi.dy.masa.malilib.network;
 
 import com.google.common.collect.ArrayListMultimap;
-import org.jetbrains.annotations.ApiStatus;
 import net.minecraft.network.packet.CustomPayload;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.ApiStatus;
 
 /**
  * The Client Network Play handler

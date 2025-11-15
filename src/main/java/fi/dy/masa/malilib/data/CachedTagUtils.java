@@ -1,14 +1,14 @@
 package fi.dy.masa.malilib.data;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.List;
+import java.util.Optional;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.item.Item;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.entry.RegistryEntryList;
-import org.apache.commons.lang3.tuple.Pair;
-
-import java.util.List;
-import java.util.Optional;
 
 public class CachedTagUtils
 {

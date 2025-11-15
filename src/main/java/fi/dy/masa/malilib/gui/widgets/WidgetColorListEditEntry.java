@@ -1,9 +1,7 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.config.IConfigColorList;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;
 import fi.dy.masa.malilib.gui.GuiTextFieldGeneric;

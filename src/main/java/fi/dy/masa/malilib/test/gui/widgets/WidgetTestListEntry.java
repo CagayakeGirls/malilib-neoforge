@@ -1,13 +1,12 @@
-package fi.dy.masa.malilib.test.gui;
+package fi.dy.masa.malilib.test.gui.widgets;
 
 import java.util.List;
-import org.jetbrains.annotations.Nullable;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.gui.DrawContext;
-
+import org.jetbrains.annotations.Nullable;
 import fi.dy.masa.malilib.gui.widgets.WidgetListEntrySortable;
 import fi.dy.masa.malilib.render.RenderUtils;
+import fi.dy.masa.malilib.test.gui.GuiTestList;
 import fi.dy.masa.malilib.util.StringUtils;
 
 public class WidgetTestListEntry extends WidgetListEntrySortable<GuiTestList.Entry>
@@ -135,7 +134,7 @@ public class WidgetTestListEntry extends WidgetListEntrySortable<GuiTestList.Ent
             y = this.y + 3;
             RenderUtils.drawRect(drawContext, x1, y, iconSize, iconSize, 0x20FFFFFF); // light background for the item
             // 0.625f
-            RenderUtils.renderModelInGui(drawContext, x1, y, iconSize, 1f, this.entry.state(), 1f);
+            RenderUtils.renderModelInGui(drawContext, x1, y, iconSize, this.entry.state(), 0.625f);
         }
 
         super.render(drawContext, mouseX, mouseY, selected);

@@ -1,11 +1,9 @@
 package fi.dy.masa.malilib.gui.widgets;
 
 import java.util.List;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-
 import fi.dy.masa.malilib.config.IConfigLockedList;
 import fi.dy.masa.malilib.config.IConfigLockedListEntry;
 import fi.dy.masa.malilib.config.gui.ConfigOptionChangeListenerTextField;

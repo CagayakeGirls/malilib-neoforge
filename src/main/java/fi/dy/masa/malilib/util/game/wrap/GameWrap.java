@@ -5,7 +5,6 @@ import java.util.function.Supplier;
 import javax.annotation.Nullable;
 
 import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ClientPlayerInteractionManager;

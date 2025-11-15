@@ -2,12 +2,6 @@ package fi.dy.masa.malilib.test;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.BuiltBuffer;
@@ -17,7 +11,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.profiler.Profiler;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.ApiStatus;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.render.MaLiLibPipelines;
@@ -132,7 +131,7 @@ public class TestWalls implements AutoCloseable
         Vec3d cameraPos = camera.getPos();
 
         // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_NO_DEPTH_NO_CULL
-        RenderContext ctx = new RenderContext(() -> "malilib:TestWalls/quads", MaLiLibPipelines.MINIHUD_SHAPE_OFFSET);
+        RenderContext ctx = new RenderContext(() -> "malilib:TestWalls/quads", MaLiLibPipelines.MINIHUD_SHAPE_OFFSET_NO_CULL);
         BufferBuilder builder = ctx.getBuilder();
         Matrix4fStack matrix4fstack = RenderSystem.getModelViewStack();
         Vec3d updatePos = this.getUpdatePosition();

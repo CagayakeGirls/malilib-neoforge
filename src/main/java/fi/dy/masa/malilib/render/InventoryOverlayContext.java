@@ -1,13 +1,10 @@
 package fi.dy.masa.malilib.render;
 
 import javax.annotation.Nullable;
-
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.inventory.Inventory;
-
+import org.jetbrains.annotations.ApiStatus;
 import fi.dy.masa.malilib.util.data.tag.CompoundData;
 
 @ApiStatus.Experimental

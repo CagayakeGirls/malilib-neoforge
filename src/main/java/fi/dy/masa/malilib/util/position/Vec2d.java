@@ -1,13 +1,15 @@
 package fi.dy.masa.malilib.util.position;
 
+import javax.annotation.Nonnull;
+import net.minecraft.network.codec.PacketCodec;
+import net.minecraft.network.codec.PacketCodecs;
 import io.netty.buffer.ByteBuf;
+import org.jetbrains.annotations.NotNull;
 import org.joml.Vector2d;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.network.codec.PacketCodec;
-import net.minecraft.network.codec.PacketCodecs;
 
 /**
  * Post-ReWrite code
@@ -23,14 +25,14 @@ public class Vec2d
     public static final PacketCodec<ByteBuf, Vec2d> PACKET_CODEC = new PacketCodec<>()
     {
         @Override
-        public void encode(ByteBuf buf, Vec2d value)
+        public void encode(@Nonnull ByteBuf buf, Vec2d value)
         {
             PacketCodecs.DOUBLE.encode(buf, value.x);
             PacketCodecs.DOUBLE.encode(buf, value.y);
         }
 
         @Override
-        public Vec2d decode(ByteBuf buf)
+        public @Nonnull Vec2d decode(@Nonnull ByteBuf buf)
         {
             return new Vec2d(
                     PacketCodecs.DOUBLE.decode(buf),

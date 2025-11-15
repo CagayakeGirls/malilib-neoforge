@@ -17,8 +17,11 @@ import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.MapCodec;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Uuids;
-import net.minecraft.util.math.*;
-
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.Vec2f;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
 

@@ -1,12 +1,10 @@
 package fi.dy.masa.malilib.test;
 
 import org.jetbrains.annotations.ApiStatus;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.world.World;
-
 import fi.dy.masa.malilib.interfaces.IDataSyncer;
 import fi.dy.masa.malilib.util.WorldUtils;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.world.World;
 
 @ApiStatus.Experimental
 public class TestDataSyncer implements IDataSyncer

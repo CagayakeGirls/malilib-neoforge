@@ -1,8 +1,6 @@
 package fi.dy.masa.malilib.util.position;
 
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
-
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.util.math.BlockPos;
@@ -167,20 +165,15 @@ public class PositionUtils
         double width = entity.getWidth();
         y = Math.floor(y + entity.getEyeHeight(EntityPose.STANDING));
 
-        switch (entity.getHorizontalFacing())
-        {
-            case EAST:
-                return new BlockPos((int) Math.ceil( x + width / 2),     (int) y, (int) Math.floor(z));
-            case WEST:
-                return new BlockPos((int) Math.floor(x - width / 2) - 1, (int) y, (int) Math.floor(z));
-            case SOUTH:
-                return new BlockPos((int) Math.floor(x), (int) y, (int) Math.ceil( z + width / 2)    );
-            case NORTH:
-                return new BlockPos((int) Math.floor(x), (int) y, (int) Math.floor(z - width / 2) - 1);
-            default:
-        }
+	    return switch (entity.getHorizontalFacing())
+	    {
+		    case EAST -> new BlockPos((int) Math.ceil(x + width / 2), (int) y, (int) Math.floor(z));
+		    case WEST -> new BlockPos((int) Math.floor(x - width / 2) - 1, (int) y, (int) Math.floor(z));
+		    case SOUTH -> new BlockPos((int) Math.floor(x), (int) y, (int) Math.ceil(z + width / 2));
+		    case NORTH -> new BlockPos((int) Math.floor(x), (int) y, (int) Math.floor(z - width / 2) - 1);
+		    default -> BlockPos.ofFloored(x, y, z);
+	    };
 
-        return BlockPos.ofFloored(x, y, z);
     }
 
     /**
@@ -218,16 +211,16 @@ public class PositionUtils
         int y = basePos.getY();
         int z = basePos.getZ();
 
-        switch (facing)
-        {
-            case UP:    return new Vec3d(x + 0.5, y + 1  , z + 0.5);
-            case DOWN:  return new Vec3d(x + 0.5, y      , z + 0.5);
-            case NORTH: return new Vec3d(x + 0.5, y + 0.5, z      );
-            case SOUTH: return new Vec3d(x + 0.5, y + 0.5, z + 1  );
-            case WEST:  return new Vec3d(x      , y + 0.5, z      );
-            case EAST:  return new Vec3d(x + 1  , y + 0.5, z + 1);
-            default:    return new Vec3d(x, y, z);
-        }
+	    return switch (facing)
+	    {
+		    case UP -> new Vec3d(x + 0.5, y + 1, z + 0.5);
+		    case DOWN -> new Vec3d(x + 0.5, y, z + 0.5);
+		    case NORTH -> new Vec3d(x + 0.5, y + 0.5, z);
+		    case SOUTH -> new Vec3d(x + 0.5, y + 0.5, z + 1);
+		    case WEST -> new Vec3d(x, y + 0.5, z);
+		    case EAST -> new Vec3d(x + 1, y + 0.5, z + 1);
+		    default -> new Vec3d(x, y, z);
+	    };
     }
 
     /**
@@ -389,7 +382,7 @@ public class PositionUtils
         LEFT,
         RIGHT,
         BOTTOM,
-        TOP;
+        TOP
     }
 
     /**
@@ -397,69 +390,53 @@ public class PositionUtils
      */
     public static Vec3d modifyValue(CoordinateType type, Vec3d valueIn, double amount)
     {
-        switch (type)
-        {
-            case X:
-                return new Vec3d(valueIn.x + amount, valueIn.y         , valueIn.z         );
-            case Y:
-                return new Vec3d(valueIn.x         , valueIn.y + amount, valueIn.z         );
-            case Z:
-                return new Vec3d(valueIn.x         , valueIn.y         , valueIn.z + amount);
-        }
+	    return switch (type)
+	    {
+		    case X -> new Vec3d(valueIn.x + amount, valueIn.y, valueIn.z);
+		    case Y -> new Vec3d(valueIn.x, valueIn.y + amount, valueIn.z);
+		    case Z -> new Vec3d(valueIn.x, valueIn.y, valueIn.z + amount);
+	    };
 
-        return valueIn;
     }
 
     public static BlockPos modifyValue(CoordinateType type, BlockPos valueIn, int amount)
     {
-        switch (type)
-        {
-            case X:
-                return BlockPos.ofFloored(valueIn.getX() + amount, valueIn.getY()         , valueIn.getZ()         );
-            case Y:
-                return BlockPos.ofFloored(valueIn.getX()         , valueIn.getY() + amount, valueIn.getZ()         );
-            case Z:
-                return BlockPos.ofFloored(valueIn.getX()         , valueIn.getY()         , valueIn.getZ() + amount);
-        }
+	    return switch (type)
+	    {
+		    case X -> BlockPos.ofFloored(valueIn.getX() + amount, valueIn.getY(), valueIn.getZ());
+		    case Y -> BlockPos.ofFloored(valueIn.getX(), valueIn.getY() + amount, valueIn.getZ());
+		    case Z -> BlockPos.ofFloored(valueIn.getX(), valueIn.getY(), valueIn.getZ() + amount);
+	    };
 
-        return valueIn;
     }
 
     public static Vec3d setValue(CoordinateType type, Vec3d valueIn, double newValue)
     {
-        switch (type)
-        {
-            case X:
-                return new Vec3d(newValue , valueIn.y, valueIn.z);
-            case Y:
-                return new Vec3d(valueIn.x, newValue , valueIn.z);
-            case Z:
-                return new Vec3d(valueIn.x, valueIn.y, newValue);
-        }
+	    return switch (type)
+	    {
+		    case X -> new Vec3d(newValue, valueIn.y, valueIn.z);
+		    case Y -> new Vec3d(valueIn.x, newValue, valueIn.z);
+		    case Z -> new Vec3d(valueIn.x, valueIn.y, newValue);
+	    };
 
-        return valueIn;
     }
 
     public static BlockPos setValue(CoordinateType type, BlockPos valueIn, int newValue)
     {
-        switch (type)
-        {
-            case X:
-                return BlockPos.ofFloored(newValue      , valueIn.getY(), valueIn.getZ());
-            case Y:
-                return BlockPos.ofFloored(valueIn.getX(), newValue      , valueIn.getZ());
-            case Z:
-                return BlockPos.ofFloored(valueIn.getX(), valueIn.getY(), newValue      );
-        }
+	    return switch (type)
+	    {
+		    case X -> BlockPos.ofFloored(newValue, valueIn.getY(), valueIn.getZ());
+		    case Y -> BlockPos.ofFloored(valueIn.getX(), newValue, valueIn.getZ());
+		    case Z -> BlockPos.ofFloored(valueIn.getX(), valueIn.getY(), newValue);
+	    };
 
-        return valueIn;
     }
 
     /**
      * Returns the closest direction the given entity is looking towards,
      * with a vertical/pitch threshold of 60 degrees.
-     * @param entity
-     * @return
+     * @param entity ()
+     * @return ()
      */
     @Deprecated
     public static Direction getClosestLookingDirection(Entity entity)
@@ -469,9 +446,9 @@ public class PositionUtils
 
     /**
      * Returns the closest direction the given entity is looking towards.
-     * @param entity
+     * @param entity ()
      * @param verticalThreshold the pitch threshold to return the up or down facing instead of horizontals
-     * @return
+     * @return ()
      */
     @Deprecated
     public static Direction getClosestLookingDirection(Entity entity, float verticalThreshold)

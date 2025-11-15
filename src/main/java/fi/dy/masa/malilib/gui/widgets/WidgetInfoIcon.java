@@ -1,8 +1,7 @@
 package fi.dy.masa.malilib.gui.widgets;
 
-import net.minecraft.client.gui.DrawContext;
-
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import net.minecraft.client.gui.DrawContext;
 
 public class WidgetInfoIcon extends WidgetHoverInfo
 {

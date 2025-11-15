@@ -773,8 +773,6 @@ public class NbtEntityUtils
             variant = PaintingVariant.ENTRY_CODEC.fieldOf(NbtKeys.VARIANT).codec()
                                      .parse(registry.getOps(NbtOps.INSTANCE), nbt)
                                      .resultOrPartial().orElse(null);
-
-//            variant = Variants.readVariantFromNbt(nbt, registry, RegistryKeys.PAINTING_VARIANT).orElse(null);
         }
 
         return Pair.of(facing, variant != null ? variant.value() : null);
@@ -818,8 +816,6 @@ public class NbtEntityUtils
                     .resultOrPartial();
 
             variantKey = variant.map(entry -> entry.getKey().orElseThrow()).orElse(CatVariants.BLACK);
-
-//            variantKey = Variants.readVariantFromNbt(nbt, registry, RegistryKeys.CAT_VARIANT).map(entry -> entry.getKey().orElseThrow()).orElse(CatVariants.BLACK);
         }
         if (nbt.contains(NbtKeys.COLLAR))
         {
@@ -846,8 +842,6 @@ public class NbtEntityUtils
                     .resultOrPartial();
 
             return variant.map(entry -> entry.getKey().orElseThrow()).orElse(ChickenVariants.DEFAULT);
-
-//            return Variants.readVariantFromNbt(nbt, registry, RegistryKeys.CHICKEN_VARIANT).map(entry -> entry.getKey().orElseThrow()).orElse(ChickenVariants.DEFAULT);
         }
 
         return null;
@@ -870,8 +864,6 @@ public class NbtEntityUtils
                     .resultOrPartial();
 
             return variant.map(entry -> entry.getKey().orElseThrow()).orElse(CowVariants.DEFAULT);
-
-            //            return Variants.readVariantFromNbt(nbt, registry, RegistryKeys.COW_VARIANT).map(entry -> entry.getKey().orElseThrow()).orElse(CowVariants.DEFAULT);
         }
 
         return null;
@@ -910,8 +902,6 @@ public class NbtEntityUtils
                     .resultOrPartial();
 
             return variant.map(entry -> entry.getKey().orElseThrow()).orElse(FrogVariants.TEMPERATE);
-
-//            return Variants.readVariantFromNbt(nbt, registry, RegistryKeys.FROG_VARIANT).map(entry -> entry.getKey().orElseThrow()).orElse(FrogVariants.TEMPERATE);
         }
 
         return null;
@@ -1008,13 +998,6 @@ public class NbtEntityUtils
 
         if (nbt.contains(NbtKeys.VARIANT))
         {
-//            Optional<RegistryEntry<WolfVariant>> entry = Variants.readVariantFromNbt(nbt, registry, RegistryKeys.WOLF_VARIANT);
-//
-//            if (entry.isPresent())
-//            {
-//                variantKey = entry.get().getKey().orElse(WolfVariants.DEFAULT);
-//            }
-
             Optional<RegistryEntry<WolfVariant>> variant = WolfVariant.ENTRY_CODEC
                     .fieldOf(NbtKeys.VARIANT).codec()
                     .parse(registry.getOps(NbtOps.INSTANCE), nbt)

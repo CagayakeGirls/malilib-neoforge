@@ -1,12 +1,11 @@
 package fi.dy.masa.malilib.hotkeys;
 
-import com.google.common.collect.ImmutableList;
-import io.netty.buffer.ByteBuf;
-
+import javax.annotation.Nonnull;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
 import net.minecraft.util.StringIdentifiable;
-
+import com.google.common.collect.ImmutableList;
+import io.netty.buffer.ByteBuf;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 
@@ -30,7 +29,7 @@ public enum KeyAction implements IConfigOptionListEntry, StringIdentifiable
     }
 
     @Override
-    public String asString()
+    public @Nonnull String asString()
     {
         return this.configString;
     }

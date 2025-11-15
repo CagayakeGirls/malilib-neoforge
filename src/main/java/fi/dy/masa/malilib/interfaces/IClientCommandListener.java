@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.interfaces;
 
 import java.util.List;
-
 import net.minecraft.client.MinecraftClient;
 
 public interface IClientCommandListener

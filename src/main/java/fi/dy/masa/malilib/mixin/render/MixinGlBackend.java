@@ -1,11 +1,10 @@
 package fi.dy.masa.malilib.mixin.render;
 
 import java.util.function.BiFunction;
-
-import com.mojang.blaze3d.shaders.ShaderType;
-import com.mojang.blaze3d.systems.GpuDevice;
 import net.minecraft.client.gl.GlBackend;
 import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.shaders.ShaderType;
+import com.mojang.blaze3d.systems.GpuDevice;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

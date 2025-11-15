@@ -3,11 +3,9 @@ package fi.dy.masa.malilib.gui;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-import org.joml.Matrix3x2fStack;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-
+import org.joml.Matrix3x2fStack;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;

@@ -3,12 +3,10 @@ package fi.dy.masa.malilib.gui.widgets;
 import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.input.CharInput;
 import net.minecraft.client.input.KeyInput;
-
 import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 

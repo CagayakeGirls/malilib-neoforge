@@ -1,9 +1,7 @@
 package fi.dy.masa.malilib.gui.button;
 
 import javax.annotation.Nullable;
-
 import net.minecraft.client.gui.Click;
-
 import fi.dy.masa.malilib.config.IConfigOptionList;
 import fi.dy.masa.malilib.util.StringUtils;
 

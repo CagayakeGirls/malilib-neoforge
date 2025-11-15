@@ -3,10 +3,9 @@ package fi.dy.masa.malilib.util.restrictions;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import com.google.common.collect.ImmutableList;
-
+import javax.annotation.Nonnull;
 import net.minecraft.util.StringIdentifiable;
-
+import com.google.common.collect.ImmutableList;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import fi.dy.masa.malilib.util.StringUtils;
 
@@ -136,7 +135,7 @@ public abstract class UsageRestriction<TYPE>
         }
 
         @Override
-        public String asString()
+        public @Nonnull String asString()
         {
             return this.configString;
         }

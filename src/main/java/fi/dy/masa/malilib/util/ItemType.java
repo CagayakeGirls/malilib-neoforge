@@ -1,13 +1,12 @@
 package fi.dy.masa.malilib.util;
 
 import java.util.Objects;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 /**
  * A wrapper around ItemStack, that implements hashCode() and equals().

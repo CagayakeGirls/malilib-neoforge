@@ -3,6 +3,7 @@ package fi.dy.masa.malilib.util.game;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableList;
 import io.netty.buffer.ByteBuf;
@@ -606,7 +607,7 @@ public class RecipeBookUtils
         }
 
         @Override
-        public String asString()
+        public @Nonnull String asString()
         {
             return this.name().toLowerCase();
         }

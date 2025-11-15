@@ -19,7 +19,6 @@ import java.util.zip.GZIPOutputStream;
 import java.util.zip.ZipException;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.NbtSizeTracker;
 

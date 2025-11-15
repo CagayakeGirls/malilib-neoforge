@@ -1,9 +1,6 @@
 package fi.dy.masa.malilib.mixin.entity;
 
 import java.util.*;
-import org.jetbrains.annotations.Nullable;
-
-import com.mojang.serialization.Codec;
 import net.minecraft.component.type.NbtComponent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -17,6 +14,9 @@ import net.minecraft.util.Uuids;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
+
+import com.mojang.serialization.Codec;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;

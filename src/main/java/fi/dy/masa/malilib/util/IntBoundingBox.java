@@ -1,12 +1,6 @@
 package fi.dy.masa.malilib.util;
 
 import javax.annotation.Nullable;
-
-import io.netty.buffer.ByteBuf;
-
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.codecs.PrimitiveCodec;
-import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.nbt.NbtIntArray;
 import net.minecraft.network.codec.PacketCodec;
 import net.minecraft.network.codec.PacketCodecs;
@@ -15,6 +9,11 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
+import io.netty.buffer.ByteBuf;
+
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.PrimitiveCodec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 public class IntBoundingBox
 {

@@ -1,9 +1,8 @@
 package fi.dy.masa.malilib.gui.button;
 
-import net.minecraft.client.gui.Click;
-
 import fi.dy.masa.malilib.config.IConfigBoolean;
 import fi.dy.masa.malilib.gui.GuiBase;
+import net.minecraft.client.gui.Click;
 
 public class ConfigButtonBoolean extends ButtonGeneric
 {

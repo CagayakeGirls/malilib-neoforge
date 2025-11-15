@@ -1,5 +1,11 @@
 package fi.dy.masa.malilib.util;
 
+import java.util.Objects;
+import java.util.Set;
+import javax.annotation.Nonnull;
+import org.apache.commons.lang3.tuple.Pair;
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.block.BlockState;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.*;
@@ -13,12 +19,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.registry.tag.ItemTags;
-import org.apache.commons.lang3.tuple.Pair;
-import org.jetbrains.annotations.Nullable;
-
-import javax.annotation.Nonnull;
-import java.util.Objects;
-import java.util.Set;
 
 public class EquipmentUtils
 {
