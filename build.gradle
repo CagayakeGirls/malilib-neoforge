@@ -14,15 +14,14 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-    mappings extraMappings.yarnWithPatch(project.mappings_version, "${libs.versions.yarn.patch.get()}")
+    mappings extraMappings.yarnWithPatch(project.mappings_version, libs.versions.yarn.patch.get())
     neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
 
     include(modApi(forgifiedFabricApi.module("fabric-api-base", project.fabric_api_version, false)))
     include(modApi(forgifiedFabricApi.module("fabric-networking-api-v1", project.fabric_api_version, false)))
 
-    modCompileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-neoforge"
-    //modCompileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-${loom.platform.get().id()}"
+    modCompileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-${loom.platform.get().id()}"
 //	modRuntimeOnly 'me.fallenbreath:mixin-auditor:0.1.0'
 }
 
@@ -59,7 +58,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
             mod_id                 : mod_id,
             mod_name               : mod_name,
             mod_version            : "${project.version}",
-            mod_link               : mod_link
+            mod_link               : libs.versions.mod.link.get()
     ]
     inputs.properties replaceProperties
     expand replaceProperties
