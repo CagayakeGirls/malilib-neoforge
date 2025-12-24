@@ -685,12 +685,12 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         try (NativeImage image = new NativeImage(sizeW, sizeH, false))
         {
-            Identifier id = Identifier.of(MaLiLibReference.MOD_ID, UUID.randomUUID().toString());
+            Identifier id = Identifier.fromNamespaceAndPath(MaLiLibReference.MOD_ID, UUID.randomUUID().toString());
             this.dynamicTexture = Pair.of(
                     id,
-                    new NativeImageBackedTexture(id::toString, image)
+                    new DynamicTexture(id::toString, image)
             );
-            this.mc.getTextureManager().registerTexture(id, this.dynamicTexture.getRight());
+            this.mc.getTextureManager().register(id, this.dynamicTexture.getRight());
 
             for (int x = 0; x < sizeW; x++)
             {
