@@ -1,6 +1,5 @@
 package team.cagayakegirls.mafglib.utils;
 
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforgespi.language.IModInfo;
@@ -18,6 +17,8 @@ public class ModPlatform {
     }
 
     public static List<IModInfo> getAllMods() {
-        return ModList.get().getMods();
+        return FMLLoader.getLoadingModList().getMods().stream()
+                        .map(modInfo -> (IModInfo) modInfo)
+                        .toList();
     }
 }
