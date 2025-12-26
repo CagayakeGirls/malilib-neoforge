@@ -34,7 +34,7 @@ dependencies {
 	include(modApi(forgifiedFabricApi.module("fabric-api-base", project.fabric_api_version, false)))
 	include(modApi(forgifiedFabricApi.module("fabric-networking-api-v1", project.fabric_api_version, false)))
 
-	modCompileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-fabric"
+	modCompileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-${loom.platform.get().id()}"
 //	modCompileOnly "net.irisshaders:iris-fabric-1.8.12-snapshot+mc1.21.5-local"
 //	modRuntimeOnly 'me.fallenbreath:mixin-auditor:0.1.0'
 }

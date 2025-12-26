@@ -22,8 +22,6 @@ import fi.dy.masa.malilib.MaLiLibReference;
 import org.jetbrains.annotations.NotNull;
 
 import com.mojang.serialization.JsonOps;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.ModContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.client.multiplayer.ServerData;
@@ -43,6 +41,8 @@ import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.util.time.DurationFormat;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
+import net.neoforged.neoforgespi.language.IModInfo;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -79,11 +79,11 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        for (ModContainer container : FabricLoader.getInstance().getAllMods())
+        for (IModInfo modInfo : ModPlatform.getAllMods())
         {
-            if (container.getMetadata().getId().equals(modId))
+            if (modInfo.getModId().equals(modId))
             {
-                return container.getMetadata().getVersion().getFriendlyString();
+                return modInfo.getVersion().toString();
             }
         }
 

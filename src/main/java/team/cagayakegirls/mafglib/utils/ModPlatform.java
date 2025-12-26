@@ -24,10 +24,16 @@ public class ModPlatform {
     }
 
     public static List<IModInfo> getAllMods() {
-        return ModList.get().getMods();
+        return FMLLoader.getCurrent().getLoadingModList().getMods().stream()
+                        .map(modInfo -> (IModInfo) modInfo)
+                        .toList();
     }
 
     public static Optional<? extends ModContainer> getModContainer(String modId) {
         return ModList.get().getModContainerById(modId);
+    }
+
+    public static boolean isDevelopmentEnvironment() {
+        return !FMLLoader.getCurrent().isProduction();
     }
 }

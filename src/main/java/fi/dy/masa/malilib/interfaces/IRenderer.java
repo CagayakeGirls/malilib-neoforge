@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 import com.google.common.collect.ImmutableMap;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.joml.Matrix4f;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -95,5 +96,5 @@ public interface IRenderer
      * @param mc ()
      * @param builder ()
      */
-    default void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc, ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder) { }
+    default void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc, ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> builder) { }
 }

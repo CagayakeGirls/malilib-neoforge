@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3x2f;
@@ -267,7 +268,7 @@ public class RenderUtils
     @ApiStatus.Internal
     public static void registerSpecialGuiRenderers(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc)
     {
-        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder = new ImmutableMap.Builder<>();
+        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> builder = new ImmutableMap.Builder<>();
 
         // Build new ImmutableMap
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
@@ -288,7 +289,7 @@ public class RenderUtils
         }
     }
 
-    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> entries)
+    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> entries)
     {
         System.out.print("DUMP SpecialGuiRenderers()\n");
 
@@ -555,7 +556,7 @@ public class RenderUtils
     /**
      * New drawRect() for GUI Rendering.
 	 *
-     * @param drawContext
+     * @param ctx
      * @param x
      * @param y
      * @param width
@@ -2154,7 +2155,7 @@ public class RenderUtils
      * @param baseX
      * @param baseY
      * @param useBgColors
-     * @param drawContext
+     * @param ctx
      */
     public static void renderNbtItemsPreview(GuiContext ctx, ItemStack stackIn, @Nonnull CompoundTag itemsTag, int baseX, int baseY, boolean useBgColors)
     {
@@ -2204,11 +2205,11 @@ public class RenderUtils
 	 * -
 	 *
 	 * @param stackIn     (Stack of the Entity for selecting the right textures)
-	 * @param itemsTag    (Nbt Items[] list)
+	 * @param data        (Nbt Items[] list)
 	 * @param baseX
 	 * @param baseY
 	 * @param useBgColors
-	 * @param drawContext
+	 * @param ctx
 	 */
 	public static void renderDataItemsPreview(GuiContext ctx, ItemStack stackIn, @Nonnull CompoundData data, int baseX, int baseY, boolean useBgColors)
 	{

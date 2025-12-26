@@ -19,6 +19,8 @@ import net.minecraft.util.profiling.Profiler;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
@@ -335,7 +337,7 @@ public class RenderEventHandler implements IRenderDispatcher
 
     @ApiStatus.Internal
     @ApiStatus.Experimental
-    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc, ImmutableMap.Builder<@NotNull Class<? extends PictureInPictureRenderState>, @NotNull PictureInPictureRenderer<?>> builder)
+    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc, ImmutableMap.Builder<@NotNull Class<? extends PictureInPictureRenderState>, @NotNull PictureInPictureRendererPool<?>> builder)
     {
 //        MaLiLib.LOGGER.warn("onRegisterSpecialGuiRenderer():");
 
