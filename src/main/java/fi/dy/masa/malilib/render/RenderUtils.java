@@ -1,20 +1,26 @@
 package fi.dy.masa.malilib.render;
 
-import java.util.*;
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
-import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
-import org.jetbrains.annotations.ApiStatus;
-import org.joml.Matrix3x2f;
-import org.joml.Matrix4f;
-import org.joml.Matrix4fStack;
-
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuTexture;
 import com.mojang.blaze3d.textures.GpuTextureView;
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibReference;
+import fi.dy.masa.malilib.config.HudAlignment;
+import fi.dy.masa.malilib.event.RenderEventHandler;
+import fi.dy.masa.malilib.gui.GuiBase;
+import fi.dy.masa.malilib.interfaces.IGuiRendererInvoker;
+import fi.dy.masa.malilib.mixin.render.IMixinAbstractTexture;
+import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
+import fi.dy.masa.malilib.mixin.render.IMixinGuiRenderer;
+import fi.dy.masa.malilib.render.element.*;
+import fi.dy.masa.malilib.util.*;
+import fi.dy.masa.malilib.util.data.Color4f;
+import fi.dy.masa.malilib.util.log.AnsiLogger;
+import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
+import fi.dy.masa.malilib.util.position.PositionUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.block.ShulkerBoxBlock;
@@ -52,6 +58,7 @@ import net.minecraft.item.*;
 import net.minecraft.item.map.MapState;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Colors;
 import net.minecraft.util.DyeColor;
 import net.minecraft.util.Identifier;
@@ -60,24 +67,15 @@ import net.minecraft.util.math.*;
 import net.minecraft.util.math.random.LocalRandom;
 import net.minecraft.village.VillagerData;
 import net.minecraft.village.VillagerProfession;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
+import org.jetbrains.annotations.ApiStatus;
+import org.joml.Matrix3x2f;
+import org.joml.Matrix4f;
+import org.joml.Matrix4fStack;
 
-import fi.dy.masa.malilib.MaLiLib;
-import fi.dy.masa.malilib.MaLiLibReference;
-import fi.dy.masa.malilib.config.HudAlignment;
-import fi.dy.masa.malilib.event.RenderEventHandler;
-import fi.dy.masa.malilib.gui.GuiBase;
-import fi.dy.masa.malilib.interfaces.IGuiRendererInvoker;
-import fi.dy.masa.malilib.mixin.render.IMixinAbstractTexture;
-import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
-import fi.dy.masa.malilib.mixin.render.IMixinGuiRenderer;
-import fi.dy.masa.malilib.render.element.*;
-import fi.dy.masa.malilib.render.special.MaLiLibBlockModelGuiElementRenderer;
-import fi.dy.masa.malilib.render.special.MaLiLibBlockStateModelGuiElement;
-import fi.dy.masa.malilib.util.*;
-import fi.dy.masa.malilib.util.data.Color4f;
-import fi.dy.masa.malilib.util.log.AnsiLogger;
-import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
-import fi.dy.masa.malilib.util.position.PositionUtils;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import java.util.*;
 
 public class RenderUtils
 {
@@ -1883,8 +1881,7 @@ public class RenderUtils
         if (block != null && useBgColors)
         {
             // In 1.13+ there is the uncolored Shulker Box variant, which returns null from getColor()
-            final DyeColor dye = block.getColor() != null ? block.getColor() : DyeColor.PURPLE;
-            final float[] colors = getColorComponents(dye.getEntityColor());
+            final float[] colors = getColorComponents(block.getColor() != null ? block.getColor().getEntityColor() : 0xFF875F87);
             return ColorHelper.fromFloats(1f, colors[0], colors[1], colors[2]);
         }
         else
@@ -1910,95 +1907,96 @@ public class RenderUtils
 
     public static int setBundleBackgroundTintColor(ItemStack bundle, boolean useBgColors)
     {
-        if (useBgColors)
+        if (bundle.isIn(ItemTags.BUNDLES) && useBgColors)
         {
-            final DyeColor dye = getBundleColor(bundle);
+            // In 1.17+ there is the uncolored Bundle variant, which returns null from getColor()
+//            final DyeColor dye = getBundleColor(bundle);
+//            final float[] colors = getColorComponents(dye != null ? dye.getEntityColor() : 0xFFA6572C);
+//            return ColorHelper.fromFloats(1f, colors[0], colors[1], colors[2]);
 
-            if (dye != null)
-            {
-                final float[] colors = getColorComponents(dye.getEntityColor());
-                return ColorHelper.fromFloats(1f, colors[0], colors[1], colors[2]);
-            }
+			// Requires Alpha value
+			return getBundleColor(bundle);
         }
 
         return Colors.WHITE;
     }
 
-    public static DyeColor getBundleColor(ItemStack bundle)
+    // returns real colors now instead of Dye Colors.
+    public static int getBundleColor(ItemStack bundle)
     {
         Item item = bundle.getItem();
 
         if (item == null)
         {
-            return null;
+            return Colors.WHITE;
         }
-        if (item.equals(Items.WHITE_BUNDLE))
+        if (item.equals(Items.WHITE_BUNDLE))            // 	#ffe6e6e6
         {
-            return DyeColor.WHITE;
+            return 0xFFE6E6E6;
         }
-        else if (item.equals(Items.ORANGE_BUNDLE))
+        else if (item.equals(Items.ORANGE_BUNDLE))      //	#fffb9320
         {
-            return DyeColor.ORANGE;
+            return 0xFFFB9320;
         }
-        else if (item.equals(Items.MAGENTA_BUNDLE))
+        else if (item.equals(Items.MAGENTA_BUNDLE))     // 	#ffcc49b9
         {
-            return DyeColor.MAGENTA;
+            return 0xFFCC49B9;
         }
-        else if (item.equals(Items.LIGHT_BLUE_BUNDLE))
+        else if (item.equals(Items.LIGHT_BLUE_BUNDLE))  // 	#ff30afe5
         {
-            return DyeColor.LIGHT_BLUE;
+            return 0xFF30AFE5;
         }
-        else if (item.equals(Items.YELLOW_BUNDLE))
+        else if (item.equals(Items.YELLOW_BUNDLE))      //	#fff2c705
         {
-            return DyeColor.YELLOW;
+            return 0xFFF2C705;
         }
-        else if (item.equals(Items.LIME_BUNDLE))
+        else if (item.equals(Items.LIME_BUNDLE))        // 	#ff9bdf39
         {
-            return DyeColor.LIME;
+            return 0xFF9BDF39;
         }
-        else if (item.equals(Items.PINK_BUNDLE))
+        else if (item.equals(Items.PINK_BUNDLE))        //	#fff8a6bd
         {
-            return DyeColor.PINK;
+            return 0xFFF8A6BD;
         }
-        else if (item.equals(Items.GRAY_BUNDLE))
+        else if (item.equals(Items.GRAY_BUNDLE))        // 	#ff6c7b83
         {
-            return DyeColor.GRAY;
+            return 0xFF6C7B83;
         }
-        else if (item.equals(Items.LIGHT_GRAY_BUNDLE))
+        else if (item.equals(Items.LIGHT_GRAY_BUNDLE))  // 	#ffb1aca3
         {
-            return DyeColor.LIGHT_GRAY;
+            return 0xFFB1ACA3;
         }
-        else if (item.equals(Items.CYAN_BUNDLE))
+        else if (item.equals(Items.CYAN_BUNDLE))        //  #ff14b4b4
         {
-            return DyeColor.CYAN;
+            return 0xFF14B4B4;
         }
-        else if (item.equals(Items.BLUE_BUNDLE))
+        else if (item.equals(Items.BLUE_BUNDLE))        //  #ff4573c7
         {
-            return DyeColor.BLUE;
+            return 0xFF4573C7;
         }
-        else if (item.equals(Items.BROWN_BUNDLE))
+        else if (item.equals(Items.BROWN_BUNDLE))       // 	#ffd18a59
         {
-            return DyeColor.BROWN;
+            return 0xFFD18A59;
         }
-        else if (item.equals(Items.GREEN_BUNDLE))
+        else if (item.equals(Items.GREEN_BUNDLE))       // 	#ff77a119
         {
-            return DyeColor.GREEN;
+            return 0xFF77A119;
         }
-        else if (item.equals(Items.RED_BUNDLE))
+        else if (item.equals(Items.RED_BUNDLE))         //	#ffd2382e
         {
-            return DyeColor.RED;
+            return 0xFFD2382E;
         }
-        else if (item.equals(Items.BLACK_BUNDLE))
+        else if (item.equals(Items.BLACK_BUNDLE))       //  #ff38364f
         {
-            return DyeColor.BLACK;
+            return 0xFF38364F;
         }
-        else if (item.equals(Items.PURPLE_BUNDLE))
+        else if (item.equals(Items.PURPLE_BUNDLE))      // 	#ff942aca
         {
-            return DyeColor.PURPLE;
+            return 0xFF942ACA;
         }
         else
         {
-            return null;
+            return 0xFFA6572C;                                // #FFA6572C
         }
     }
 
@@ -2029,6 +2027,7 @@ public class RenderUtils
         return Colors.WHITE;
     }
 
+    // todo - return real colors
     public static DyeColor getVillagerColor(RegistryEntry<VillagerProfession> profession)
     {
         if (profession == null)
@@ -2634,8 +2633,9 @@ public class RenderUtils
 
     public static void renderAreaSides(BlockPos pos1, BlockPos pos2, Color4f color, Matrix4f matrix4f, boolean shouldResort)
     {
+		boolean culling = shouldCull(pos1, pos2);
         // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_2
-        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH);
+        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", culling ? MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_3 : MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_NO_CULL);
         BufferBuilder buffer = ctx.getBuilder();
 
         renderAreaSidesBatched(pos1, pos2, color, 0.002, buffer);
@@ -2853,4 +2853,57 @@ public class RenderUtils
             MaLiLib.LOGGER.error("drawAreaOutlineNoCorners(): Draw Exception; {}", err.getMessage());
         }
     }
+
+	public static boolean shouldCull(BlockPos pos1, BlockPos pos2)
+	{
+		return shouldCull(new Box(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
+	}
+
+	public static boolean shouldCull(Vec3d pos1, Vec3d pos2)
+	{
+		return shouldCull(new Box(pos1, pos2));
+	}
+
+	/**
+	 * The POSITION_COLOR Bottom Side causes Z fighting at certain distances;
+	 * If and only if the Side collides with a Block surface.
+	 * Calculate `withCull` if and only if the bottom side
+	 * is Air that meets with Non-Air.  We are only considering the Center Block Pos here.
+	 * NOTE that this causes a noticable "shift" in how the selection box appears when
+	 * Enabling culling; so we should only do so in this case; and only to stop "Z Fighting" .
+	 * @param bb
+	 * @return
+	 */
+	public static boolean shouldCull(Box bb)
+	{
+		Entity camera = mc().getCameraEntity();
+		final Vec3d minPos = bb.getMinPos();
+		final Vec3d maxPos = bb.getMaxPos();
+		Vec3d mid = bb.getCenter();
+		BlockPos pos;
+
+		if (minPos.getY() < maxPos.getY())
+		{
+			pos = new BlockPos((int) mid.x, (int) minPos.y, (int) mid.z);
+		}
+		else
+		{
+			pos = new BlockPos((int) mid.x, (int) maxPos.y, (int) mid.z);
+		}
+
+		if (mc().world != null)
+		{
+			// Calculate only if the Down Direction is a Block, while above it is Air.
+			BlockState state = mc().world.getBlockState(pos);
+			BlockState stateDown = mc().world.getBlockState(pos.offset(Direction.DOWN));
+
+			if (camera != null && state.isAir() && !stateDown.isAir())
+			{
+				// Causes Z fighting on the floor (~24 Block distance)
+				return camera.getPos().distanceTo(mid) >= 23;
+			}
+		}
+
+		return false;
+	}
 }

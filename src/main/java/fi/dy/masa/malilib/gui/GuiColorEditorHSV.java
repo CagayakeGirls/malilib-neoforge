@@ -1,15 +1,24 @@
 package fi.dy.masa.malilib.gui;
 
 import java.awt.*;
+import java.util.UUID;
 import javax.annotation.Nullable;
+import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.lang3.tuple.Pair;
 import org.joml.Matrix3x2f;
 
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.client.texture.TextureSetup;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.ColorHelper;
 import net.minecraft.util.math.MathHelper;
 
+import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibReference;
 import fi.dy.masa.malilib.config.IConfigColor;
 import fi.dy.masa.malilib.gui.interfaces.IDialogHandler;
 import fi.dy.masa.malilib.gui.interfaces.ITextFieldListener;
@@ -51,6 +60,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
     protected float relG;
     protected float relB;
     protected float relA;
+    private Pair<Identifier, NativeImageBackedTexture> dynamicTexture = null;
 
     public GuiColorEditorHSV(IConfigColor config, @Nullable IDialogHandler dialogHandler, Screen parent)
     {
@@ -151,6 +161,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
     {
         this.config.setIntegerValue(this.color);
 
+        this.clearDynamicTexture();
         super.removed();
     }
 
@@ -508,79 +519,44 @@ public class GuiColorEditorHSV extends GuiDialogBase
         RenderUtils.drawOutline(drawContext, this.xHFullSV, y - 1, this.widthHFullSV, this.sizeHS + 2, 0xC0FFFFFF); // Hue vertical/full value
 
         // Full SV Square --
-        // MaLiLibPipelines.POSITION_SIMPLE
-//        RenderContext ctx = new RenderContext(() -> "ColorSelector A", MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
-//        BufferBuilder buffer = ctx.getBuilder();
-
         int r = (int) (this.relR * 255f);
         int g = (int) (this.relG * 255f);
         int b = (int) (this.relB * 255f);
         int a = 255;
         int c = 255;
-
-//        RenderUtils.blend(true);
-//        int tempColor = RenderUtils.color(r, g, b, a);
-//        RenderUtils.color(1f, 1f, 1f, 1f);
 
         /*
         GlProgramManager.useProgram(SHADER_HUE.getProgram());
         GL20.glUniform1f(GL20.glGetUniformLocation(SHADER_HUE.getProgram(), "hue_value"), this.relH);
          */
 
-        final int[] colorPair = this.getColorPairForSelector();
+//        final int[] colorPair = this.getColorPairForSelector();
+        this.generateDynamicTextureForHSVSelector();
+
+//        RenderUtils.addSimpleElement(drawContext,
+//                                     new MaLiLibHSV4ColorGradientGuiElement(
+//                                             RenderPipelines.GUI,
+//                                             TextureSetup.empty(),
+//                                             new Matrix3x2f(drawContext.getMatrices()),
+//                                             x, x + w, y, y + h,
+//                                             colorPair,
+//                                             RenderUtils.peekLastScissor(drawContext))
+//                                     );
 
         RenderUtils.addSimpleElement(drawContext,
-                                     new MaLiLibHSV4ColorGradientGuiElement(
-                                             RenderPipelines.GUI,
-                                             TextureSetup.empty(),
+                                     new MaLiLibTexturedGuiElement(
+                                             RenderPipelines.GUI_TEXTURED,
+                                             TextureSetup.of(this.dynamicTexture.getRight().getGlTextureView()),
                                              new Matrix3x2f(drawContext.getMatrices()),
-                                             x, x + w, y, y + h,
-                                             colorPair,
-                                             RenderUtils.peekLastScissor(drawContext))
-                                     );
-
-//        buffer.vertex(x    , y    , z).texture(1, 0);
-//        buffer.vertex(x    , y + h, z).texture(0, 0);
-//        buffer.vertex(x + w, y + h, z).texture(0, 1);
-//        buffer.vertex(x + w, y    , z).texture(1, 1);
-
-//        buffer.vertex(x    , y    , z).color(colorPair[0]);
-//        buffer.vertex(x    , y + h, z).color(colorPair[1]);
-//        buffer.vertex(x + w, y + h, z).color(colorPair[2]);
-//        buffer.vertex(x + w, y    , z).color(colorPair[3]);
-
-//        try
-//        {
-//            BuiltBuffer meshData = buffer.endNullable();
-//
-//            if (meshData != null)
-//            {
-//                ctx.draw(meshData, false);
-//                meshData.close();
-//            }
-//
-//            ctx.reset();
-//        }
-//        catch (Exception ignored) { }
+                                             x, y,
+                                             x + w, y + h,
+                                             0, 256 * 0.00390625F,
+                                             0, 256 * 0.00390625F,
+                                             -1,
+                                             RenderUtils.peekLastScissor(drawContext)
+                                     ));
 
         // Element Selectors --
-        // MaLiLibPipelines.POSITION_COLOR_SIMPLE
-//        buffer = ctx.start(() -> "ColorSelector B", MaLiLibPipelines.POSITION_COLOR_MASA_NO_DEPTH_NO_CULL, BufferUsage.STATIC_WRITE);
-
-        /*
-        int r = (int) (this.relR * 255f);
-        int g = (int) (this.relG * 255f);
-        int b = (int) (this.relB * 255f);
-        int a = 255;
-        int c = 255;
-         */
-
-        // Current color indicator
-//        buffer.vertex(cx     , cy     , z).color(r, g, b, a);
-//        buffer.vertex(cx     , cy + ch, z).color(r, g, b, a);
-//        buffer.vertex(cx + cw, cy + ch, z).color(r, g, b, a);
-//        buffer.vertex(cx + cw, cy     , z).color(r, g, b, a);
-
         // Current color indicator
         RenderUtils.addSimpleElement(drawContext,
                                      new MaLiLibHSV1ColorIndicatorGuiElement(
@@ -595,10 +571,6 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         // SV selection marker for saturation, horizontal marker, vertical range
         int yt = y + (int) ((1 - this.relS) * h);
-//        buffer.vertex(x - 1    , yt    , z).color(c, c, c, a);
-//        buffer.vertex(x - 1    , yt + 1, z).color(c, c, c, a);
-//        buffer.vertex(x + w + 1, yt + 1, z).color(c, c, c, a);
-//        buffer.vertex(x + w + 1, yt    , z).color(c, c, c, a);
 
         // SV selection marker for saturation, horizontal marker, vertical range
         RenderUtils.addSimpleElement(drawContext,
@@ -614,10 +586,6 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
         // SV selection marker for value, vertical marker, horizontal range
         int xt = x + (int) (this.relV * w);
-//        buffer.vertex(xt    , y - 1    , z).color(c, c, c, a);
-//        buffer.vertex(xt    , y + h + 1, z).color(c, c, c, a);
-//        buffer.vertex(xt + 1, y + h + 1, z).color(c, c, c, a);
-//        buffer.vertex(xt + 1, y - 1    , z).color(c, c, c, a);
 
         // SV selection marker for value, vertical marker, horizontal range
         RenderUtils.addSimpleElement(drawContext,
@@ -687,30 +655,81 @@ public class GuiColorEditorHSV extends GuiDialogBase
         renderGradientColorBar(drawContext, x, y, z, w, h, color1, color2);
         renderBarMarkerHorizontalBar(drawContext, x, y, z, w, h, (float) a / 255f);
         y += yd;
-
-//        try
-//        {
-//            BuiltBuffer meshData = buffer.endNullable();
-//
-//            if (meshData != null)
-//            {
-//                ctx.draw(meshData, false);
-//                meshData.close();
-//            }
-//
-//            ctx.close();
-//        }
-//        catch (Exception ignored) { }
     }
 
+    @Deprecated
     private int[] getColorPairForSelector()
     {
-        int color1 = Color.HSBtoRGB(this.relH, 0f, 0f);
-        int color2 = Color.HSBtoRGB(this.relH, 1f, 0f);
-        int color3 = Color.HSBtoRGB(this.relH, 0f, 1f);
-        int color4 = Color.HSBtoRGB(this.relH, 1f, 1f);
+        int color1 = Color.HSBtoRGB(this.relH, 0f, 0f);     // TOP LEFT
+        int color2 = Color.HSBtoRGB(this.relH, 1f, 0f);     // TOP RIGHT
+        int color3 = Color.HSBtoRGB(this.relH, 0f, 1f);     // BOTTOM RIGHT
+        int color4 = Color.HSBtoRGB(this.relH, 1f, 1f);     // BOTTOM LEFT
 
         return new int[]{ color1, color2, color3, color4 };
+    }
+
+    /**
+     * This Generates a Dynamic Image for the 4-Point Color Selector;
+     * - as opposed to using a custom Fragment shader.
+     */
+    private void generateDynamicTextureForHSVSelector()
+    {
+        final int sizeW = 256;
+        final int sizeH = 256;
+
+        if (this.dynamicTexture != null)
+        {
+            // for 1.21.5+ we need to destroy the last texture
+            this.clearDynamicTexture();
+        }
+
+        try (NativeImage image = new NativeImage(sizeW, sizeH, false))
+        {
+            Identifier id = Identifier.of(MaLiLibReference.MOD_ID, UUID.randomUUID().toString());
+            this.dynamicTexture = Pair.of(
+                    id,
+                    new NativeImageBackedTexture(id::toString, image)
+            );
+            this.mc.getTextureManager().registerTexture(id, this.dynamicTexture.getRight());
+
+            for (int x = 0; x < sizeW; x++)
+            {
+                float brightness = Fraction.getFraction(x, sizeW).floatValue();
+
+                for (int y = 0; y < sizeH; y++)
+                {
+                    float saturation = Fraction.getFraction(y, sizeH).floatValue();
+
+                    // inverted Y (?)
+                    image.setColor(x, ((sizeH - 1) - y), ColorHelper.toAbgr(Color.HSBtoRGB(this.relH, saturation, brightness)));
+                    // 1.21.10- seems to need ABGR, where Color.HSBtoRGB returns RGBA
+                }
+            }
+
+//            if (MaLiLibReference.DEBUG_MODE)
+//            {
+//                Path dir = MaLiLibReference.CONFIG_DIR.resolve(id.getNamespace());
+//                FileUtils.createDirectoriesIfMissing(dir);
+//                Path file = dir.resolve(id.getPath() + ".png");
+//                image.writeToFile(file);
+//            }
+
+            this.dynamicTexture.getRight().upload();
+        }
+        catch (Throwable err)
+        {
+            MaLiLib.LOGGER.error("GuiColorEditorHSV: generate native image failed; {}", err.getLocalizedMessage());
+        }
+    }
+
+    private void clearDynamicTexture()
+    {
+        if (this.dynamicTexture != null)
+        {
+            this.mc.getTextureManager().destroyTexture(this.dynamicTexture.getLeft());
+            this.dynamicTexture.getRight().close();
+            this.dynamicTexture = null;
+        }
     }
 
     public static void renderGradientColorBar(DrawContext drawContext, int x, int y, float z, int width, int height, int colorStart, int colorEnd)
@@ -1018,7 +1037,7 @@ public class GuiColorEditorHSV extends GuiDialogBase
 
                     return true;
                 }
-                catch (Exception e) {}
+                catch (Exception ignored) {}
             }
 
             return false;

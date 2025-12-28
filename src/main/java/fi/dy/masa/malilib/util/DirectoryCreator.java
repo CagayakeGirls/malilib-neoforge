@@ -4,57 +4,61 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import javax.annotation.Nullable;
 
+import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.gui.Message.MessageType;
 import fi.dy.masa.malilib.gui.interfaces.IDirectoryNavigator;
 import fi.dy.masa.malilib.interfaces.IStringConsumerFeedback;
 
-public class DirectoryCreator implements IStringConsumerFeedback
+/**
+ * Used to create a Directory via the GUI
+ *
+ * @param dir
+ * @param navigator
+// * @param feedback
+ */
+public record DirectoryCreator(Path dir, @Nullable IDirectoryNavigator navigator) implements IStringConsumerFeedback
 {
-    //protected final File dir;
-    protected final Path dir;
-    @Nullable protected final IDirectoryNavigator navigator;
+	@Override
+	public boolean setString(String string)
+	{
+		if (string.isEmpty())
+		{
+			InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.message.error.failed_to_create_directory", string);
+			MaLiLib.LOGGER.warn("DirectoryCreator: Failed to create directory; Directory is invalid/empty.");
+			return false;
+		}
 
-    public DirectoryCreator(Path dir, @Nullable IDirectoryNavigator navigator)
-    {
-        this.dir = dir;
-        this.navigator = navigator;
-    }
+		Path newDir = this.dir().resolve(string);
 
-    @Override
-    public boolean setString(String string)
-    {
-        if (string.isEmpty())
-        {
-            InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.error.invalid_directory", string);
-            return false;
-        }
+		if (Files.exists(newDir))
+		{
+			InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.message.error.file_or_directory_already_exists", newDir.toAbsolutePath());
+			MaLiLib.LOGGER.warn("DirectoryCreator: Failed to create directory '{}'; Destination already exists.", this.dir().toAbsolutePath());
+			return false;
+		}
 
-        //File file = new File(this.dir, string);
-        Path file = this.dir.resolve(string);
+		try
+		{
+			Files.createDirectory(newDir);
+		}
+		catch (Exception err)
+		{
+			InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.message.error.failed_to_create_directory", newDir.toAbsolutePath());
+			MaLiLib.LOGGER.error("DirectoryCreator: Exception creating directory '{}'; {}", this.dir().toAbsolutePath(), err.getLocalizedMessage());
+			return false;
+		}
 
-        if (Files.exists(file))
-        {
-            InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.error.file_or_directory_already_exists", file.toAbsolutePath());
-            return false;
-        }
+		if (this.navigator() != null)
+		{
+			this.navigator().switchToDirectory(newDir);
+		}
 
-        try
-        {
-            Files.createDirectory(file);
-        }
-        catch (Exception err)
-        {
-            InfoUtils.showGuiOrActionBarMessage(MessageType.ERROR, "malilib.error.failed_to_create_directory", file.toAbsolutePath());
-            return false;
-        }
+//		if (this.feedback())
+//		{
+			InfoUtils.showGuiOrActionBarMessage(MessageType.SUCCESS, "malilib.message.directory_created", string);
+//		}
 
-        if (this.navigator != null)
-        {
-            this.navigator.switchToDirectory(file);
-        }
-
-        InfoUtils.showGuiOrActionBarMessage(MessageType.SUCCESS, "malilib.message.directory_created", string);
-
-        return true;
-    }
+		MaLiLib.debugLog("DirectoryCreator: Created directory '{}'", newDir.toAbsolutePath());
+		return true;
+	}
 }
