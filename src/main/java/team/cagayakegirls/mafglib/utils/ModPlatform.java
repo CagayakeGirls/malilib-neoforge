@@ -16,9 +16,17 @@ public class ModPlatform {
         return FMLPaths.CONFIGDIR.get();
     }
 
+    public static Path getGameDir() {
+        return FMLPaths.GAMEDIR.get();
+    }
+
     public static List<IModInfo> getAllMods() {
         return FMLLoader.getLoadingModList().getMods().stream()
                         .map(modInfo -> (IModInfo) modInfo)
                         .toList();
+    }
+
+    public static boolean isDevelopmentEnvironment() {
+        return !FMLLoader.isProduction();
     }
 }
