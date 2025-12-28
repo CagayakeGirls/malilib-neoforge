@@ -1,7 +1,6 @@
 package fi.dy.masa.malilib.util.data.tag.converter;
 
 import javax.annotation.Nullable;
-import org.jetbrains.annotations.ApiStatus;
 
 import net.minecraft.nbt.*;
 
@@ -9,7 +8,6 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.*;
 
-@ApiStatus.Experimental
 public class DataConverterNbt
 {
 //	private static final AnsiLogger LOGGER = new AnsiLogger(DataConverterNbt.class, true, true);
@@ -34,10 +32,8 @@ public class DataConverterNbt
             case Constants.NBT.TAG_COMPOUND:    return fromVanillaCompound(vanillaTag.asCompound().orElse(new NbtCompound()));
             case Constants.NBT.TAG_LIST:        return fromVanillaList(vanillaTag.asNbtList().orElse(new NbtList()));
             default:
-                MaLiLib.LOGGER.warn("DataConverterNbt.fromVanillaCompound: Unknown NBT tag id {}", vanillaTag.getType());
+                return EmptyData.INSTANCE;
         }
-
-        return null;
     }
 
     public static ListData fromVanillaList(NbtList vanillaList)
@@ -51,7 +47,7 @@ public class DataConverterNbt
 
         for (int index = 0; index < vanillaList.size(); index++)
         {
-            NbtElement entry = vanillaList.get(index);
+	        NbtElement entry = vanillaList.get(index);
 
 			if (entry != null)
 			{
@@ -84,7 +80,7 @@ public class DataConverterNbt
 
         for (String key : vanillaCompound.getKeys())
         {
-			NbtElement ele = vanillaCompound.get(key);
+	        NbtElement ele = vanillaCompound.get(key);
 
 			if (ele != null)
 			{
@@ -119,15 +115,13 @@ public class DataConverterNbt
             case Constants.NBT.TAG_COMPOUND:    return toVanillaCompound((CompoundData) data);
             case Constants.NBT.TAG_LIST:        return toVanillaList((ListData) data);
             default:
-                MaLiLib.LOGGER.warn("DataConverterNbt.toVanillaNbt: Unknown NBT tag id {}", data.getType());
+                return NbtEnd.INSTANCE;
         }
-
-        return null;
     }
 
     public static NbtList toVanillaList(ListData listData)
     {
-        NbtList list = new NbtList();
+	    NbtList list = new NbtList();
 
 		if (listData == null || listData.isEmpty())
 		{
@@ -160,7 +154,7 @@ public class DataConverterNbt
 
     public static NbtCompound toVanillaCompound(CompoundData compoundData)
     {
-        NbtCompound tag = new NbtCompound();
+	    NbtCompound tag = new NbtCompound();
 
         for (String key : compoundData.getKeys())
         {
