@@ -1,12 +1,12 @@
 [versions]
 range-fml = "[4,)"
-range-game = "[1.21.9,)"
-range-neoforge = "[21.9,)"
+range-game = "[1.21.11,)"
+range-neoforge = "[21.11,)"
 
 mod-link = "https://github.com/CagayakeGirls/malilib-neoforge"
 
 version-env = "client"
-version-type = "release"
+version-type = "alpha"
 
 platformId-curseforge = "910766"
 platformId-modrinth = "SKI34J7B"
