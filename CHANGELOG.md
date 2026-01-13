@@ -1,2 +1,2 @@
 ## Changelog
-- fix when using GraalVM, registering with Iris inside a RenderPipeline mixin Mod causes crashes. (issue #9)
+- sync upstream `1.21.5-0.24.3`
