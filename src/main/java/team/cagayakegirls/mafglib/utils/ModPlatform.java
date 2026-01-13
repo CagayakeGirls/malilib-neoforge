@@ -32,4 +32,8 @@ public class ModPlatform {
     public static Optional<? extends ModContainer> getModContainer(String modId) {
         return ModList.get().getModContainerById(modId);
     }
+
+    public static boolean isDevelopmentEnvironment() {
+        return !FMLLoader.getCurrent().isProduction();
+    }
 }
