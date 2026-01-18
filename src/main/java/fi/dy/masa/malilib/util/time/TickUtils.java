@@ -23,17 +23,25 @@ public class TickUtils
     public static float getTickRate()
     {
         Minecraft mc = Minecraft.getInstance();
+        float tickRate = -1.0F;
 
         if (mc.hasSingleplayerServer() && mc.getSingleplayerServer() != null)
         {
-            return mc.getSingleplayerServer().tickRateManager().tickrate();
+            tickRate = mc.getSingleplayerServer().tickRateManager().tickrate();
         }
         else if (mc.level != null)
         {
-            return mc.level.tickRateManager().tickrate();
+            tickRate = mc.level.tickRateManager().tickrate();
         }
 
-        return -1F;
+        // Things like ViaVersion breaks this; since
+        // older MC doesn't have a tickRate; so return 20.0F.
+        if (tickRate < 1.0F)
+        {
+            tickRate = 20.0F;
+        }
+
+        return tickRate;
     }
 
     /**
@@ -329,12 +337,23 @@ public class TickUtils
         private boolean isFrozen;
         private boolean isSprinting;
         private boolean isStepping;
+        private boolean validTickRate = false;
 
         private Data() {}
 
+        @ApiStatus.Internal
         public void updateTickRate(float tickRate)
         {
-            this.tickRate = tickRate;
+            if (tickRate >= 1.0f)
+            {
+                this.tickRate = tickRate;
+                this.validTickRate = true;
+            }
+            else
+            {
+                this.tickRate = 20.0f;
+                this.validTickRate = false;
+            }
         }
 
         /**
@@ -355,6 +374,8 @@ public class TickUtils
         @ApiStatus.Internal
         public void updateNanoTick(long timeUpdate)
         {
+            this.ensureTickRateIsValid();
+
             if (!Minecraft.getInstance().hasSingleplayerServer())
             {
                 final long currentTime = System.nanoTime();
@@ -385,10 +406,12 @@ public class TickUtils
                         this.measuredMSPT = ((double) (currentTime - this.lastNanoTime) / (double) elapsed) / 1000000D;
                         this.measuredTPS = this.measuredMSPT <= 50 ? this.tickRate : (1000D / this.measuredMSPT);
                         this.actualTPS = (1000D / this.measuredMSPT);
+
                         if (MaLiLibReference.DEBUG_MODE)
                         {
                             this.calculateAverages();
                         }
+
                         this.isValid = true;
                     }
                 }
@@ -403,16 +426,19 @@ public class TickUtils
         public void updateNanoTickFromIntegratedServer(MinecraftServer server)
         {
             this.lastNanoTime = System.nanoTime();
+            this.ensureTickRateIsValid();
 
             if (server != null)
             {
                 this.measuredMSPT = MathUtils.average(server.getTickTimesNanos()) / 1000000D;
                 this.measuredTPS = this.measuredMSPT <= 50 ? this.tickRate : (1000D / this.measuredMSPT);
                 this.actualTPS = (1000D / this.measuredMSPT);
+
                 if (MaLiLibReference.DEBUG_MODE)
                 {
                     this.calculateAverages();
                 }
+
                 this.isValid = true;
             }
         }
@@ -424,16 +450,20 @@ public class TickUtils
          */
         public void updateNanoTickFromServerDirect(final double tps, final double mspt)
         {
+            this.ensureTickRateIsValid();
+
             if (this.useDirectServerData && !this.hasServuxData)
             {
                 // For things like Carpet
                 this.directMSPT = mspt;
                 this.directTPS = tps;
                 this.lastDirectTick = System.nanoTime();
+
                 if (MaLiLibReference.DEBUG_MODE)
                 {
                     this.calculateAverages();
                 }
+
                 this.isValid = true;
             }
         }
@@ -454,6 +484,8 @@ public class TickUtils
                                              boolean sprinting,
                                              boolean stepping)
         {
+            this.ensureTickRateIsValid();
+
             if (this.useDirectServerData)
             {
                 // For Servux
@@ -470,6 +502,19 @@ public class TickUtils
                 }
                 this.hasServuxData = true;
                 this.isValid = true;
+            }
+        }
+
+        public boolean isTickRateValid()
+        {
+            return this.validTickRate;
+        }
+
+        private void ensureTickRateIsValid()
+        {
+            if (!this.validTickRate || this.tickRate < 1.0f)
+            {
+                this.tickRate = 20.0f;
             }
         }
 

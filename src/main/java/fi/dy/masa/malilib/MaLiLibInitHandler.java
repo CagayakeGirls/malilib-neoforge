@@ -37,6 +37,19 @@ public class MaLiLibInitHandler implements IInitializationHandler
 
             ClientCommandHandler.INSTANCE.registerCommand(new TestCommand());
             TickHandler.getInstance().registerClientTickHandler(TestSelector.INSTANCE);
+
+//            if (MaLiLibReference.EXPERIMENTAL_MODE)
+//            {
+//                TickHandler.getInstance().registerClientTickHandler(TestThreadDaemonDefaultHandler.INSTANCE);
+//                TickHandler.getInstance().registerClientTickHandler(TestThreadDaemonAsyncHandler.INSTANCE);
+//                TestThreadDaemonDefaultHandler.INSTANCE.start();
+//                TestThreadDaemonAsyncHandler.INSTANCE.start();
+//            }
+//            else
+//            {
+//                TestThreadDaemonDefaultHandler.INSTANCE.stop();
+//                TestThreadDaemonAsyncHandler.INSTANCE.stop();
+//            }
         }
 
         MaLiLibCallbacks.init();
