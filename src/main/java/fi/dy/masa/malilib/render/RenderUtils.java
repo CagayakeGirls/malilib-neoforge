@@ -14,6 +14,8 @@ import org.joml.Matrix4fStack;
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.pipeline.RenderTarget;
+import com.mojang.blaze3d.platform.DestFactor;
+import com.mojang.blaze3d.platform.SourceFactor;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTexture;
@@ -99,10 +101,10 @@ public class RenderUtils
 
     private static final SingleThreadedRandomSource RAND = new SingleThreadedRandomSource(0);
 
-    //private static final Vec3d LIGHT0_POS = (new Vec3d( 0.2D, 1.0D, -0.7D)).normalize();
-    //private static final Vec3d LIGHT1_POS = (new Vec3d(-0.2D, 1.0D,  0.7D)).normalize();
-
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void blend(boolean toggle)
     {
         //RenderSystem.enableBlend();
@@ -111,7 +113,13 @@ public class RenderUtils
         if (toggle)
         {
             GlStateManager._enableBlend();
-            GlStateManager._blendFuncSeparate(770, 771, 1, 0);
+//            GlStateManager._blendFuncSeparate(770, 771, 1, 0);
+	        GlStateManager._blendFuncSeparate(
+					GlConst.toGl(SourceFactor.SRC_ALPHA),
+					GlConst.toGl(DestFactor.ONE_MINUS_SRC_ALPHA),
+					GlConst.toGl(SourceFactor.ONE),
+					GlConst.toGl(DestFactor.ZERO)
+	        );
         }
         else
         {
@@ -126,7 +134,10 @@ public class RenderUtils
     }
      */
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void depthTest(boolean toggle)
     {
         if (toggle)
@@ -139,19 +150,28 @@ public class RenderUtils
         }
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void depthFunc(int depth)
     {
         GlStateManager._depthFunc(depth);
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void depthMask(boolean toggle)
     {
         GlStateManager._depthMask(toggle);
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void culling(boolean toggle)
     {
         if (toggle)
@@ -164,7 +184,10 @@ public class RenderUtils
         }
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void polygonOffset(boolean toggle)
     {
         if (toggle)
@@ -177,13 +200,19 @@ public class RenderUtils
         }
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+	@Deprecated(forRemoval = true)
     public static void polygonOffset(float factor, float units)
     {
         GlStateManager._polygonOffset(factor, units);
     }
 
-    @Deprecated
+	/**
+	 * @deprecated Please transition to using RenderPipelines
+	 */
+    @Deprecated(forRemoval = true)
     public static void fbStartDrawing()
     {
         RenderSystem.assertOnRenderThread();
@@ -191,12 +220,7 @@ public class RenderUtils
     }
 
     /**
-     * Attempt a simple binding of a GpuTexture, returns null if failed to loadContents.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-     * @param texture ()
-     * @return ()
+     * @deprecated Please Migrate to using {@link GuiContext}
      */
 	@Deprecated(forRemoval = true)
     public static @Nullable Pair<GpuTexture, GpuSampler> bindGpuTexture(Identifier texture)
@@ -212,53 +236,36 @@ public class RenderUtils
         return null;
     }
 
-    /**
-     * Attempt a simple binding of a GpuTextureView, returns null if failed to loadContents.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param texture ()
-     * @return ()
-     */
-	@Deprecated
-    public static @Nullable Pair<GpuTextureView, GpuSampler> bindGpuTextureView(Identifier texture)
-    {
-        SimpleTexture tex = (SimpleTexture) tex().getTexture(texture);
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
+	public static @Nullable Pair<GpuTextureView, GpuSampler> bindGpuTextureView(Identifier texture)
+	{
+		SimpleTexture tex = (SimpleTexture) tex().getTexture(texture);
 
-        if (tex != null && ((IMixinAbstractTexture) tex).malilib_getGlTextureView() != null)
-        {
-            return Pair.of(tex.getTextureView(), tex.getSampler());
-        }
+		if (tex != null && ((IMixinAbstractTexture) tex).malilib_getGlTextureView() != null)
+		{
+			return Pair.of(tex.getTextureView(), tex.getSampler());
+		}
 
-        MaLiLib.LOGGER.error("bindGpuTextureView: Result is null!");
-        return null;
-    }
+		MaLiLib.LOGGER.error("bindGpuTextureView: Result is null!");
+		return null;
+	}
 
-    /**
-     * Add a 'Simple' Element to the DrawContext.
-     * Don't forget to manage the Layers / Checkpoints.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param simpleElement ()
-     */
-	@Deprecated
-    public static void addSimpleElement(GuiGraphics drawContext, GuiElementRenderState simpleElement)
-    {
-        ((IMixinDrawContext) drawContext).malilib_getRenderState().submitGuiElement(simpleElement);
-    }
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
+	public static void addSimpleElement(GuiGraphics drawContext, GuiElementRenderState simpleElement)
+	{
+		((IMixinDrawContext) drawContext).malilib_getRenderState().submitGuiElement(simpleElement);
+	}
 
-    /**
-     * Add a 'Special' Element to the DrawContext
-     * Don't forget to manage the Layers / Checkpoints.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param specialElement ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+    @Deprecated(forRemoval = true)
     public static void addSpecialElement(GuiGraphics drawContext, PictureInPictureRenderState specialElement)
     {
         ((IMixinDrawContext) drawContext).malilib_getRenderState().submitPicturesInPictureState(specialElement);
@@ -310,89 +317,55 @@ public class RenderUtils
         System.out.print("DUMP END\n");
     }
 
-    /**
-     * Add a 'Item' Element to the DrawContext
-     * Don't forget to manage the Layers / Checkpoints.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param itemElement ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static void addItemElement(GuiGraphics drawContext, GuiItemRenderState itemElement)
     {
         ((IMixinDrawContext) drawContext).malilib_getRenderState().submitItem(itemElement);
     }
 
-    /**
-     * Add a 'Text' Element to the DrawContext.
-     * Don't forget to manage the Layers / Checkpoints.
-     *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param textElement ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static void addTextElement(GuiGraphics drawContext, GuiTextRenderState textElement)
     {
         ((IMixinDrawContext) drawContext).malilib_getRenderState().submitText(textElement);
     }
 
-    /**
-     * Pushes the Scissor Stack using rect
-	 *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param rect ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static void pushScissor(GuiGraphics drawContext, @Nonnull ScreenRectangle rect)
     {
         ((IMixinDrawContext) drawContext).malilib_getScissorStack().push(rect);
     }
 
-    /**
-     * Returns if the Scissor Stack contains the position x, y
-	 *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @param x ()
-     * @param y ()
-     * @return ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static boolean containsScissor(GuiGraphics drawContext, int x, int y)
     {
         return ((IMixinDrawContext) drawContext).malilib_getScissorStack().containsPoint(x, y);
     }
 
-    /**
-     * Peeks the Scissor Stack's Screen Rect
-	 *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @return ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static ScreenRectangle peekLastScissor(GuiGraphics drawContext)
     {
         return ((IMixinDrawContext) drawContext).malilib_getScissorStack().peek();
     }
 
-    /**
-     * Pop's the Scissor Stack's Screen Rect
-	 *
-	 * Please Migrate to using {@link GuiContext}
-	 *
-	 * @param drawContext ()
-     * @return ()
-     */
-    @Deprecated
+	/**
+	 * @deprecated Please Migrate to using {@link GuiContext}
+	 */
+	@Deprecated(forRemoval = true)
     public static ScreenRectangle popScissor(GuiGraphics drawContext)
     {
         return ((IMixinDrawContext) drawContext).malilib_getScissorStack().pop();
@@ -1157,7 +1130,8 @@ public class RenderUtils
 	 * @param lines
 	 * @return
 	 */
-    public static int renderText(GuiContext ctx, int xOff, int yOff, double scale,
+    public static int renderText(GuiContext ctx,
+                                 int xOff, int yOff, double scale,
                                  int textColor, int bgColor, HudAlignment alignment,
                                  boolean useBackground, boolean useShadow, boolean useStatusShift,
                                  List<String> lines)
@@ -1573,28 +1547,70 @@ public class RenderUtils
         drawBoxAllSidesBatchedQuads(minX, minY, minZ, maxX, maxY, maxZ, color, bufferQuads);
     }
 
-    /**
-     * Renders a text plate/billboard, similar to the player name plate.<br>
-     * The plate will always face towards the viewer.
-     *
-     * @param text
-     * @param x
-     * @param y
-     * @param z
-     * @param scale
-     */
-    public static void drawTextPlate(List<String> text, double x, double y, double z, float scale)
-    {
-        Entity entity = mc().getCameraEntity();
+	/**
+	 * @deprecated (Use the Tick Progress version to remove the "jumpy" text problem)<br>
+	 * -
+	 * Renders a text plate/billboard, similar to the player name plate.<br>
+	 * The plate will always face towards the viewer.
+	 *
+	 * @param text  List of strings
+	 * @param x     xPos
+	 * @param y     yPos
+	 * @param z     zPos
+	 * @param scale FontScale
+	 */
+	@Deprecated
+	public static void drawTextPlate(List<String> text, double x, double y, double z, float scale)
+	{
+		Entity entity = mc().getCameraEntity();
 
-        if (entity != null)
-        {
-            drawTextPlate(text, x, y, z, entity.getYRot(), entity.getXRot(), scale, 0xFFFFFFFF, 0x40000000, true);
-        }
-    }
+		if (entity != null)
+		{
+			drawTextPlate(text, x, y, z, entity.getYRot(), entity.getXRot(), scale, 0xFFFFFFFF, 0x40000000, true);
+		}
+	}
 
-    public static void drawTextPlate(List<String> text, double x, double y, double z, float yaw, float pitch,
-                                     float scale, int textColor, int bgColor, boolean disableDepth)
+	/**
+	 * Renders a text plate/billboard, similar to the player name plate.<br>
+	 * The plate will always face towards the viewer.
+	 *
+	 * @param text  List of strings
+	 * @param x     xPos
+	 * @param y     yPos
+	 * @param z     zPos
+	 * @param scale FontScale
+	 * @param delta Tick Progress for Lerping the Camera Entity Rotations
+	 */
+	public static void drawTextPlate(List<String> text, double x, double y, double z, float scale, float delta)
+	{
+		Entity entity = mc().getCameraEntity();
+
+		if (entity != null)
+		{
+			drawTextPlate(text, x, y, z, entity.getYRot(delta), entity.getXRot(delta), scale, 0xFFFFFFFF, 0x40000000, true);
+		}
+	}
+
+	/**
+	 * Renders a text plate/billboard, similar to the player name plate.<br>
+	 * The plate will always face towards the viewer.
+	 *
+	 * @param text  List of strings
+	 * @param x     xPos
+	 * @param y     yPos
+	 * @param z     zPos
+	 * @param yaw       Camera Yaw / YRot
+	*  @param pitch     Camera Pitch / XRot
+	 * @param scale     FontScale
+	 * @param textColor     Text Color
+	 * @param bgColor       Background Color of the Rectangle
+	 * @param disableDepth  Disable Depth Test (renderThrough)
+	 */
+	public static void drawTextPlate(List<String> text,
+                                     double x, double y, double z,
+                                     float yaw, float pitch,
+                                     float scale, int textColor, int bgColor,
+                                     boolean disableDepth)
     {
         Vec3 cameraPos = camPos();
         double cx = cameraPos.x;
@@ -1603,26 +1619,24 @@ public class RenderUtils
         Font textRenderer = mc().font;
 
         Matrix4fStack global4fStack = RenderSystem.getModelViewStack();
+
         global4fStack.pushMatrix();
-
         global4fStack.translate((float) (x - cx), (float) (y - cy), (float) (z - cz));
-
         //  Wrap it with matrix4fRotateFix() if rotation errors are found.
         global4fStack.rotateYXZ((-yaw) * ((float) (Math.PI / 180.0)), pitch * ((float) (Math.PI / 180.0)), 0.0F);
-
         global4fStack.scale((-scale), (-scale), scale);
-        //RenderSystem.applyModelViewMatrix();
 
-        culling(false);
-        blend(true);
+	    // todo
+//        culling(false);
+//        blend(true);
 
-        RenderContext ctx = new RenderContext(() -> "malilib:drawTextPlate", MaLiLibPipelines.POSITION_COLOR_MASA);
+        RenderContext ctx = new RenderContext(() -> "malilib:drawTextPlate", disableDepth ? MaLiLibPipelines.TEXT_PLATE_MASA_NO_DEPTH : MaLiLibPipelines.TEXT_PLATE_MASA);
         BufferBuilder buffer = ctx.getBuilder();
         int maxLineLen = 0;
 
         for (String line : text)
         {
-            maxLineLen = Math.max(maxLineLen, textRenderer.width(line));
+            maxLineLen = MathUtils.max(maxLineLen, textRenderer.width(line));
         }
 
         int strLenHalf = maxLineLen / 2;
@@ -1632,11 +1646,12 @@ public class RenderUtils
         int bgg = ((bgColor >>> 8) & 0xFF);
         int bgb = (bgColor & 0xFF);
 
-        if (disableDepth)
-        {
-            //RenderSystem.depthMask(false);
-            depthTest(false);
-        }
+		// todo
+//        if (disableDepth)
+//        {
+//            //RenderSystem.depthMask(false);
+//            depthTest(false);
+//        }
 
         buffer.addVertex((float) (-strLenHalf - 1), (float) -1, 0.0F).setColor(bgr, bgg, bgb, bga);
         buffer.addVertex((float) (-strLenHalf - 1), (float) textHeight, 0.0F).setColor(bgr, bgg, bgb, bga);
@@ -1662,12 +1677,13 @@ public class RenderUtils
 
         int textY = 0;
 
+		// todo
         // translate the text a bit infront of the background
-        if (disableDepth == false)
-        {
-            polygonOffset(true);
-            polygonOffset(-0.6f, -1.2f);
-        }
+//        if (disableDepth == false)
+//        {
+//            polygonOffset(true);
+//            polygonOffset(-0.6f, -1.2f);
+//        }
 
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.identity();
@@ -1676,33 +1692,49 @@ public class RenderUtils
 
         for (String line : text)
         {
-            if (disableDepth)
-            {
-                //depthMask(false);
-                depthTest(false);
-                MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(allocator);
-                textRenderer.drawInBatch(line, -strLenHalf, textY, 0x20000000 | (textColor & 0xFFFFFF), false, modelMatrix, immediate, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
-                immediate.endBatch();
-                depthTest(true);
-                //depthMask(true);
-            }
+			// f = x
+	        // g = y
+	        // i = color
+	        // bl = shadow
+	        // j = bgColor
+	        // k = light
+	        // bl2 = incl empty
+
+	        // todo
+//            if (disableDepth)
+//            {
+//                //depthMask(false);
+////                depthTest(false);
+//                MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(allocator);
+//                textRenderer.drawInBatch(line, -strLenHalf, textY, 0x20000000 | (textColor & 0xFFFFFFFF), false, modelMatrix, immediate, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
+//                immediate.endBatch();
+////                depthTest(true);
+//                //depthMask(true);
+//            }
 
             MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(allocator);
-            textRenderer.drawInBatch(line, -strLenHalf, textY, textColor, false, modelMatrix, immediate, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
+
+            textRenderer.drawInBatch(line, -strLenHalf, textY,
+                                     disableDepth ? (0x20000000 | (textColor & 0xFFFFFFFF)) : textColor,
+                                     false, modelMatrix, immediate,
+                                     disableDepth ? Font.DisplayMode.SEE_THROUGH : Font.DisplayMode.POLYGON_OFFSET,
+                                     0, 15728880
+            );
+
             immediate.endBatch();
             textY += textRenderer.lineHeight;
         }
 
         allocator.close();
 
-        if (disableDepth == false)
-        {
-            polygonOffset(0f, 0f);
-            polygonOffset(false);
-        }
+		// todo
+//        if (disableDepth == false)
+//        {
+//            polygonOffset(0f, 0f);
+//            polygonOffset(false);
+//        }
 
-//        color(1f, 1f, 1f, 1f);
-        culling(true);
+//        culling(true);
         global4fStack.popMatrix();
     }
 
@@ -1979,12 +2011,16 @@ public class RenderUtils
         matrix4fStack.translate((float) (-x), (float) (-y), (float) ((-z) + 0.510));
     }
 
-    public static void renderMapPreview(GuiContext ctx, ItemStack stack, int x, int y, int dimensions)
+    public static void renderMapPreview(GuiContext ctx,
+                                        ItemStack stack,
+                                        int x, int y, int dimensions)
     {
         renderMapPreview(ctx, stack, x, y, dimensions, true);
     }
 
-    public static void renderMapPreview(GuiContext ctx, ItemStack stack, int x, int y, int dimensions, boolean requireShift)
+    public static void renderMapPreview(GuiContext ctx,
+                                        ItemStack stack,
+                                        int x, int y, int dimensions, boolean requireShift)
     {
         if (stack.getItem() instanceof MapItem && (!requireShift || GuiBase.isShiftDown()))
         {
@@ -2038,7 +2074,9 @@ public class RenderUtils
         }
     }
 
-    public static void renderShulkerBoxPreview(GuiContext ctx, ItemStack stack, int baseX, int baseY, boolean useBgColors)
+    public static void renderShulkerBoxPreview(GuiContext ctx,
+                                               ItemStack stack,
+                                               int baseX, int baseY, boolean useBgColors)
     {
         NonNullList<ItemStack> items;
 
@@ -2100,13 +2138,17 @@ public class RenderUtils
         }
     }
 
-    public static void renderBundlePreview(GuiContext ctx, ItemStack stack, int baseX, int baseY, boolean useBgColors)
+    public static void renderBundlePreview(GuiContext ctx,
+                                           ItemStack stack,
+                                           int baseX, int baseY, boolean useBgColors)
     {
         // Default is 9 to make the default display the same as Shulker Boxes
         renderBundlePreview(ctx, stack, baseX, baseY, 9, useBgColors);
     }
 
-    public static void renderBundlePreview(GuiContext ctx, ItemStack stack, int baseX, int baseY, int slotsPerRow, boolean useBgColors)
+    public static void renderBundlePreview(GuiContext ctx,
+                                           ItemStack stack,
+                                           int baseX, int baseY, int slotsPerRow, boolean useBgColors)
     {
         NonNullList<ItemStack> items;
 
@@ -2144,59 +2186,64 @@ public class RenderUtils
         }
     }
 
-    /**
-     * Render's the Inventory Overlay using an NbtCompound Items[] List format instead of the Item Container Component,
-     * Such as for a Crafter, etc.  This is meant to be simillar to the 1.20.4 behavior, minus the "BlockEntityTag";
-     * since it no longer exists; but this can be used as such, if the "BlockEntityTag" or its eqivalent, is read in first.
-     * -
-     *
-     * @param stackIn     (Stack of the Entity for selecting the right textures)
-     * @param itemsTag    (Nbt Items[] list)
-     * @param baseX
-     * @param baseY
-     * @param useBgColors
-     * @param ctx
-     */
-    public static void renderNbtItemsPreview(GuiContext ctx, ItemStack stackIn, @Nonnull CompoundTag itemsTag, int baseX, int baseY, boolean useBgColors)
-    {
-        if (InventoryUtils.hasNbtItems(itemsTag))
-        {
-            if (mc().level == null)
-            {
-                return;
-            }
+	/**
+	 * @deprecated Please consider using <b>renderDataItemsPreview()</b>
+	 * <br>
+	 * Render's the Inventory Overlay using an NbtCompound Items[] List format instead of the Item Container Component,
+	 * Such as for a Crafter, etc.  This is meant to be simillar to the 1.20.4 behavior, minus the "BlockEntityTag";
+	 * since it no longer exists; but this can be used as such, if the "BlockEntityTag" or its eqivalent, is read in first.
+	 * -
+	 *
+	 * @param ctx
+	 * @param stackIn     (Stack of the Entity for selecting the right textures)
+	 * @param itemsTag    (Nbt Items[] list)
+	 * @param baseX
+	 * @param baseY
+	 * @param useBgColors
+	 */
+	@Deprecated
+	public static void renderNbtItemsPreview(GuiContext ctx,
+	                                         ItemStack stackIn, @Nonnull CompoundTag itemsTag,
+	                                         int baseX, int baseY, boolean useBgColors)
+	{
+		if (InventoryUtils.hasNbtItems(itemsTag))
+		{
+			if (mc().level == null)
+			{
+				return;
+			}
 
-	        CompoundData data = DataConverterNbt.fromVanillaCompound(itemsTag);
-            NonNullList<ItemStack> items = InventoryUtils.getDataItems(data, -1, mc().level.registryAccess());
+			CompoundData data = DataConverterNbt.fromVanillaCompound(itemsTag);
+			NonNullList<ItemStack> items = InventoryUtils.getDataItems(data, -1, mc().level.registryAccess());
 
-            if (items.size() == 0)
-            {
-                return;
-            }
+			if (items.size() == 0)
+			{
+				return;
+			}
 
-	        InventoryOverlayType type = InventoryOverlay.getInventoryType(stackIn);
-            InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, items.size());
+			InventoryOverlayType type = InventoryOverlay.getInventoryType(stackIn);
+			InventoryOverlay.InventoryProperties props = InventoryOverlay.getInventoryPropsTemp(type, items.size());
 
-            int screenWidth = GuiUtils.getScaledWindowWidth();
-            int screenHeight = GuiUtils.getScaledWindowHeight();
-            int height = props.height + 18;
-            int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
-            int y = Mth.clamp(baseY - height, 0, screenHeight - height);
+			int screenWidth = GuiUtils.getScaledWindowWidth();
+			int screenHeight = GuiUtils.getScaledWindowHeight();
+			int height = props.height + 18;
+			int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
+			int y = Mth.clamp(baseY - height, 0, screenHeight - height);
 
-            int color = CommonColors.WHITE;
+			int color = CommonColors.WHITE;
 
-            Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
-            matrix4fStack.pushMatrix();
-            matrix4fStack.translate(0, 0, 500);
+			Matrix4fStack matrix4fStack = RenderSystem.getModelViewStack();
+			matrix4fStack.pushMatrix();
+			matrix4fStack.translate(0, 0, 500);
 
-            InventoryOverlay.renderInventoryBackground(ctx, type, x, y, props.slotsPerRow, items.size(), color);
+			InventoryOverlay.renderInventoryBackground(ctx, type, x, y, props.slotsPerRow, items.size(), color);
 
-            Container inv = InventoryUtils.getAsInventory(items);
-            InventoryOverlay.renderInventoryStacks(ctx, type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1);
+			Container inv = InventoryUtils.getAsInventory(items);
+			InventoryOverlay.renderInventoryStacks(ctx, type, inv, x + props.slotOffsetX, y + props.slotOffsetY, props.slotsPerRow, 0, -1);
 
-            matrix4fStack.popMatrix();
-        }
-    }
+			matrix4fStack.popMatrix();
+		}
+	}
 
 	/**
 	 * Render's the Inventory Overlay using an NbtCompound Items[] List format instead of the Item Container Component,
@@ -2204,14 +2251,16 @@ public class RenderUtils
 	 * since it no longer exists; but this can be used as such, if the "BlockEntityTag" or its eqivalent, is read in first.
 	 * -
 	 *
+	 * @param ctx
 	 * @param stackIn     (Stack of the Entity for selecting the right textures)
 	 * @param data        (Nbt Items[] list)
 	 * @param baseX
 	 * @param baseY
 	 * @param useBgColors
-	 * @param ctx
 	 */
-	public static void renderDataItemsPreview(GuiContext ctx, ItemStack stackIn, @Nonnull CompoundData data, int baseX, int baseY, boolean useBgColors)
+	public static void renderDataItemsPreview(GuiContext ctx,
+	                                          ItemStack stackIn, @Nonnull CompoundData data,
+	                                          int baseX, int baseY, boolean useBgColors)
 	{
 		if (InventoryUtils.hasDataItems(data))
 		{
@@ -2408,7 +2457,7 @@ public class RenderUtils
         return CommonColors.WHITE;
     }
 
-    // todo - return real colors
+    // todo - return real colors based on the Villager, not Dye Colors
     public static DyeColor getVillagerColor(Holder<VillagerProfession> profession)
     {
         if (profession == null)
@@ -3117,6 +3166,13 @@ public class RenderUtils
         }
     }
 
+	/**
+	 * I really don't like this.
+	 *
+	 * @param pos1
+	 * @param pos2
+	 * @return
+	 */
 	public static boolean shouldCull(BlockPos pos1, BlockPos pos2)
 	{
 		return shouldCull(new AABB(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
@@ -3134,6 +3190,7 @@ public class RenderUtils
 	 * is Air that meets with Non-Air.  We are only considering the Center Block Pos here.
 	 * NOTE that this causes a noticable "shift" in how the selection box appears when
 	 * Enabling culling; so we should only do so in this case; and only to stop "Z Fighting" .
+	 *
 	 * @param bb
 	 * @return
 	 */
