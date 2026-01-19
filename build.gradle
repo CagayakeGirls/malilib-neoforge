@@ -6,18 +6,15 @@ plugins {
 }
 
 repositories {
-//	maven {
-//		name = "Masa"
-//		url = "https://masa.dy.fi/maven"
-//		content {
-//			includeGroupAndSubgroups("fi.dy.masa")
-//		}
-//	}
-// 	maven { url = 'https://maven.fallenbreath.me/releases' }
- 	maven { url = 'https://maven.terraformersmc.com/releases/' }
-	maven { url = 'https://maven.fallenbreath.me/releases' }
+//	maven {url = "https://masa.dy.fi/maven/sakura-ryoko"
+//		content {includeGroupAndSubgroups("fi.dy.masa")}
+	maven {url = 'https://maven.fallenbreath.me/releases'
+		content {includeGroupAndSubgroups("me.fallenbreath")}
+	}
+	maven { url = 'https://maven.terraformersmc.com/releases/'
+		content {includeGroupAndSubgroups("com.terraformersmc")}
+	}
 	maven { url = 'https://api.modrinth.com/maven' }
-//	flatDir { dirs 'libs' }
 }
 
 def generatedResources = file("src/main/generated")
@@ -40,8 +37,11 @@ loom {
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
 	mappings extraMappings.yarnWithPatch(project.mappings_version, "1.21+build.4")
-	neoForge "net.neoforged:neoforge:${project.neoforge_version}"
+//    mappings loom.officialMojangMappings()
+    neoForge "net.neoforged:neoforge:${project.neoforge_version}"
+	mappings "net.fabricmc:yarn:${project.mappings_version}:v2"
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
+//	implementation "org.jspecify:jspecify:1.0.0"
 
 	include(modApi(forgifiedFabricApi.module("fabric-api-base", project.fabric_api_version, false)))
 	include(modApi(forgifiedFabricApi.module("fabric-networking-api-v1", project.fabric_api_version, false)))
@@ -61,7 +61,7 @@ base {
 }
 
 loom {
-	accessWidenerPath = file("src/main/resources/malilib.accesswidener")
+    accessWidenerPath = file("src/main/resources/malilib.accesswidener")
 
 //	def commonVmArgs = ['-Dmixin.debug.export=true', '-Dmixin.debug.countInjections=true']
 //	// [FEATURE] MIXIN_AUDITOR
@@ -73,7 +73,6 @@ loom {
 //			ideConfigGenerated false
 //		}
 //	}
-//
 }
 
 var generateModMetadata = tasks.register("generateModMetadata", ProcessResources) {
