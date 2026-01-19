@@ -1,8 +1,8 @@
 plugins {
 	id 'team.cagayakegirls.scripts'
 	id 'dev.architectury.loom'
-	id 'com.hypherionmc.modutils.modpublisher' version '2.+'
 	id 'maven-publish'
+	alias(libs.plugins.modpublisher)
 }
 
 repositories {
