@@ -84,7 +84,7 @@ var generateModMetadata = tasks.register("generateModMetadata", ProcessResources
 			mod_id                 : mod_id,
 			mod_name               : mod_name,
 			mod_version            : "${project.version}",
-			mod_link               : mod_link
+			mod_link               : libs.versions.mod.link.get()
 	]
 	inputs.properties replaceProperties
 	expand replaceProperties
