@@ -1,7 +1,7 @@
 [versions]
 range-fml = "[4,)"
-range-game = "[1.21.9,)"
-range-neoforge = "[21.9,)"
+range-game = "[1.21.5,)"
+range-neoforge = "[21.5,)"
 
 mod-link = "https://github.com/CagayakeGirls/malilib-neoforge"
 
