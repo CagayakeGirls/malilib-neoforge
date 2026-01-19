@@ -23,17 +23,25 @@ public class TickUtils
     public static float getTickRate()
     {
         MinecraftClient mc = MinecraftClient.getInstance();
+        float tickRate = -1.0F;
 
         if (mc.isIntegratedServerRunning() && mc.getServer() != null)
         {
-            return mc.getServer().getTickManager().getTickRate();
+            tickRate = mc.getServer().getTickManager().getTickRate();
         }
         else if (mc.world != null)
         {
-            return mc.world.getTickManager().getTickRate();
+            tickRate = mc.world.getTickManager().getTickRate();
         }
 
-        return -1F;
+        // Things like ViaVersion breaks this; since
+        // older MC doesn't have a tickRate; so return 20.0F.
+        if (tickRate <= 1.0F)
+        {
+            tickRate = 20.0F;
+        }
+
+        return tickRate;
     }
 
     /**
@@ -332,6 +340,7 @@ public class TickUtils
 
         private Data() {}
 
+        @ApiStatus.Internal
         public void updateTickRate(float tickRate)
         {
             this.tickRate = tickRate;
@@ -355,6 +364,8 @@ public class TickUtils
         @ApiStatus.Internal
         public void updateNanoTick(long timeUpdate)
         {
+            this.ensureTickRateIsValid();
+
             if (!MinecraftClient.getInstance().isIntegratedServerRunning())
             {
                 final long currentTime = System.nanoTime();
@@ -385,10 +396,12 @@ public class TickUtils
                         this.measuredMSPT = ((double) (currentTime - this.lastNanoTime) / (double) elapsed) / 1000000D;
                         this.measuredTPS = this.measuredMSPT <= 50 ? this.tickRate : (1000D / this.measuredMSPT);
                         this.actualTPS = (1000D / this.measuredMSPT);
+
                         if (MaLiLibReference.DEBUG_MODE)
                         {
                             this.calculateAverages();
                         }
+
                         this.isValid = true;
                     }
                 }
@@ -403,16 +416,19 @@ public class TickUtils
         public void updateNanoTickFromIntegratedServer(MinecraftServer server)
         {
             this.lastNanoTime = System.nanoTime();
+            this.ensureTickRateIsValid();
 
             if (server != null)
             {
                 this.measuredMSPT = MathUtils.average(server.getTickTimes()) / 1000000D;
                 this.measuredTPS = this.measuredMSPT <= 50 ? this.tickRate : (1000D / this.measuredMSPT);
                 this.actualTPS = (1000D / this.measuredMSPT);
+
                 if (MaLiLibReference.DEBUG_MODE)
                 {
                     this.calculateAverages();
                 }
+
                 this.isValid = true;
             }
         }
@@ -424,16 +440,20 @@ public class TickUtils
          */
         public void updateNanoTickFromServerDirect(final double tps, final double mspt)
         {
+            this.ensureTickRateIsValid();
+
             if (this.useDirectServerData && !this.hasServuxData)
             {
                 // For things like Carpet
                 this.directMSPT = mspt;
                 this.directTPS = tps;
                 this.lastDirectTick = System.nanoTime();
+
                 if (MaLiLibReference.DEBUG_MODE)
                 {
                     this.calculateAverages();
                 }
+
                 this.isValid = true;
             }
         }
@@ -454,6 +474,8 @@ public class TickUtils
                                              boolean sprinting,
                                              boolean stepping)
         {
+            this.ensureTickRateIsValid();
+
             if (this.useDirectServerData)
             {
                 // For Servux
@@ -470,6 +492,14 @@ public class TickUtils
                 }
                 this.hasServuxData = true;
                 this.isValid = true;
+            }
+        }
+
+        private void ensureTickRateIsValid()
+        {
+            if (this.tickRate <= 1.0f)
+            {
+                this.tickRate = 20.0f;
             }
         }
 

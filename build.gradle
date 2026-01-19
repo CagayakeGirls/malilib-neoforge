@@ -4,17 +4,15 @@ plugins {
 }
 
 repositories {
-//	maven {
-//		name = "Masa"
-//		url = "https://masa.dy.fi/maven"
-//		content {
-//			includeGroupAndSubgroups("fi.dy.masa")
-//		}
-//	}
-	maven { url = 'https://maven.terraformersmc.com/releases/' }
-	maven { url = 'https://maven.fallenbreath.me/releases' }
+//	maven {url = "https://masa.dy.fi/maven/sakura-ryoko"
+//		content {includeGroupAndSubgroups("fi.dy.masa")}
+	maven {url = 'https://maven.fallenbreath.me/releases'
+		content {includeGroupAndSubgroups("me.fallenbreath")}
+	}
+	maven { url = 'https://maven.terraformersmc.com/releases/'
+		content {includeGroupAndSubgroups("com.terraformersmc")}
+	}
 	maven { url = 'https://api.modrinth.com/maven' }
-//	flatDir { dirs 'libs' }
 }
 
 dependencies {
@@ -23,6 +21,7 @@ dependencies {
 //    mappings loom.officialMojangMappings()
 	modImplementation "net.fabricmc:fabric-loader:${project.fabric_loader_version}"
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
+//	implementation "org.jspecify:jspecify:1.0.0"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	//modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
