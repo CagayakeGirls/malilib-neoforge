@@ -1,3 +1,2 @@
 ## Changelog
-- update neoforge version
-- fix when using GraalVM, registering with Iris inside a RenderPipeline mixin Mod causes crashes. (issue #9)
+- sync upstream `1.21.4-0.23.5`
