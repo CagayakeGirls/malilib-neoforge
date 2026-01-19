@@ -113,6 +113,8 @@ jar {
 	}
 }
 
+remapJar.atAccessWideners.add("malilib.accesswidener")
+
 tasks.publish.dependsOn build
 publishing {
 	publications {
