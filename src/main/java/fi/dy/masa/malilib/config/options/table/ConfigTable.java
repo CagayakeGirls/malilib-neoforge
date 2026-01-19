@@ -15,13 +15,13 @@ import fi.dy.masa.malilib.config.IConfigTable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.table.type.*;
 
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 import net.minecraft.util.dynamic.Codecs;
 
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
-import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 import java.util.ArrayList;
 import java.util.List;
