@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Range;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.fabricmc.loader.api.FabricLoader;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.config.ConfigType;
@@ -23,6 +22,7 @@ import fi.dy.masa.malilib.config.IConfigTable;
 import fi.dy.masa.malilib.config.options.ConfigBase;
 import fi.dy.masa.malilib.config.options.table.type.*;
 import fi.dy.masa.malilib.util.data.CodecsWrap;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 @ApiStatus.Experimental
 public class ConfigTable extends ConfigBase<ConfigTable> implements IConfigTable
@@ -663,7 +663,7 @@ public class ConfigTable extends ConfigBase<ConfigTable> implements IConfigTable
 						throw new IllegalArgumentException("Type mismatch: expected " + this.types[j] + " but got " + v.list().get(j).getType().name());
 					}
 
-                    if (this.allowAddNewEntry && this.types[j] == EntryTypes.LABEL && FabricLoader.getInstance().isDevelopmentEnvironment() && !ignoreWarning)
+                    if (this.allowAddNewEntry && this.types[j] == EntryTypes.LABEL && ModPlatform.isDevelopmentEnvironment() && !ignoreWarning)
                     {
                         MaLiLib.LOGGER.warn("You probably shouldn't enable allowAddNewEntry if you are using labels.");
                     }
