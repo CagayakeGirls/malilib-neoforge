@@ -12,21 +12,27 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import net.neoforged.neoforgespi.language.IModInfo;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import org.jetbrains.annotations.NotNull;
 
+import com.mojang.serialization.JsonOps;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.network.ServerInfo;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.network.ClientConnection;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
+import net.minecraft.text.TextCodecs;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -35,6 +41,8 @@ import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.gui.LeftRight;
 import fi.dy.masa.malilib.util.time.DurationFormat;
 import team.cagayakegirls.mafglib.utils.ModPlatform;
+
+import net.neoforged.neoforgespi.language.IModInfo;
 
 /**
  * File has been merged with Post-Rewrite StringUtils
@@ -851,5 +859,46 @@ public class StringUtils
         return DurationFormat.PRETTY.format(durationMs);
         // OG method
         //return DurationFormatUtils.formatDurationWords(durationMs, true, true);
+    }
+
+    /**
+     * A copy of the Legacy Text.Deserializer that was removed from Vanilla.
+     * We need this for backwards compatibility with things like Litematica and NBT tags.
+     * @param oldText ()
+     * @param registry ()
+     * @return ()
+     */
+    public static @Nullable String legacyTextDeserializer(MutableText oldText, @Nonnull DynamicRegistryManager registry)
+    {
+        try
+        {
+            JsonElement element = TextCodecs.CODEC.encodeStart(registry.getOps(JsonOps.INSTANCE), oldText).getPartialOrThrow(JsonParseException::new);
+            return new GsonBuilder().disableHtmlEscaping().create().toJson(element);
+        }
+        catch (Exception err)
+        {
+            MaLiLib.LOGGER.error("legacyTextDeserializer: Failed to convert MutableText to JSON; {}", err.getLocalizedMessage());
+            return null;
+        }
+    }
+
+    /**
+     * A copy of the Legacy Text.Serializer that was removed from Vanilla.
+     * We need this for backwards compatibility with things like Litematica and NBT tags.
+     * @param json ()
+     * @param registry ()
+     * @return ()
+     */
+    public static @Nullable MutableText legacyTextSerializer(String json, @Nonnull DynamicRegistryManager registry)
+    {
+        try
+        {
+            return (MutableText) TextCodecs.CODEC.parse(registry.getOps(JsonOps.INSTANCE), JsonParser.parseString(json)).getOrThrow(JsonParseException::new);
+        }
+        catch (Exception err)
+        {
+            MaLiLib.LOGGER.error("legacyTextSerializer: Failed to convert JSON to MutableText; {}", err.getLocalizedMessage());
+            return null;
+        }
     }
 }
