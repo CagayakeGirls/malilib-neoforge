@@ -14,7 +14,7 @@ platformId-modrinth = "SKI34J7B"
 
 yarn-patch = "1.21+build.4"
 
-architectury-loom = "1.10-SNAPSHOT"
+architectury-loom = "1.11-SNAPSHOT"
 modpublisher = "2.1.+"
 
 [plugins]
