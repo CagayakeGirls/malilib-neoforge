@@ -12,7 +12,10 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
  * A wrapper around ItemStack, that implements hashCode() and equals().
  * Whether or not the NBT data is considered by those methods,
  * depends on the checkNBT argument to the constructor.
+ *
+ * @deprecated See {@link fi.dy.masa.malilib.util.data.ItemType}
  */
+@Deprecated
 public class ItemType
 {
     public static final Codec<ItemType> CODEC = RecordCodecBuilder.create(

@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import fi.dy.masa.malilib.gui.wrappers.TextFieldType;
 import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -92,7 +93,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         ChangeListenerTextField listenerChange = new ChangeListenerTextField(field, resetButton, this.defaultValue.toString());
         ListenerResetConfig listenerReset = new ListenerResetConfig(resetButton, this);
 
-        this.addTextField(field, listenerChange);
+        this.addTextField(field, listenerChange, TextFieldType.STRING.setMaxLength(this.maxTextfieldTextLength));
         this.addButton(resetButton, listenerReset);
 
         return resetButton.getX() + resetButton.getWidth() + 4;
@@ -123,7 +124,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
     {
 		if (this.textField != null)
 		{
-			applyNewValueToConfig(StringUtils.getColor(this.textField.textField().getValue(), Color4f.ZERO.intValue));
+			this.applyNewValueToConfig(StringUtils.getColor(this.textField.textField().getValue(), Color4f.ZERO.intValue));
 		}
     }
 
@@ -140,6 +141,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
             {
                 list.set(this.listIndex, value);
                 this.lastAppliedValue = value.toString();
+                config.markDirty();
                 config.setModified();
             }
         }
@@ -151,6 +153,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         final int size = list.size();
         int index = this.listIndex < 0 ? size : (Math.min(this.listIndex, size));
         list.add(index, Color4f.ZERO);
+        this.parent.getConfig().markDirty();
         this.parent.getConfig().setModified();
         this.parent.refreshEntries();
         this.parent.markConfigsModified();
@@ -164,6 +167,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         if (this.listIndex >= 0 && this.listIndex < size)
         {
             list.remove(this.listIndex);
+            this.parent.getConfig().markDirty();
             this.parent.getConfig().setModified();
             this.parent.refreshEntries();
             this.parent.markConfigsModified();
@@ -192,6 +196,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
 
             if (index2 >= 0)
             {
+                this.parent.getConfig().markDirty();
                 this.parent.getConfig().setModified();
                 this.parent.markConfigsModified();
                 this.parent.applyPendingModifications();
@@ -214,7 +219,7 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
     @Override
     public void render(GuiContext ctx, int mouseX, int mouseY, boolean selected)
     {
-        super.render(ctx, mouseX, mouseY, selected);
+//        super.render(ctx, mouseX, mouseY, selected);
 
         if (this.isOdd)
         {
@@ -250,8 +255,8 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
         }
     }
 
-	private record ListenerResetConfig(ButtonGeneric buttonReset,
-	                                   WidgetColorListEditEntry parent) implements IButtonActionListener
+	private record ListenerResetConfig(ButtonGeneric buttonReset, WidgetColorListEditEntry parent)
+            implements IButtonActionListener
 	{
 		@Override
 		public void actionPerformedWithButton(ButtonBase button, int mouseButton)
@@ -267,8 +272,8 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
 		}
 	}
 
-	private record ListenerListActions(ButtonType type,
-	                                   WidgetColorListEditEntry parent) implements IButtonActionListener
+	private record ListenerListActions(ButtonType type, WidgetColorListEditEntry parent)
+            implements IButtonActionListener
 	{
 		@Override
 		public void actionPerformedWithButton(ButtonBase button, int mouseButton)
@@ -290,10 +295,10 @@ public class WidgetColorListEditEntry extends WidgetConfigOptionBase<Color4f>
 
     protected enum ButtonType
     {
-        ADD(MaLiLibIcons.PLUS, "malilib.gui.button.hovertext.add"),
-        REMOVE(MaLiLibIcons.MINUS, "malilib.gui.button.hovertext.remove"),
-        MOVE_UP(MaLiLibIcons.ARROW_UP, "malilib.gui.button.hovertext.move_up"),
-        MOVE_DOWN(MaLiLibIcons.ARROW_DOWN, "malilib.gui.button.hovertext.move_down");
+        ADD         (MaLiLibIcons.PLUS,         "malilib.gui.button.hovertext.add"),
+        REMOVE      (MaLiLibIcons.MINUS,        "malilib.gui.button.hovertext.remove"),
+        MOVE_UP     (MaLiLibIcons.ARROW_UP,     "malilib.gui.button.hovertext.move_up"),
+        MOVE_DOWN   (MaLiLibIcons.ARROW_DOWN,   "malilib.gui.button.hovertext.move_down");
 
         private final MaLiLibIcons icon;
         private final String hoverTextkey;

@@ -1,16 +1,19 @@
 package fi.dy.masa.malilib.util.nbt;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import org.jetbrains.annotations.ApiStatus;
 
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.DynamicOps;
@@ -535,9 +538,8 @@ public class NbtUtils
 	/**
 	 * See {@link #readNbtFromFileAsPath}
 	 */
-	@Deprecated(forRemoval = true)
 	@Nullable
-	public static CompoundTag readNbtFromFile(@Nonnull File file)
+	public static CompoundTag readNbtFromFile(@Nonnull Path file)
 	{
 		return readNbtFromFile(file, NbtAccounter.unlimitedHeap());
 	}
@@ -551,24 +553,24 @@ public class NbtUtils
 	/**
 	 * See {@link #readNbtFromFileAsPath}
 	 */
-	@Deprecated(forRemoval = true)
+	@ApiStatus.Experimental
 	@Nullable
-	public static CompoundTag readNbtFromFile(@Nonnull File file, NbtAccounter tracker)
+	public static CompoundTag readNbtFromFile(@Nonnull Path file, NbtAccounter tracker)
 	{
-		if (file.exists() == false || file.canRead() == false)
+		if (!Files.exists(file) || !Files.isReadable(file))
 		{
 			return null;
 		}
 
-		FileInputStream is;
+		InputStream is;
 
 		try
 		{
-			is = new FileInputStream(file);
+			is = Files.newInputStream(file, StandardOpenOption.READ);
 		}
 		catch (Exception e)
 		{
-			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}' (failed to create the input stream)", file.getAbsolutePath());
+			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}' (failed to create the input stream)", file.toAbsolutePath());
 			return null;
 		}
 
@@ -578,33 +580,29 @@ public class NbtUtils
 		{
 			try
 			{
-				nbt = NbtIo.readCompressed(is, tracker);
+				nbt = NbtIo.read(new DataInputStream(new BufferedInputStream(new GZIPInputStream(is))), tracker);
 			}
 			catch (Exception e)
 			{
 				try
 				{
 					is.close();
-					is = new FileInputStream(file);
-					nbt = NbtIo.read(file.toPath());
+					is = Files.newInputStream(file, StandardOpenOption.READ);
+					nbt = NbtIo.read(new DataInputStream(new BufferedInputStream(is)), tracker);
 				}
-				catch (Exception ignore)
-				{
-				}
+				catch (Exception ignore) {}
 			}
 
 			try
 			{
 				is.close();
 			}
-			catch (Exception ignore)
-			{
-			}
+			catch (Exception ignore) {}
 		}
 
-		if (nbt == null)
+		if (nbt == null || nbt.getId() == Constants.NBT.TAG_END)
 		{
-			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}'", file.getAbsolutePath());
+			MaLiLib.LOGGER.warn("readNbtFromFile: Failed to read NBT data from file '{}'", file.toAbsolutePath());
 		}
 
 		return nbt;
@@ -655,6 +653,57 @@ public class NbtUtils
 		{
 			MaLiLib.LOGGER.warn("writeCompressed: Failed to write NBT data to file");
 		}
+	}
+
+	@ApiStatus.Experimental
+	public static boolean writeCompoundTagToCompressedFile(@Nonnull CompoundTag tag, @Nonnull Path file)
+	{
+		return writeCompoundTagToCompressedFile(tag, file, "");
+	}
+
+	@ApiStatus.Experimental
+	public static boolean writeCompoundTagToCompressedFile(@Nonnull CompoundTag tag, @Nonnull Path file, String tagName)
+	{
+		try (DataOutputStream os = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(Files.newOutputStream(file)))))
+		{
+//			NbtIo.write(tag, dos);
+			return writeToNbtStream(tag, os, tagName);
+		}
+		catch (Exception e)
+		{
+			MaLiLib.LOGGER.warn("writeCompressedTest: Failed to write NBT data to file '{}'; {}", file.toAbsolutePath(), e.getLocalizedMessage());
+		}
+
+		return false;
+	}
+
+	@ApiStatus.Experimental
+	public static boolean writeToNbtStream(@Nonnull Tag tag, @Nonnull DataOutput os)
+	{
+		return writeToNbtStream(tag, os, "");
+	}
+
+	@ApiStatus.Experimental
+	public static boolean writeToNbtStream(@Nonnull Tag tag, @Nonnull DataOutput os, String tagName)
+	{
+		try
+		{
+			os.writeByte(tag.getId());
+
+			if (tag.getId() != Constants.NBT.TAG_END)
+			{
+				os.writeUTF(tagName);
+				tag.write(os);
+			}
+
+			return true;
+		}
+		catch (Exception e)
+		{
+			MaLiLib.LOGGER.warn("writeToNbtStream: Exception while writing NBT data; {}", e.getLocalizedMessage());
+		}
+
+		return false;
 	}
 
 	// todo this must have been an older method for this that no longer works

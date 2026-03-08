@@ -11,7 +11,9 @@ public class MaLiLib
 {
     public static final Logger LOGGER = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    public void onInitialize() {
+    public void onInitialize()
+    {
+        MaLiLibFabricData.onInitialize();
         InitializationHandler.getInstance().registerInitializationHandler(new MaLiLibInitHandler());
         Registry.CONFIG_SCREEN.registerConfigScreenFactory(
                 new ModInfo(MaLiLibReference.MOD_ID, MaLiLibReference.MOD_NAME, MaLiLibConfigGui::new)

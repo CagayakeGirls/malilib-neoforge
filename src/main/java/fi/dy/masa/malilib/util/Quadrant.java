@@ -11,12 +11,16 @@ import io.netty.buffer.ByteBuf;
 import fi.dy.masa.malilib.config.IConfigOptionListEntry;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * @deprecated See {@link fi.dy.masa.malilib.util.position.Quadrant}
+ */
+@Deprecated
 public enum Quadrant implements IConfigOptionListEntry, StringRepresentable
 {
-    NORTH_WEST ("north_west"),
-    NORTH_EAST ("north_east"),
-    SOUTH_WEST ("south_west"),
-    SOUTH_EAST ("south_east");
+    NORTH_WEST("north_west"),
+    NORTH_EAST("north_east"),
+    SOUTH_WEST("south_west"),
+    SOUTH_EAST("south_east");
 
     public static final StringRepresentable.EnumCodec<@NotNull Quadrant> CODEC = StringRepresentable.fromEnum(Quadrant::values);
     public static final StreamCodec<@NotNull ByteBuf, @NotNull Quadrant> PACKET_CODEC = ByteBufCodecs.STRING_UTF8.map(Quadrant::fromStringStatic, Quadrant::getSerializedName);

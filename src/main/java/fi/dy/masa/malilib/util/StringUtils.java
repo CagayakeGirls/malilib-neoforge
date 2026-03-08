@@ -18,6 +18,8 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
+
+import fi.dy.masa.malilib.MaLiLibFabricData;
 import fi.dy.masa.malilib.MaLiLibReference;
 import org.jetbrains.annotations.NotNull;
 
@@ -79,12 +81,17 @@ public class StringUtils
 
     public static String getModVersionString(String modId)
     {
-        for (IModInfo modInfo : ModPlatform.getAllMods())
+//        for (ModContainer container : FabricLoader.getInstance().getAllMods())
+//        {
+//            if (container.getMetadata().getId().equals(modId))
+//            {
+//                return container.getMetadata().getVersion().getFriendlyString();
+//            }
+//        }
+
+        if (MaLiLibFabricData.ALL_MOD_VERSIONS.containsKey(modId))
         {
-            if (modInfo.getModId().equals(modId))
-            {
-                return modInfo.getVersion().toString();
-            }
+            return MaLiLibFabricData.ALL_MOD_VERSIONS.get(modId);
         }
 
         return "?";

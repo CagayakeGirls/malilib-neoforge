@@ -10,60 +10,149 @@ import fi.dy.masa.malilib.util.MathUtils;
 // todo -- UNCOMMENT WHEN TESTING!  (Do not mess with threads when not in use)
 public class TestThreadDaemonDefaultHandler implements IThreadDaemonHandler<TestThreadTaskDefault>
 {
-//	private static final ThreadFactory THREAD_FACTORY = (new ThreadFactoryBuilder()).setNameFormat("MaLiLib Test Default Thread Daemon").setDaemon(true).build();
 	public static final TestThreadDaemonDefaultHandler INSTANCE = new TestThreadDaemonDefaultHandler();
-//	private final Thread thread;
-//	private final TestThreadDaemonExecutorDefault threadExecutor;
-
-//	private final Queue<TestThreadTaskDefault> queue = new LinkedBlockingQueue<>();
-	private final float taskInterval = 30.0f;
+	private static final int MAX_PLATFORM_THREADS = 1;
+//	private final int threadCount = this.calculateMaxThreads();
+	private boolean useVirtual = false;
+	private final String namePrefix = MaLiLibReference.MOD_NAME+" Test Default Thread";
+	private static final float TASK_INTERVAL = 20.0f;
+//	private final ConcurrentHashMap<String, Thread> threadMap = this.builder();
+//	private final LinkedBlockingQueue<TestThreadTaskDefault> queue = new LinkedBlockingQueue<>();
 	private long lastTick;
+
+	private int calculateMaxThreads()
+	{
+		final int result = this.getThreadCountSafe();
+		if (result < 1) { this.useVirtual = true; }
+
+		return MathUtils.clamp(result, 1, MAX_PLATFORM_THREADS);
+	}
+
+//	private ConcurrentHashMap<String, Thread> builder()
+//	{
+//		ConcurrentHashMap<String, Thread> threads = new ConcurrentHashMap<>(this.threadCount, 0.9f, 1);
+//
+//		for (int i = 0; i < this.threadCount; i++)
+//		{
+//			final String name = this.threadCount > 1 ? this.namePrefix+" "+ (i+1) : this.namePrefix;
+//			threads.put(name, this.threadFactory(name, this.useVirtual, new TestThreadDaemonExecutorDefault()));
+//		}
+//
+//		return threads;
+//	}
 
 	private TestThreadDaemonDefaultHandler()
 	{
 		this.lastTick = System.currentTimeMillis();
-//		this.threadExecutor = new TestThreadDaemonExecutorDefault();
-//		this.thread = THREAD_FACTORY.newThread(this.threadExecutor);
+	}
+
+	@Override
+	public String getName()
+	{
+		return this.namePrefix;
 	}
 
 	@Override
 	public void start()
 	{
-//		this.thread.start();
+//		MaLiLib.LOGGER.info("Starting [{}] Test Default threads", this.threadMap.size());
+//		Set<String> keys = this.threadMap.keySet();
+//
+//		for (String key : keys)
+//		{
+//			try
+//			{
+//				this.safeStart(this.threadMap.get(key));
+//			}
+//			catch (ConcurrentModificationException cme)
+//			{
+//				// Busy
+//			}
+//			catch (IllegalStateException is)
+//			{
+//				// Terminated
+//				Thread entry = this.threadFactory(key, this.useVirtual, new TestThreadDaemonExecutorDefault());
+//				entry.start();
+//
+//				synchronized (this.threadMap)
+//				{
+//					this.threadMap.replace(key, entry);
+//				}
+//			}
+//			catch (RuntimeException re)
+//			{
+//				// Already Running
+//			}
+//			catch (Exception ignored) {}
+//		}
 	}
 
 	@Override
 	public void stop()
 	{
-//		this.threadExecutor.stop();
-//		this.thread.interrupt();
+//		MaLiLib.LOGGER.info("Stopping [{}] Test Default threads", this.threadMap.size());
+//		Set<String> keys = this.threadMap.keySet();
+//
+//		for (String key : keys)
+//		{
+//			try
+//			{
+//				this.safeStop(this.threadMap.get(key));
+//			}
+//			catch (ConcurrentModificationException cme)
+//			{
+//				// Busy
+//				MaLiLib.LOGGER.warn("Thread [{}] is currently busy, and shouldn't be stopped", key);
+//			}
+//			catch (IllegalStateException is)
+//			{
+//				// Terminated already
+//			}
+//			catch (IllegalThreadStateException is)
+//			{
+//				// Never started
+//			}
+//			catch (Exception ignored) {}
+//		}
 	}
 
 	@Override
 	public void reset()
 	{
 //		this.queue.clear();
-		this.stop();
-		this.start();
 	}
 
 	@Override
 	public void addTask(TestThreadTaskDefault task)
 	{
+//		boolean wasEmpty = this.queue.isEmpty();
 //		this.queue.offer(task);
+//
+//		if (wasEmpty)
+//		{
+//			this.ensureThreadsAreAlive();
+//		}
 	}
 
 	@Override
-	public TestThreadTaskDefault getNextTask()
+	public TestThreadTaskDefault getNextTask() throws InterruptedException
 	{
+//		return this.queue.take();
 //		return this.queue.poll();
 		return null;
 	}
 
 	@Override
+	public boolean hasTasks()
+	{
+//		return !this.queue.isEmpty();
+		return false;
+	}
+
+	@Override
 	public long getTaskInterval()
 	{
-		return MathUtils.floor(this.taskInterval * 1000L);
+		return MathUtils.floor(TASK_INTERVAL * 1000L);
 	}
 
 	@Override
@@ -75,32 +164,57 @@ public class TestThreadDaemonDefaultHandler implements IThreadDaemonHandler<Test
 
 			if ((now - this.lastTick) > this.getTaskInterval())
 			{
-				for (int i = 0; i < 3; i++)
+				if (mc.level != null)
 				{
-					final int finalIndex = i;
+					for (int i = 0; i < 5; i++)
+					{
+						final int finalIndex = i;
 
-					this.addTask(new TestThreadTaskDefault(() ->
-                                 MaLiLib.LOGGER.info("Running TestThreadTaskDefault as a Runnable, [{}]", finalIndex))
-					);
+						this.addTask(new TestThreadTaskDefault(() ->
+								                                       MaLiLib.LOGGER.info("Running TestThreadTaskDefault as a Runnable, [{}]", finalIndex))
+						);
+					}
+
+//					System.out.printf("TestThreadDaemonDefaultHandler: taskQueue: [%02d]\n", this.queue.size());
+					this.ensureThreadsAreAlive();
 				}
 
-//				System.out.printf("TestThreadDaemonDefaultHandler: taskQueue: [%02d]\n", this.queue.size());
 				this.lastTick = now;
 			}
 		}
-		else
-		{
-//			if (this.threadExecutor.isRunning())
+	}
+
+	private void ensureThreadsAreAlive()
+	{
+//		if (this.hasTasks())
+//		{
+//			Set<String> keySet = this.threadMap.keySet();
+//
+//			for (String key : keySet)
 //			{
-//				this.stop();
+//				try
+//				{
+//					this.safeStart(this.threadMap.get(key));
+//				}
+//				catch (IllegalStateException is)
+//				{
+//					// Terminated (Replace)
+//					Thread entry = this.threadFactory(key, this.useVirtual, new TestThreadDaemonExecutorDefault());
+//					entry.start();
+//
+//					synchronized (this.threadMap)
+//					{
+//						this.threadMap.replace(key, entry);
+//					}
+//				}
+//				catch (RuntimeException ignored) {}
 //			}
-		}
+//		}
 	}
 
 	@Override
 	public void close() throws Exception
 	{
-//		this.queue.clear();
-		this.stop();
+		this.endAll();
 	}
 }

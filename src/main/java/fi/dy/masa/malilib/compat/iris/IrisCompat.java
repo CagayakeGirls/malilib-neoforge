@@ -1,18 +1,15 @@
 package fi.dy.masa.malilib.compat.iris;
 
-import java.util.Objects;
 import net.irisshaders.iris.api.v0.IrisApi;
 import net.irisshaders.iris.api.v0.IrisProgram;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibFabricData;
+import fi.dy.masa.malilib.compat.ModIds;
 import fi.dy.masa.malilib.render.MaLiLibPipelines;
-import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 public class IrisCompat
 {
-    private static final String SODIUM_ID = "sodium";
-    private static final String IRIS_ID = "iris";
-
     private static boolean isSodiumLoaded = false;
     private static boolean isIrisLoaded = false;
     private static String sodiumVersion = "";
@@ -20,19 +17,16 @@ public class IrisCompat
 
     static
     {
-        ModPlatform.getAllMods().stream().toList().forEach((modInfo ->
-        {
-            if (Objects.equals(modInfo.getModId(), SODIUM_ID))
-            {
-                sodiumVersion = modInfo.getVersion().toString();
-                isSodiumLoaded = true;
-            }
-            else if (Objects.equals(modInfo.getModId(), IRIS_ID))
-            {
-                irisVersion = modInfo.getVersion().toString();
-                isIrisLoaded = true;
-            }
-        }));
+	    if (MaLiLibFabricData.ALL_MOD_VERSIONS.containsKey(ModIds.sodium))
+	    {
+			sodiumVersion = MaLiLibFabricData.ALL_MOD_VERSIONS.get(ModIds.sodium);
+			isSodiumLoaded = true;
+	    }
+		if (MaLiLibFabricData.ALL_MOD_VERSIONS.containsKey(ModIds.iris))
+		{
+			irisVersion = MaLiLibFabricData.ALL_MOD_VERSIONS.get(ModIds.iris);
+			isIrisLoaded = true;
+		}
 
         MaLiLib.LOGGER.info("Sodium: [{}], Iris: [{}]", isSodiumLoaded ? sodiumVersion : "N/F", isIrisLoaded ? irisVersion : "N/F");
     }

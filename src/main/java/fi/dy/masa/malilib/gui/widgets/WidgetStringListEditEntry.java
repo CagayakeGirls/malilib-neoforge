@@ -9,6 +9,7 @@ import fi.dy.masa.malilib.gui.button.ButtonBase;
 import fi.dy.masa.malilib.gui.button.ButtonGeneric;
 import fi.dy.masa.malilib.gui.button.IButtonActionListener;
 import fi.dy.masa.malilib.gui.interfaces.IGuiIcon;
+import fi.dy.masa.malilib.gui.wrappers.TextFieldType;
 import fi.dy.masa.malilib.render.GuiContext;
 import fi.dy.masa.malilib.render.RenderUtils;
 import fi.dy.masa.malilib.util.StringUtils;
@@ -91,7 +92,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         ChangeListenerTextField listenerChange = new ChangeListenerTextField(field, resetButton, this.defaultValue);
         ListenerResetConfig listenerReset = new ListenerResetConfig(resetButton, this);
 
-        this.addTextField(field, listenerChange);
+        this.addTextField(field, listenerChange, TextFieldType.STRING.setMaxLength(this.maxTextfieldTextLength));
         this.addButton(resetButton, listenerReset);
 
         return resetButton.x + resetButton.getWidth() + 4;
@@ -125,6 +126,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
             {
                 list.set(this.listIndex, value);
                 this.lastAppliedValue = value;
+                config.markDirty();
                 config.setModified();
             }
         }
@@ -136,6 +138,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         final int size = list.size();
         int index = this.listIndex < 0 ? size : (this.listIndex >= size ? size : this.listIndex);
         list.add(index, "");
+        this.parent.getConfig().markDirty();
         this.parent.getConfig().setModified();
         this.parent.refreshEntries();
         this.parent.markConfigsModified();
@@ -149,6 +152,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
         if (this.listIndex >= 0 && this.listIndex < size)
         {
             list.remove(this.listIndex);
+            this.parent.getConfig().markDirty();
             this.parent.getConfig().setModified();
             this.parent.refreshEntries();
             this.parent.markConfigsModified();
@@ -177,6 +181,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
 
             if (index2 >= 0)
             {
+                this.parent.getConfig().markDirty();
                 this.parent.getConfig().setModified();
                 this.parent.markConfigsModified();
                 this.parent.applyPendingModifications();
@@ -199,7 +204,7 @@ public class WidgetStringListEditEntry extends WidgetConfigOptionBase<String>
     @Override
     public void render(GuiContext ctx, int mouseX, int mouseY, boolean selected)
     {
-        super.render(ctx, mouseX, mouseY, selected);
+//        super.render(ctx, mouseX, mouseY, selected);
 
         if (this.isOdd)
         {

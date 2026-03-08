@@ -10,6 +10,7 @@ import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3x2f;
 import org.joml.Matrix4f;
 import org.joml.Matrix4fStack;
+import org.joml.Quaternionf;
 
 import com.mojang.blaze3d.opengl.GlConst;
 import com.mojang.blaze3d.opengl.GlStateManager;
@@ -57,13 +58,13 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
-import net.minecraft.util.Mth;
 import net.minecraft.world.Container;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.npc.villager.VillagerData;
 import net.minecraft.world.entity.npc.villager.VillagerProfession;
+import net.minecraft.world.entity.npc.villager.VillagerType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.block.Blocks;
@@ -82,9 +83,11 @@ import fi.dy.masa.malilib.event.RenderEventHandler;
 import fi.dy.masa.malilib.gui.GuiBase;
 import fi.dy.masa.malilib.interfaces.IGuiRendererInvoker;
 import fi.dy.masa.malilib.mixin.render.IMixinAbstractTexture;
-import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
+import fi.dy.masa.malilib.mixin.render.IMixinGuiGraphics;
 import fi.dy.masa.malilib.mixin.render.IMixinGuiRenderer;
 import fi.dy.masa.malilib.render.element.*;
+import fi.dy.masa.malilib.render.special.MaLiLibBlockStateGuiElementRenderer;
+import fi.dy.masa.malilib.render.special.MaLiLibBlockStateGuiElement;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.data.Color4f;
 import fi.dy.masa.malilib.util.data.tag.CompoundData;
@@ -259,7 +262,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
 	public static void addSimpleElement(GuiGraphics drawContext, GuiElementRenderState simpleElement)
 	{
-		((IMixinDrawContext) drawContext).malilib_getRenderState().submitGuiElement(simpleElement);
+		((IMixinGuiGraphics) drawContext).malilib_getRenderState().submitGuiElement(simpleElement);
 	}
 
 	/**
@@ -268,7 +271,7 @@ public class RenderUtils
     @Deprecated(forRemoval = true)
     public static void addSpecialElement(GuiGraphics drawContext, PictureInPictureRenderState specialElement)
     {
-        ((IMixinDrawContext) drawContext).malilib_getRenderState().submitPicturesInPictureState(specialElement);
+        ((IMixinGuiGraphics) drawContext).malilib_getRenderState().submitPicturesInPictureState(specialElement);
     }
 
     // FIXME
@@ -281,7 +284,7 @@ public class RenderUtils
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
 
         // Add Gui Block Model Renderer
-//        builder.put(MaLiLibBlockStateModelGuiElement.class, new MaLiLibBlockModelGuiElementRenderer(immediate, mc.getBlockRenderManager()));
+        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRenderer(immediate, mc.getBlockRenderer()));
 
         // Event Callback
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRegisterSpecialGuiRenderer(guiRenderer, immediate, mc, builder);
@@ -323,7 +326,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static void addItemElement(GuiGraphics drawContext, GuiItemRenderState itemElement)
     {
-        ((IMixinDrawContext) drawContext).malilib_getRenderState().submitItem(itemElement);
+        ((IMixinGuiGraphics) drawContext).malilib_getRenderState().submitItem(itemElement);
     }
 
 	/**
@@ -332,7 +335,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static void addTextElement(GuiGraphics drawContext, GuiTextRenderState textElement)
     {
-        ((IMixinDrawContext) drawContext).malilib_getRenderState().submitText(textElement);
+        ((IMixinGuiGraphics) drawContext).malilib_getRenderState().submitText(textElement);
     }
 
 	/**
@@ -341,7 +344,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static void pushScissor(GuiGraphics drawContext, @Nonnull ScreenRectangle rect)
     {
-        ((IMixinDrawContext) drawContext).malilib_getScissorStack().push(rect);
+        ((IMixinGuiGraphics) drawContext).malilib_getScissorStack().push(rect);
     }
 
 	/**
@@ -350,7 +353,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static boolean containsScissor(GuiGraphics drawContext, int x, int y)
     {
-        return ((IMixinDrawContext) drawContext).malilib_getScissorStack().containsPoint(x, y);
+        return ((IMixinGuiGraphics) drawContext).malilib_getScissorStack().containsPoint(x, y);
     }
 
 	/**
@@ -359,7 +362,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static ScreenRectangle peekLastScissor(GuiGraphics drawContext)
     {
-        return ((IMixinDrawContext) drawContext).malilib_getScissorStack().peek();
+        return ((IMixinGuiGraphics) drawContext).malilib_getScissorStack().peek();
     }
 
 	/**
@@ -368,7 +371,7 @@ public class RenderUtils
 	@Deprecated(forRemoval = true)
     public static ScreenRectangle popScissor(GuiGraphics drawContext)
     {
-        return ((IMixinDrawContext) drawContext).malilib_getScissorStack().pop();
+        return ((IMixinGuiGraphics) drawContext).malilib_getScissorStack().pop();
     }
 
     public static void drawOutlinedBox(GuiContext ctx, int x, int y, int width, int height, int colorBg, int colorBorder)
@@ -1626,10 +1629,6 @@ public class RenderUtils
         global4fStack.rotateYXZ((-yaw) * ((float) (Math.PI / 180.0)), pitch * ((float) (Math.PI / 180.0)), 0.0F);
         global4fStack.scale((-scale), (-scale), scale);
 
-	    // todo
-//        culling(false);
-//        blend(true);
-
         RenderContext ctx = new RenderContext(() -> "malilib:drawTextPlate", disableDepth ? MaLiLibPipelines.TEXT_PLATE_MASA_NO_DEPTH : MaLiLibPipelines.TEXT_PLATE_MASA);
         BufferBuilder buffer = ctx.getBuilder();
         int maxLineLen = 0;
@@ -1645,13 +1644,6 @@ public class RenderUtils
         int bgr = ((bgColor >>> 16) & 0xFF);
         int bgg = ((bgColor >>> 8) & 0xFF);
         int bgb = (bgColor & 0xFF);
-
-		// todo
-//        if (disableDepth)
-//        {
-//            //RenderSystem.depthMask(false);
-//            depthTest(false);
-//        }
 
         buffer.addVertex((float) (-strLenHalf - 1), (float) -1, 0.0F).setColor(bgr, bgg, bgb, bga);
         buffer.addVertex((float) (-strLenHalf - 1), (float) textHeight, 0.0F).setColor(bgr, bgg, bgb, bga);
@@ -1677,14 +1669,6 @@ public class RenderUtils
 
         int textY = 0;
 
-		// todo
-        // translate the text a bit infront of the background
-//        if (disableDepth == false)
-//        {
-//            polygonOffset(true);
-//            polygonOffset(-0.6f, -1.2f);
-//        }
-
         Matrix4f modelMatrix = new Matrix4f();
         modelMatrix.identity();
 
@@ -1700,18 +1684,6 @@ public class RenderUtils
 	        // k = light
 	        // bl2 = incl empty
 
-	        // todo
-//            if (disableDepth)
-//            {
-//                //depthMask(false);
-////                depthTest(false);
-//                MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(allocator);
-//                textRenderer.drawInBatch(line, -strLenHalf, textY, 0x20000000 | (textColor & 0xFFFFFFFF), false, modelMatrix, immediate, Font.DisplayMode.SEE_THROUGH, 0, 15728880);
-//                immediate.endBatch();
-////                depthTest(true);
-//                //depthMask(true);
-//            }
-
             MultiBufferSource.BufferSource immediate = MultiBufferSource.immediate(allocator);
 
             textRenderer.drawInBatch(line, -strLenHalf, textY,
@@ -1726,15 +1698,6 @@ public class RenderUtils
         }
 
         allocator.close();
-
-		// todo
-//        if (disableDepth == false)
-//        {
-//            polygonOffset(0f, 0f);
-//            polygonOffset(false);
-//        }
-
-//        culling(true);
         global4fStack.popMatrix();
     }
 
@@ -2099,8 +2062,8 @@ public class RenderUtils
             int screenWidth = GuiUtils.getScaledWindowWidth();
             int screenHeight = GuiUtils.getScaledWindowHeight();
             int height = props.height + 18;
-            int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
-            int y = Mth.clamp(baseY - height, 0, screenHeight - height);
+            int x = MathUtils.clamp(baseX + 8, 0, screenWidth - props.width);
+            int y = MathUtils.clamp(baseY - height, 0, screenHeight - height);
             int color;
 
             if (stack.getItem() instanceof BlockItem && ((BlockItem) stack.getItem()).getBlock() instanceof ShulkerBoxBlock)
@@ -2170,8 +2133,8 @@ public class RenderUtils
             int screenWidth = GuiUtils.getScaledWindowWidth();
             int screenHeight = GuiUtils.getScaledWindowHeight();
             int height = props.height + 18;
-            int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
-            int y = Mth.clamp(baseY - height, 0, screenHeight - height);
+            int x = MathUtils.clamp(baseX + 8, 0, screenWidth - props.width);
+            int y = MathUtils.clamp(baseY - height, 0, screenHeight - height);
 
             int color = setBundleBackgroundTintColor(stack, useBgColors);
 
@@ -2227,8 +2190,8 @@ public class RenderUtils
 			int screenWidth = GuiUtils.getScaledWindowWidth();
 			int screenHeight = GuiUtils.getScaledWindowHeight();
 			int height = props.height + 18;
-			int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
-			int y = Mth.clamp(baseY - height, 0, screenHeight - height);
+			int x = MathUtils.clamp(baseX + 8, 0, screenWidth - props.width);
+			int y = MathUtils.clamp(baseY - height, 0, screenHeight - height);
 
 			int color = CommonColors.WHITE;
 
@@ -2282,8 +2245,8 @@ public class RenderUtils
 			int screenWidth = GuiUtils.getScaledWindowWidth();
 			int screenHeight = GuiUtils.getScaledWindowHeight();
 			int height = props.height + 18;
-			int x = Mth.clamp(baseX + 8, 0, screenWidth - props.width);
-			int y = Mth.clamp(baseY - height, 0, screenHeight - height);
+			int x = MathUtils.clamp(baseX + 8, 0, screenWidth - props.width);
+			int y = MathUtils.clamp(baseY - height, 0, screenHeight - height);
 
 			int color = CommonColors.WHITE;
 
@@ -2432,105 +2395,254 @@ public class RenderUtils
 
     public static int setVillagerBackgroundTintColor(VillagerData data, boolean useBgColors)
     {
-        if (useBgColors)
+        if (useBgColors && data != null)
         {
             Holder<VillagerProfession> profession = data != null ? data.profession() : null;
-            return setVillagerBackgroundTintColor(profession, useBgColors);
+	        Holder<VillagerType> type = data != null ? data.type() : null;
+
+            return setVillagerBackgroundTintColor(profession, data.type(), data.level(), useBgColors);
         }
 
         return CommonColors.WHITE;
     }
 
-    public static int setVillagerBackgroundTintColor(Holder<VillagerProfession> profession, boolean useBgColors)
+    public static int setVillagerBackgroundTintColor(Holder<VillagerProfession> profession,
+                                                     Holder<VillagerType> type,
+                                                     int level, boolean useBgColors)
     {
         if (useBgColors)
         {
-            final DyeColor dye = getVillagerColor(profession);
+//            final DyeColor dye = getVillagerColor(profession);
+			final int professionColor = getVillagerProfessionColor(profession);
 
-            if (dye != null)
-            {
-                final float[] colors = getColorComponents(dye.getTextureDiffuseColor());
-                return ARGB.colorFromFloat(1f, colors[0], colors[1], colors[2]);
-            }
+//            if (dye != null)
+//            {
+//                final float[] colors = getColorComponents(dye.getTextureDiffuseColor());
+//                return ARGB.colorFromFloat(1f, colors[0], colors[1], colors[2]);
+//            }
+
+			return professionColor;
         }
 
         return CommonColors.WHITE;
     }
 
-    // todo - return real colors based on the Villager, not Dye Colors
-    public static DyeColor getVillagerColor(Holder<VillagerProfession> profession)
-    {
-        if (profession == null)
-        {
-            return null;
-        }
+	public static int getVillagerLevelColor(int level)
+	{
+		switch (level)
+		{
+			case 1 ->       // Stone
+			{
+				return 0xFFB3B1AF;
+			}
+			case 2 ->       // Iron
+			{
+				return 0xFFECC1A6;
+			}
+			case 3 ->       // Gold
+			{
+				return 0xFFFDFF76;
+			}
+			case 4 ->       // Emerald
+			{
+				return 0xFF41F384;
+			}
+			case 5 ->       // Diamond
+			{
+				return 0xFFA4FDF0;
+			}
+		}
 
-        if (profession.equals(VillagerProfession.NONE))
-        {
-            return DyeColor.BLUE;
-        }
-        else if (profession.is(VillagerProfession.ARMORER))
-        {
-            return DyeColor.GRAY;
-        }
-        else if (profession.is(VillagerProfession.BUTCHER))
-        {
-            return DyeColor.PINK;
-        }
-        else if (profession.is(VillagerProfession.CARTOGRAPHER))
-        {
-            return DyeColor.LIGHT_BLUE;
-        }
-        else if (profession.is(VillagerProfession.CLERIC))
-        {
-            return DyeColor.PURPLE;
-        }
-        else if (profession.is(VillagerProfession.FARMER))
-        {
-            return DyeColor.YELLOW;
-        }
-        else if (profession.is(VillagerProfession.FISHERMAN))
-        {
-            return DyeColor.CYAN;
-        }
-        else if (profession.is(VillagerProfession.FLETCHER))
-        {
-            return DyeColor.ORANGE;
-        }
-        else if (profession.is(VillagerProfession.LEATHERWORKER))
-        {
-            return DyeColor.BROWN;
-        }
-        else if (profession.is(VillagerProfession.LIBRARIAN))
-        {
-            return DyeColor.RED;
-        }
-        else if (profession.is(VillagerProfession.MASON))
-        {
-            return DyeColor.MAGENTA;
-        }
-        else if (profession.is(VillagerProfession.NITWIT))
-        {
-            return DyeColor.GREEN;
-        }
-        else if (profession.is(VillagerProfession.SHEPHERD))
-        {
-            return DyeColor.WHITE;
-        }
-        else if (profession.is(VillagerProfession.TOOLSMITH))
-        {
-            return DyeColor.LIGHT_GRAY;
-        }
-        else if (profession.is(VillagerProfession.WEAPONSMITH))
-        {
-            return DyeColor.BLACK;
-        }
-        else
-        {
-            // Unhandled Profession
-            return DyeColor.LIME;
-        }
-    }
+		return -1;
+	}
+
+	public static int getVillagerTypeColor(Holder<VillagerType> type)
+	{
+		if (type == null) return -1;
+
+		if (type.is(VillagerType.DESERT))
+		{
+			return 0xFFD75601;      // Orangeish color of robes
+		}
+		else if (type.is(VillagerType.JUNGLE))
+		{
+			return 0xFFEAC03F;      // Yellowish color of shirt
+		}
+		else if (type.is(VillagerType.PLAINS))
+		{
+			return 0xFF71544D;      // Brownish Color of overalls
+		}
+		else if (type.is(VillagerType.SAVANNA))
+		{
+			return 0xFFAA2A2A;      // Reddish Color of top
+		}
+		else if (type.is(VillagerType.SNOW))
+		{
+			return 0xFF5E8F83;      // Cyanish Color of coat
+		}
+		else if (type.is(VillagerType.SWAMP))
+		{
+			return 0xFF412D56;      // Purpleish color of shirt
+		}
+		else if (type.is(VillagerType.TAIGA))
+		{
+			return 0xFFE3E0C2;      // Off-White color of shirt
+		}
+
+		return -1;
+	}
+
+	public static int getVillagerProfessionColor(Holder<VillagerProfession> profession)
+	{
+		if (profession == null) return -1;
+
+		if (profession.is(VillagerProfession.NONE))
+		{
+//			return 0xFFBE886C;          // Skin-like color
+			return 0xFF5F44B6;          // Skin-like + Blue
+		}
+		else if (profession.is(VillagerProfession.ARMORER))
+		{
+			return 0xFF858078;          // A Gray face mask color
+//			return 0xFF615E58;          // A Gray + hint of Charcoal
+		}
+		else if (profession.is(VillagerProfession.BUTCHER))
+		{
+//			return 0xFFAE574F;          // Reddish/Orange Headband color
+			return 0xFFCE6D9F;          // Reddish/Orange + Pink
+		}
+		else if (profession.is(VillagerProfession.CARTOGRAPHER))
+		{
+			return 0xFF97CAF6;          // Light Blue Monicle glass color
+		}
+		else if (profession.is(VillagerProfession.CLERIC))
+		{
+//			return 0xFF793C5B;          // Purpleish robes color
+			return 0xFF6A2868;          // Purpleish + a hint Purple
+		}
+		else if (profession.is(VillagerProfession.FARMER))
+		{
+			return 0xFFDBC549;          // Yellowish hat color
+		}
+		else if (profession.is(VillagerProfession.FISHERMAN))
+		{
+			return 0xFF6B9F93;          // Cyanish "Fish" color
+		}
+		else if (profession.is(VillagerProfession.FLETCHER))
+		{
+			return 0xFF9A5030;          // Orangish belt color
+		}
+		else if (profession.is(VillagerProfession.LEATHERWORKER))
+		{
+			return 0xFF855636;          // Brownish apron color
+		}
+		else if (profession.is(VillagerProfession.LIBRARIAN))
+		{
+			return 0xFF9A2323;          // Red hat color
+		}
+		else if (profession.is(VillagerProfession.MASON))
+		{
+			return 0xFF363230;          // Dark Gray apron color
+//			return 0xFF5B1958;          // Dark Gray + Magenta
+		}
+		else if (profession.is(VillagerProfession.NITWIT))
+		{
+			return 0xFF5D744F;          // Greenish shirt color
+		}
+		else if (profession.is(VillagerProfession.SHEPHERD))
+		{
+			return 0xFFF4F4E1;          // Off-White vest color
+		}
+		else if (profession.is(VillagerProfession.TOOLSMITH))
+		{
+			return 0xFF615026;          // Wood-Brownish Hammer handle color
+//			return 0xFF82765C;          // Wood-Brown + Light Gray
+		}
+		else if (profession.is(VillagerProfession.WEAPONSMITH))
+		{
+			return 0xFF191919;          // Charcoalish hat color
+//			return 0xFF232121;          // Charcoal + hint of Mason Dark Gray
+		}
+
+//		return 0xFF32CD32;              // Lime
+		return 0xFF4EB349;              // Lime + hint of gray
+	}
+
+	// todo - return real colors based on the Villager, not Dye Colors
+	@Deprecated(forRemoval = true)
+	public static DyeColor getVillagerColor(Holder<VillagerProfession> profession)
+	{
+		if (profession == null)
+		{
+			return null;
+		}
+
+		if (profession.equals(VillagerProfession.NONE))
+		{
+			return DyeColor.BLUE;           // 0xFFBE886C (Skin-Like Color)
+		}
+		else if (profession.is(VillagerProfession.ARMORER))
+		{
+			return DyeColor.GRAY;           // 0xFF5C5A57
+		}
+		else if (profession.is(VillagerProfession.BUTCHER))
+		{
+			return DyeColor.PINK;           // 0xFFAE574F
+		}
+		else if (profession.is(VillagerProfession.CARTOGRAPHER))
+		{
+			return DyeColor.LIGHT_BLUE;     // 0xFF97CAF6
+		}
+		else if (profession.is(VillagerProfession.CLERIC))
+		{
+			return DyeColor.PURPLE;         // 0xFF864E6A
+		}
+		else if (profession.is(VillagerProfession.FARMER))
+		{
+			return DyeColor.YELLOW;         // 0xFFDBC549
+		}
+		else if (profession.is(VillagerProfession.FISHERMAN))
+		{
+			return DyeColor.CYAN;           // 0xFF6B9F93
+		}
+		else if (profession.is(VillagerProfession.FLETCHER))
+		{
+			return DyeColor.ORANGE;         // 0xFFC26A44
+		}
+		else if (profession.is(VillagerProfession.LEATHERWORKER))
+		{
+			return DyeColor.BROWN;          // 0xFF855636
+		}
+		else if (profession.is(VillagerProfession.LIBRARIAN))
+		{
+			return DyeColor.RED;            // 0xFF9A2323
+		}
+		else if (profession.is(VillagerProfession.MASON))
+		{
+			return DyeColor.MAGENTA;        // 0xFF989696
+		}
+		else if (profession.is(VillagerProfession.NITWIT))
+		{
+			return DyeColor.GREEN;          // 0xFF5D744F
+		}
+		else if (profession.is(VillagerProfession.SHEPHERD))
+		{
+			return DyeColor.WHITE;          // 0xFFE5E0CB
+		}
+		else if (profession.is(VillagerProfession.TOOLSMITH))
+		{
+			return DyeColor.LIGHT_GRAY;     // 0xFFA29C91
+		}
+		else if (profession.is(VillagerProfession.WEAPONSMITH))
+		{
+			return DyeColor.BLACK;          // 0xFF191919
+		}
+		else
+		{
+			// Unhandled Profession
+			return DyeColor.LIME;
+		}
+	}
 
     public static boolean stateModelHasQuads(BlockState state)
     {
@@ -2562,82 +2674,36 @@ public class RenderUtils
 
     public static void renderModelInGui(GuiContext ctx, int x, int y, BlockState state)
     {
-        renderModelInGui(ctx, x, y, 16, state, 0.625f);
+        renderModelInGui(ctx, x, y, 16, state, 0.75F, 0.50F);
+		// scale: 0.625f ?
     }
 
-    public static void renderModelInGui(GuiContext ctx, int x, int y, int size, BlockState state, float scale)
+	public static void renderModelInGui(GuiContext ctx, int x, int y, BlockState state, float scale)
+	{
+		renderModelInGui(ctx, x, y, 16, state, scale, 0.0F);
+		// scale: 0.625f ?
+	}
+
+	public static void renderModelInGui(GuiContext ctx, int x, int y, int size, BlockState state, float scale, float yOffset)
     {
         if (state.getBlock() == Blocks.AIR)
         {
             return;
         }
 
-        // FIXME
-//        RenderUtils.addSpecialElement(drawContext, new MaLiLibBlockStateModelGuiElement(
-//                state,
-//                x, y,
-//                size,
-//                scale,
-//                RenderUtils.peekLastScissor(drawContext))
-//        );
+	    ctx.addSpecialElement(
+				new MaLiLibBlockStateGuiElement(
+						state,
+//						new Vector3f((float) (x + 8.0), (float) (y + 8.0), (float) (z + 100.0)),
+						new Quaternionf().rotationXYZ(30 * (float) (Math.PI / 180.0), 225 * (float) (Math.PI / 180.0), 0.0F),
+						x, y,
+						size,
+						scale,
+						yOffset,
+						ctx.peekLastScissor()
+				)
+        );
     }
-
-//    private static void renderModel(BlockStateModel model, BlockState state,
-//                                    MatrixStack matrices, BufferBuilder builder)
-//    {
-//        LocalRandom random = new LocalRandom(0);
-//        List<BlockModelPart> parts = model.getParts(random);
-//        MatrixStack.Entry entry = matrices.peek();
-//        int l = LightmapTextureManager.pack(15, 15);
-//        int[] light = new int[] { l, l, l, l };
-//        float[] brightness = new float[] { 0.75f, 0.75f, 0.75f, 1.0f };
-//
-//        for (BlockModelPart part : parts)
-//        {
-//            for (Direction face : PositionUtils.ALL_DIRECTIONS)
-//            {
-//                random.setSeed(0);
-//                renderQuads(part.getQuads(face), brightness, light, entry, builder);
-//            }
-//
-//            random.setSeed(0);
-//            renderQuads(part.getQuads(null), brightness, light, entry, builder);
-//        }
-//    }
-//
-//    private static void renderQuads(List<BakedQuad> quads, float[] brightness, int[] light,
-//                                    MatrixStack.Entry matrixEntry, BufferBuilder builder)
-//    {
-//        for (BakedQuad quad : quads)
-//        {
-//            renderQuad(quad, brightness, light, matrixEntry, builder);
-//        }
-//    }
-//
-//    private static void renderQuad(BakedQuad quad, float[] brightness, int[] light,
-//                                   MatrixStack.Entry matrixEntry, BufferBuilder builder)
-//    {
-//        builder.quad(matrixEntry, quad, brightness, 1.0f, 1.0f, 1.0f, 1.0f, light, OverlayTexture.DEFAULT_UV, true);
-//    }
-//
-//    private static void renderModelQuadOverlayBatched(BlockPos pos, BufferBuilder buffer, Color4f color, BakedQuad quad)
-//    {
-//        final int[] vertexData = quad.vertexData();
-//        final int x = pos.getX();
-//        final int y = pos.getY();
-//        final int z = pos.getZ();
-//        final int vertexSize = vertexData.length / 4;
-//        float fx, fy, fz;
-//
-//        for (int index = 0; index < 4; ++index)
-//        {
-//            fx = x + Float.intBitsToFloat(vertexData[index * vertexSize    ]);
-//            fy = y + Float.intBitsToFloat(vertexData[index * vertexSize + 1]);
-//            fz = z + Float.intBitsToFloat(vertexData[index * vertexSize + 2]);
-//
-//            buffer.vertex(fx, fy, fz).color(color.r, color.g, color.b, color.a);
-//        }
-//    }
 
     public static Minecraft mc()
     {
@@ -2945,9 +3011,9 @@ public class RenderUtils
 
     public static void renderAreaSides(BlockPos pos1, BlockPos pos2, Color4f color, Matrix4f matrix4f, boolean shouldResort)
     {
-		boolean culling = shouldCull(pos1, pos2);
-        // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_2
-        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", culling ? MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_3 : MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_NO_CULL);
+	    boolean insideOf = isCameraInsideOf(pos1, pos2);
+        // MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_NO_CULL
+        RenderContext ctx = new RenderContext(() -> "malilib:renderAreaSides", insideOf ? MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH_OFFSET_3 : MaLiLibPipelines.POSITION_COLOR_TRANSLUCENT_LEQUAL_DEPTH);
         BufferBuilder buffer = ctx.getBuilder();
 
         renderAreaSidesBatched(pos1, pos2, color, 0.002, buffer);
@@ -3173,14 +3239,24 @@ public class RenderUtils
 	 * @param pos2
 	 * @return
 	 */
-	public static boolean shouldCull(BlockPos pos1, BlockPos pos2)
+	public static boolean isCameraInsideOf(BlockPos pos1, BlockPos pos2)
 	{
-		return shouldCull(new AABB(pos1.getX(), pos1.getY(), pos1.getZ(), pos2.getX(), pos2.getY(), pos2.getZ()));
+		// Fix Bottom Y Border offset
+		if (pos1.getY() < pos2.getY())
+		{
+			pos1 = pos1.mutable().setY(pos1.getY() - 1).immutable();
+		}
+		else if (pos2.getY() < pos1.getY())
+		{
+			pos2 = pos2.mutable().setY(pos2.getY() - 1).immutable();
+		}
+
+		return isCameraInsideOf(AABB.encapsulatingFullBlocks(pos1, pos2));
 	}
 
-	public static boolean shouldCull(Vec3 pos1, Vec3 pos2)
+	public static boolean isCameraInsideOf(Vec3 pos1, Vec3 pos2)
 	{
-		return shouldCull(new AABB(pos1, pos2));
+		return isCameraInsideOf(new AABB(pos1, pos2));
 	}
 
 	/**
@@ -3194,36 +3270,12 @@ public class RenderUtils
 	 * @param bb
 	 * @return
 	 */
-	public static boolean shouldCull(AABB bb)
+	public static boolean isCameraInsideOf(AABB bb)
 	{
 		Entity camera = mc().getCameraEntity();
-		final Vec3 minPos = bb.getMinPosition();
-		final Vec3 maxPos = bb.getMaxPosition();
-		Vec3 mid = bb.getCenter();
-		BlockPos pos;
+		Vec3 pos = camera.position();
 
-		if (minPos.y() < maxPos.y())
-		{
-			pos = new BlockPos((int) mid.x, (int) minPos.y, (int) mid.z);
-		}
-		else
-		{
-			pos = new BlockPos((int) mid.x, (int) maxPos.y, (int) mid.z);
-		}
-
-		if (mc().level != null)
-		{
-			// Calculate only if the Down Direction is a Block, while above it is Air.
-			BlockState state = mc().level.getBlockState(pos);
-			BlockState stateDown = mc().level.getBlockState(pos.relative(Direction.DOWN));
-
-			if (camera != null && state.isAir() && !stateDown.isAir())
-			{
-				// Causes Z fighting on the floor (~24 Block distance)
-				return camera.position().distanceTo(mid) >= 23;
-			}
-		}
-
-		return false;
+		// Mark culling if the camera is outside of the bounding box (Walls overlapping, etc)
+		return bb.contains(pos);
 	}
 }

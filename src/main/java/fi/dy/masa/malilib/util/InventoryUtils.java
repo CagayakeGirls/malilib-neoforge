@@ -14,6 +14,7 @@ import org.apache.commons.lang3.math.Fraction;
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.commands.arguments.item.ItemParser;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
@@ -28,10 +29,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.Identifier;
-import net.minecraft.world.CompoundContainer;
-import net.minecraft.world.Container;
-import net.minecraft.world.ItemStackWithSlot;
-import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.BlockItem;
@@ -640,15 +638,16 @@ public class InventoryUtils
                 return NonNullList.create();
             }
 
-            return nbtInv.toVanillaList(slotCount);
+            return nbtInv.sorted().toVanillaList(slotCount);
         }
         // A few Entities use this
         else if (nbt.contains(NbtKeys.INVENTORY))
         {
 	        InventoryOverlayType type = InventoryOverlay.getInventoryType(DataConverterNbt.fromVanillaCompound(nbt));
 	        boolean isPlayer = type == InventoryOverlayType.PLAYER;
-
             ListTag list = nbt.getListOrEmpty(NbtKeys.INVENTORY);
+            boolean noSlotId = list.isEmpty() ? !isPlayer : !nbtInventoryHasSlots(list);
+
             if (slotCount < 0)
             {
                 // Doesn't use slots
@@ -657,14 +656,14 @@ public class InventoryUtils
 
             slotCount = NbtInventory.getAdjustedSize(slotCount);
 
-            NbtInventory nbtInv = NbtInventory.fromNbtList(list, !isPlayer, registry);
+            NbtInventory nbtInv = NbtInventory.fromNbtList(list, noSlotId, registry);
 
             if (nbtInv == null || nbtInv.isEmpty())
             {
                 return NonNullList.create();
             }
             
-            return nbtInv.toVanillaList(slotCount);
+            return nbtInv.sorted().toVanillaList(slotCount);
         }
         // Ender Chest
         else if (nbt.contains(NbtKeys.ENDER_ITEMS))
@@ -686,7 +685,7 @@ public class InventoryUtils
                 return NonNullList.create();
             }
 
-            return nbtInv.toVanillaList(slotCount);
+            return nbtInv.sorted().toVanillaList(slotCount);
         }
         else if (nbt.contains(NbtKeys.ITEM))
         {
@@ -783,7 +782,7 @@ public class InventoryUtils
 				return NonNullList.create();
 			}
 
-			return nbtInv.toVanillaList(slotCount);
+			return nbtInv.sorted().toVanillaList(slotCount);
 		}
 		// A few Entities use this
 		else if (data.contains(NbtKeys.INVENTORY, Constants.NBT.TAG_LIST))
@@ -792,6 +791,8 @@ public class InventoryUtils
 			boolean isPlayer = type == InventoryOverlayType.PLAYER;
 
 			ListData list = data.getList(NbtKeys.INVENTORY);
+			boolean noSlotId = list.isEmpty() ? !isPlayer : !dataInventoryHasSlots(list);
+
 			if (slotCount < 0)
 			{
 				// Doesn't use slots
@@ -800,14 +801,14 @@ public class InventoryUtils
 
 			slotCount = NbtInventory.getAdjustedSize(slotCount);
 
-			NbtInventory nbtInv = NbtInventory.fromDataList(list, !isPlayer, registry);
+			NbtInventory nbtInv = NbtInventory.fromDataList(list, noSlotId, registry);
 
 			if (nbtInv == null || nbtInv.isEmpty())
 			{
 				return NonNullList.create();
 			}
 
-			return nbtInv.toVanillaList(slotCount);
+			return nbtInv.sorted().toVanillaList(slotCount);
 		}
 		// Ender Chest
 		else if (data.contains(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_LIST))
@@ -829,7 +830,7 @@ public class InventoryUtils
 				return NonNullList.create();
 			}
 
-			return nbtInv.toVanillaList(slotCount);
+			return nbtInv.sorted().toVanillaList(slotCount);
 		}
 		else if (data.contains(NbtKeys.ITEM, Constants.NBT.TAG_COMPOUND))
 		{
@@ -943,17 +944,18 @@ public class InventoryUtils
                 return null;
             }
 
-            return nbtInv.toInventory(slotCount);
+            return nbtInv.sorted().toInventory(slotCount);
         }
         else if (nbt.contains(NbtKeys.INVENTORY))
         {
 	        InventoryOverlayType type = InventoryOverlay.getInventoryType(DataConverterNbt.fromVanillaCompound(nbt));
 	        boolean isPlayer = type == InventoryOverlayType.PLAYER;
+            ListTag list = nbt.getListOrEmpty(NbtKeys.INVENTORY);
+            boolean noSlotId = list.isEmpty() ? !isPlayer : !nbtInventoryHasSlots(list);
 
             // Entities use this (Piglin, Villager, a few others)
             if (slotCount < 0)
             {
-                ListTag list = nbt.getListOrEmpty(NbtKeys.INVENTORY);
                 // Doesn't use slots
                 slotCount = list.size();
             }
@@ -961,14 +963,14 @@ public class InventoryUtils
             slotCount = NbtInventory.getAdjustedSize(slotCount);
 
             // "Inventory" tags might not include Slot ID's, but a Player will.
-            NbtInventory nbtInv = NbtInventory.fromNbt(nbt, NbtKeys.INVENTORY, !isPlayer, registry);
+            NbtInventory nbtInv = NbtInventory.fromNbt(nbt, NbtKeys.INVENTORY, noSlotId, registry);
 
             if (nbtInv == null || nbtInv.isEmpty())
             {
                 return null;
             }
 
-            return nbtInv.toInventory(slotCount);
+            return nbtInv.sorted().toInventory(slotCount);
         }
         else if (nbt.contains(NbtKeys.ENDER_ITEMS))
         {
@@ -989,7 +991,7 @@ public class InventoryUtils
                 return null;
             }
 
-            return nbtInv.toInventory(Math.max(slotCount, NbtInventory.DEFAULT_SIZE));
+            return nbtInv.sorted().toInventory(Math.max(slotCount, NbtInventory.DEFAULT_SIZE));
         }
         else if (nbt.contains(NbtKeys.ITEM))
         {
@@ -1067,17 +1069,18 @@ public class InventoryUtils
 				return null;
 			}
 
-			return nbtInv.toInventory(slotCount);
+			return nbtInv.sorted().toInventory(slotCount);
 		}
 		else if (data.contains(NbtKeys.INVENTORY, Constants.NBT.TAG_LIST))
 		{
 			InventoryOverlayType type = InventoryOverlay.getInventoryType(data);
 			boolean isPlayer = type == InventoryOverlayType.PLAYER;
+			ListData list = data.getList(NbtKeys.INVENTORY);
+			boolean noSlotId = list.isEmpty() ? !isPlayer : !dataInventoryHasSlots(list);
 
 			// Entities use this (Piglin, Villager, a few others)
 			if (slotCount < 0)
 			{
-				ListData list = data.getList(NbtKeys.INVENTORY);
 				// Doesn't use slots
 				slotCount = list.size();
 			}
@@ -1085,14 +1088,14 @@ public class InventoryUtils
 			slotCount = NbtInventory.getAdjustedSize(slotCount);
 
 			// "Inventory" tags might not include Slot ID's, but a Player will.
-			NbtInventory nbtInv = NbtInventory.fromData(data, NbtKeys.INVENTORY, !isPlayer, registry);
+			NbtInventory nbtInv = NbtInventory.fromData(data, NbtKeys.INVENTORY, noSlotId, registry);
 
 			if (nbtInv == null || nbtInv.isEmpty())
 			{
 				return null;
 			}
 
-			return nbtInv.toInventory(slotCount);
+			return nbtInv.sorted().toInventory(slotCount);
 		}
 		else if (data.contains(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_LIST))
 		{
@@ -1113,7 +1116,7 @@ public class InventoryUtils
 				return null;
 			}
 
-			return nbtInv.toInventory(Math.max(slotCount, NbtInventory.DEFAULT_SIZE));
+			return nbtInv.sorted().toInventory(Math.max(slotCount, NbtInventory.DEFAULT_SIZE));
 		}
 		else if (data.contains(NbtKeys.ITEM, Constants.NBT.TAG_COMPOUND))
 		{
@@ -1155,7 +1158,29 @@ public class InventoryUtils
 		return null;
 	}
 
-	/**
+    private static boolean nbtInventoryHasSlots(@Nonnull ListTag list)
+    {
+        for (int i = 0; i < list.size(); i++)
+        {
+            CompoundTag entry = list.getCompoundOrEmpty(i);
+            if (entry.contains(NbtKeys.SLOT)) { return true; }
+        }
+
+        return false;
+    }
+
+    private static boolean dataInventoryHasSlots(@Nonnull ListData list)
+    {
+        for (int i = 0; i < list.size(); i++)
+        {
+            CompoundData entry = list.getCompoundAt(i);
+            if (entry.contains(NbtKeys.SLOT, Constants.NBT.TAG_BYTE)) { return true; }
+        }
+
+        return false;
+    }
+
+    /**
      * Executes the "Inventory Display Horse Fix" (Saddle Offset) for NBT-based Displays.
      *
      * @param nbt ()
@@ -1191,7 +1216,7 @@ public class InventoryUtils
             // Chested Horse
             if (nbtInv != null && !nbtInv.isEmpty())
             {
-                NonNullList<ItemStack> items = nbtInv.toVanillaList(slotCount + 1);
+                NonNullList<ItemStack> items = nbtInv.sorted().toVanillaList(slotCount + 1);
 
                 for (int i = 0; i < slotCount; i++)
                 {
@@ -1257,7 +1282,7 @@ public class InventoryUtils
 			// Chested Horse
 			if (nbtInv != null && !nbtInv.isEmpty())
 			{
-				NonNullList<ItemStack> items = nbtInv.toVanillaList(slotCount + 1);
+				NonNullList<ItemStack> items = nbtInv.sorted().toVanillaList(slotCount + 1);
 
 				for (int i = 0; i < slotCount; i++)
 				{
@@ -2118,5 +2143,36 @@ public class InventoryUtils
 	public static CompoundData putStackCodec(@Nonnull CompoundData data, @Nonnull RegistryAccess registry, @Nonnull ItemStack stack, String key)
 	{
 		return data.putCodec(key, ItemStack.CODEC, registry.createSerializationContext(DataOps.INSTANCE), stack);
+	}
+
+	/**
+	 * Return the {@link InteractionHand} defined by the Slot config.
+	 * If the config is set to 'ANY', then pick whichever hand is empty first; such that:<br>
+	 * - If Both hands are Empty, return the Main Hand.<br>
+	 * - If One Hand is Empty and not the other; use that Hand.<br>
+	 * - If both hands are full, then return the Main Hand.
+	 *
+	 * @param slot      The {@link HandSlot} configuration.  If this is null, then the "Any" Hand Slot logic applies.
+	 * @return          The {@link InteractionHand} associated with the {@link HandSlot} value, or the Main Hand.
+	 */
+	public static InteractionHand getHandSlot(@Nullable HandSlot slot)
+	{
+		if (slot == null)
+		{
+			slot = HandSlot.ANY;
+		}
+
+		Minecraft mc = Minecraft.getInstance();
+		LocalPlayer player = mc.player;
+		if (player == null) return slot.getHand();
+
+		if (slot.getHand() == null)
+		{
+			return player.getOffhandItem().isEmpty()
+			       ? (player.getMainHandItem().isEmpty() ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND)
+			       : InteractionHand.MAIN_HAND;
+		}
+
+		return slot.getHand();
 	}
 }

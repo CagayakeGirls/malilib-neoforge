@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
 import org.apache.commons.lang3.tuple.Pair;
+import org.joml.Matrix3x2fStack;
+
 import com.mojang.blaze3d.textures.GpuSampler;
 import com.mojang.blaze3d.textures.GpuTextureView;
 import net.minecraft.client.Minecraft;
@@ -15,7 +16,7 @@ import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.state.*;
 import net.minecraft.client.gui.render.state.pip.PictureInPictureRenderState;
-import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
@@ -23,9 +24,9 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
+
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.mixin.render.IMixinAbstractTexture;
-import fi.dy.masa.malilib.mixin.render.IMixinDrawContext;
 import fi.dy.masa.malilib.util.WorldUtils;
 
 /**
@@ -37,24 +38,40 @@ import fi.dy.masa.malilib.util.WorldUtils;
  */
 public class GuiContext extends GuiGraphics
 {
+	private GuiGraphics guiGraphics;
+
 	public GuiContext(Minecraft client, GuiRenderState state, int mouseX, int mouseY)
 	{
 		super(client, state, mouseX, mouseY);
 	}
 
+	public GuiContext(Minecraft client, Matrix3x2fStack pose, GuiRenderState state, int mouseX, int mouseY)
+	{
+		super(client, pose, state, mouseX, mouseY);
+	}
+
 	/**
 	 * Create from GuiGraphics
-	 * @param context ()
+	 * @param gui ()
 	 * @return ()
 	 */
-	public static GuiContext fromGuiGraphics(GuiGraphics context)
+	public static GuiContext fromGuiGraphics(GuiGraphics gui)
 	{
-		return new GuiContext(
-				((IMixinDrawContext) context).malilib_getClient(),
-				((IMixinDrawContext) context).malilib_getRenderState(),
-				((IMixinDrawContext) context).malilib_getMouseX(),
-				((IMixinDrawContext) context).malilib_getMouseY()
+		// Copy with Pose Stack
+		GuiContext ctx = new GuiContext(
+				gui.minecraft,
+				gui.pose, gui.guiRenderState,
+				gui.mouseX, gui.mouseY
 		);
+
+		ctx.pendingCursor = gui.pendingCursor;
+		ctx.deferredTooltip = gui.deferredTooltip;
+		ctx.hoveredTextStyle = gui.hoveredTextStyle;
+		ctx.clickableTextStyle = gui.clickableTextStyle;
+
+		// Store the proper reference
+		ctx.guiGraphics = gui;
+		return ctx;
 	}
 
 	/**
@@ -63,6 +80,11 @@ public class GuiContext extends GuiGraphics
 	 */
 	public GuiGraphics getGuiGraphics()
 	{
+		if (this.guiGraphics != null)
+		{
+			return this.guiGraphics;
+		}
+
 		return (GuiGraphics) this;
 	}
 
@@ -84,7 +106,7 @@ public class GuiContext extends GuiGraphics
 	public Pair<GpuTextureView, GpuSampler> bindTexture(@Nullable Identifier id)
 	{
 		if (id == null) return null;
-		SimpleTexture tex = (SimpleTexture) this.mc().getTextureManager().getTexture(id);
+		AbstractTexture tex = (AbstractTexture) this.mc().getTextureManager().getTexture(id);
 
 		if (tex != null && ((IMixinAbstractTexture) tex).malilib_getGlTextureView() != null)
 		{
@@ -116,12 +138,21 @@ public class GuiContext extends GuiGraphics
 	}
 
 	/**
+	 * Send 'up()' to GuiRenderState()
+	 */
+	public void elementUp()
+	{
+		this.guiRenderState.up();
+	}
+
+	/**
 	 * Add a Basic GUI Element
 	 * @param element ()
 	 */
 	public void addSimpleElement(GuiElementRenderState element)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitGuiElement(element);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitGuiElement(element);
+		this.guiRenderState.submitGuiElement(element);
 	}
 
 	/**
@@ -130,7 +161,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void addSpecialElement(PictureInPictureRenderState specialElement)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitPicturesInPictureState(specialElement);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitPicturesInPictureState(specialElement);
+		this.guiRenderState.submitPicturesInPictureState(specialElement);
 	}
 
 	/**
@@ -139,7 +171,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void addItemElement(GuiItemRenderState itemElement)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitItem(itemElement);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitItem(itemElement);
+		this.guiRenderState.submitItem(itemElement);
 	}
 
 	/**
@@ -148,7 +181,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void addTextElement(GuiTextRenderState textElement)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitText(textElement);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitText(textElement);
+		this.guiRenderState.submitText(textElement);
 	}
 
 	/**
@@ -157,7 +191,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void addPreparedTextElement(GuiElementRenderState element)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitGlyphToCurrentLayer(element);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitGlyphToCurrentLayer(element);
+		this.guiRenderState.submitGlyphToCurrentLayer(element);
 	}
 
 	/**
@@ -166,7 +201,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void addSimpleElementToCurrentLayer(BlitRenderState element)
 	{
-		((IMixinDrawContext) this).malilib_getRenderState().submitBlitToCurrentLayer(element);
+//		((IMixinGuiGraphics) this).malilib_getRenderState().submitBlitToCurrentLayer(element);
+		this.guiRenderState.submitBlitToCurrentLayer(element);
 	}
 
 	/**
@@ -175,7 +211,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public void pushScissor(@Nonnull ScreenRectangle rect)
 	{
-		((IMixinDrawContext) this).malilib_getScissorStack().push(rect);
+//		((IMixinGuiGraphics) this).malilib_getScissorStack().push(rect);
+		this.scissorStack.push(rect);
 	}
 
 	/**
@@ -186,7 +223,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public boolean containsScissor(int x, int y)
 	{
-		return ((IMixinDrawContext) this).malilib_getScissorStack().containsPoint(x, y);
+//		return ((IMixinGuiGraphics) this).malilib_getScissorStack().containsPoint(x, y);
+		return this.scissorStack.containsPoint(x, y);
 	}
 
 	/**
@@ -195,7 +233,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public ScreenRectangle peekLastScissor()
 	{
-		return ((IMixinDrawContext) this).malilib_getScissorStack().peek();
+//		return ((IMixinGuiGraphics) this).malilib_getScissorStack().peek();
+		return this.scissorStack.peek();
 	}
 
 	/**
@@ -204,7 +243,8 @@ public class GuiContext extends GuiGraphics
 	 */
 	public ScreenRectangle popScissor()
 	{
-		return ((IMixinDrawContext) this).malilib_getScissorStack().pop();
+//		return ((IMixinGuiGraphics) this).malilib_getScissorStack().pop();
+		return this.scissorStack.pop();
 	}
 
 	/**
