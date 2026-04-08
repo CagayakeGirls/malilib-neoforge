@@ -4,8 +4,9 @@ import java.util.Map;
 
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 
 public interface IGuiRendererInvoker
 {
-    void malilib$replaceSpecialGuiRenderers(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> map);
+    void malilib$replaceSpecialGuiRenderers(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> map);
 }

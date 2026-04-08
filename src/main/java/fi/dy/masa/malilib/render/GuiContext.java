@@ -337,7 +337,8 @@ public class GuiContext extends GuiGraphicsExtractor
 
 	public void renderTooltip(final Font font, final List<Component> lines, final int xo, final int yo)
 	{
-		this.setComponentTooltipForNextFrame(font, lines, xo, yo, null);
+		Identifier style = null;
+		this.setComponentTooltipForNextFrame(font, lines, xo, yo, style);
 	}
 
 	public void renderTooltip(final Font font, final List<Component> lines, final int xo, final int yo, @Nullable final Identifier style)

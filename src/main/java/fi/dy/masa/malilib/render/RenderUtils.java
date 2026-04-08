@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3x2f;
@@ -23,7 +24,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.render.GuiRenderer;
 import net.minecraft.client.gui.render.TextureSetup;
-import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
 import net.minecraft.client.renderer.Lightmap;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderPipelines;
@@ -75,7 +75,6 @@ import fi.dy.masa.malilib.mixin.render.IMixinGameRenderer;
 import fi.dy.masa.malilib.mixin.gui.IMixinGuiRenderer;
 import fi.dy.masa.malilib.render.element.*;
 import fi.dy.masa.malilib.render.special.MaLiLibBlockStateGuiElement;
-import fi.dy.masa.malilib.render.special.MaLiLibBlockStateGuiElementRenderer;
 import fi.dy.masa.malilib.util.*;
 import fi.dy.masa.malilib.util.data.Color4f;
 import fi.dy.masa.malilib.util.data.DataBlockUtils;
@@ -83,6 +82,7 @@ import fi.dy.masa.malilib.util.data.tag.CompoundData;
 import fi.dy.masa.malilib.util.data.tag.converter.DataConverterNbt;
 import fi.dy.masa.malilib.util.log.AnsiLogger;
 import fi.dy.masa.malilib.util.position.PositionUtils;
+import team.cagayakegirls.mafglib.render.pip.MaLiLibBlockStateGuiElementRendererPool;
 
 public class RenderUtils
 {
@@ -95,13 +95,13 @@ public class RenderUtils
     @ApiStatus.Internal
     public static void registerSpecialGuiRenderers(GuiRenderer guiRenderer, MultiBufferSource.BufferSource immediate, Minecraft mc)
     {
-        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder = new ImmutableMap.Builder<>();
+        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> builder = new ImmutableMap.Builder<>();
 
         // Build new ImmutableMap
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
 
         // Add Gui Block Model Renderer
-        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRenderer(immediate, ((IMixinMinecraft) mc).malilib_getBlockModelResolver()));
+        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRendererPool(immediate, ((IMixinMinecraft) mc).malilib_getBlockModelResolver()));
 
         // Event Callback
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRegisterSpecialGuiRenderer(guiRenderer, immediate, mc, builder);
@@ -116,7 +116,7 @@ public class RenderUtils
         }
     }
 
-    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> entries)
+    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> entries)
     {
         System.out.print("DUMP SpecialGuiRenderers()\n");
 
