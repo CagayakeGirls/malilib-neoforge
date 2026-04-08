@@ -1,2 +1,5 @@
 ## Changelog
-- sync upstream `1.21.11-0.27.7`
+- sync upstream
+- rename `GuiElementRendererPools` -> `MaLiLibGuiElementRendererRegistries`
+- rework `MaLiLibBlockStateGuiElementRendererPool` Construct method
+- update NeoForge version
