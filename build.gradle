@@ -1,6 +1,6 @@
 plugins {
 	id 'team.cagayakegirls.scripts'
-	id 'gg.essential.loom-no-remap'
+	id 'dev.architectury.loom-no-remap'
 	id 'maven-publish'
 	alias(libs.plugins.modpublisher)
 }
@@ -20,7 +20,6 @@ repositories {
 
 dependencies {
 	minecraft "com.mojang:minecraft:${project.minecraft_version}"
-//    mappings loom.officialMojangMappings()
 	neoForge "net.neoforged:neoforge:${project.neoforge_version}"
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
 //	implementation "org.jspecify:jspecify:1.0.0"
@@ -148,7 +147,7 @@ publisher {
 	setModrinthID("${libs.versions.platformId.modrinth.get()}")
 	setVersionType("${libs.versions.version.type.get()}")
 	setChangelog(file("CHANGELOG.md").getText("UTF-8"))
-	setVersion("${project.version}")
+	setProjectVersion("${project.version}")
 	setDisplayName("${project.version}")
 	setGameVersions("26.1", "26.1.1")
 	setLoaders(loom.platform.get().id())
