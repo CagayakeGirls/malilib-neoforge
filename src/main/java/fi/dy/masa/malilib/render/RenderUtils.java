@@ -94,7 +94,6 @@ import fi.dy.masa.malilib.util.log.AnsiLogger;
 import fi.dy.masa.malilib.util.nbt.NbtBlockUtils;
 import fi.dy.masa.malilib.util.position.PositionUtils;
 import team.cagayakegirls.mafglib.render.pip.MaLiLibBlockStateGuiElementRendererPool;
-import team.cagayakegirls.mafglib.render.pip.GuiElementRendererPools;
 
 public class RenderUtils
 {
@@ -284,8 +283,7 @@ public class RenderUtils
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
 
         // Add Gui Block Model Renderer
-        var blockStateGuiElementFactory = GuiElementRendererPools.blockStateGuiElement(mc.getBlockRenderer());
-        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRendererPool(blockStateGuiElementFactory, immediate));
+        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRendererPool(immediate, mc.getBlockRenderer()));
 
         // Event Callback
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRegisterSpecialGuiRenderer(guiRenderer, immediate, mc, builder);
