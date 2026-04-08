@@ -37,13 +37,9 @@
 		"fabric-networking-api-v1": ">=5.1.4",
         "fabric-resource-loader-v1": "*"
 	},
-    "suggests": {
-        "sodium": ">=0.8.4-",
-        "iris": ">=1.10.5-"
-    },
 	"breaks": {
-        "sodium": "<0.8.4-",
-		"iris": "<1.10.5-",
+        "sodium": "<0.8.7-",
+		"iris": "<1.10.7-",
 		"litematica": "<0.25.4-",
 		"tweakeroo": "<0.27.5-"
 	}
