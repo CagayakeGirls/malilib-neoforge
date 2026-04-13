@@ -1,2 +1,2 @@
 ## Changelog
-- sync upstream `1.21.3-0.22.8`
+- Fixed an issue where the accesswidener failed when importing mafglib as a dependency (with architectury-loom)
