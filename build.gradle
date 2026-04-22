@@ -25,7 +25,7 @@ dependencies {
 //	implementation "org.jspecify:jspecify:1.0.0"
 
 	include(api("team.cagayakegirls.foxified:foxified-networking-api:${project.networking_api_version}"))
-	runtimeOnly("team.cagayakegirls.foxified:foxified-classtweaker:0.1.0-alpha.2")
+	runtimeOnly("team.cagayakegirls.foxified:foxified-classtweaker:${project.foxified_classtweaker_version}")
 
 	include(implementation("me.fallenbreath:conditional-mixin-${loom.platform.get().id()}:${project.conditionalmixin_version}"))
 
@@ -149,7 +149,7 @@ publisher {
 	setChangelog(file("CHANGELOG.md").getText("UTF-8"))
 	setProjectVersion("${project.version}")
 	setDisplayName("${project.version}")
-	setGameVersions("26.1", "26.1.1")
+	setGameVersions("26.1", "26.1.1", "26.1.2")
 	setLoaders(loom.platform.get().id())
 	setCurseEnvironment("${libs.versions.version.env.get()}")
 	setArtifact(jar)
