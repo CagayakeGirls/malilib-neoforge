@@ -1,3 +1,2 @@
 ## Changelog
-- port to 26.1.2 neoforge
-- sync upstream `26.1.2-0.28.6`
+- Fixed an issue where the game crashed because `i18nLang` was using the wrong ClassLoader, preventing it from reading language files.

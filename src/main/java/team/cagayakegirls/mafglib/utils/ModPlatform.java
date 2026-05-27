@@ -6,6 +6,7 @@ import net.neoforged.fml.loading.FMLLoader;
 import net.neoforged.fml.loading.FMLPaths;
 import net.neoforged.neoforgespi.language.IModInfo;
 
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -35,5 +36,9 @@ public class ModPlatform {
 
     public static boolean isDevelopmentEnvironment() {
         return !FMLLoader.getCurrent().isProduction();
+    }
+
+    public static InputStream getResourceAsStream(String path) {
+        return FMLLoader.getCurrent().getCurrentClassLoader().getResourceAsStream(path);
     }
 }
