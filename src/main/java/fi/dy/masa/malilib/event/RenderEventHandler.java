@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4fc;
@@ -329,7 +330,7 @@ public class RenderEventHandler implements IRenderDispatcher
 
     @ApiStatus.Internal
     @ApiStatus.Experimental
-    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, Minecraft mc, ImmutableMap.Builder<@NotNull Class<? extends PictureInPictureRenderState>, @NotNull PictureInPictureRenderer<?>> builder)
+    public void onRegisterSpecialGuiRenderer(GuiRenderer guiRenderer, Minecraft mc, ImmutableMap.Builder<@NotNull Class<? extends PictureInPictureRenderState>, @NotNull PictureInPictureRendererPool<?>> builder)
     {
 //        MaLiLib.LOGGER.warn("onRegisterSpecialGuiRenderer():");
 

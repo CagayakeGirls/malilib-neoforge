@@ -31,7 +31,7 @@ public abstract class MixinLevelRenderer
 	// Effected by Improved Transparency
 	@Inject(method = "render",
 	        at = @At(value = "INVOKE",
-	                 target = "Lnet/minecraft/client/renderer/LevelRenderer;addWeatherPass(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;)V",
+	                 target = "Lnet/minecraft/client/renderer/LevelRenderer;addWeatherPass(Lcom/mojang/blaze3d/framegraph/FrameGraphBuilder;Lcom/mojang/blaze3d/buffers/GpuBufferSlice;Lorg/joml/Matrix4fc;)V",
 	                 shift = At.Shift.BEFORE
 	        ))
 	private void malilib_onRenderWorldPreWeather(GraphicsResourceAllocator resourceAllocator, DeltaTracker deltaTracker,

@@ -4,6 +4,7 @@ import java.util.*;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import com.google.common.collect.ImmutableMap;
+import net.neoforged.neoforge.client.gui.PictureInPictureRendererPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix3x2f;
@@ -94,6 +95,7 @@ import fi.dy.masa.malilib.util.position.IntBoundingBox;
 import fi.dy.masa.malilib.util.position.PositionUtils;
 import fi.dy.masa.malilib.util.position.Vec3d;
 import fi.dy.masa.malilib.util.text.TextAlignment;
+import team.cagayakegirls.mafglib.render.pip.MaLiLibBlockStateGuiElementRendererPool;
 
 public class RenderUtils
 {
@@ -106,13 +108,13 @@ public class RenderUtils
     @ApiStatus.Internal
     public static void registerSpecialGuiRenderers(GuiRenderer guiRenderer, Minecraft mc)
     {
-        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> builder = new ImmutableMap.Builder<>();
+        ImmutableMap.Builder<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> builder = new ImmutableMap.Builder<>();
 
         // Build new ImmutableMap
         builder.putAll(((IMixinGuiRenderer) guiRenderer).malilib_getSpecialGuiRenderers());
 
         // Add Gui Block Model Renderer
-        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRenderer());
+        builder.put(MaLiLibBlockStateGuiElement.class, new MaLiLibBlockStateGuiElementRendererPool());
 
         // Event Callback
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRegisterSpecialGuiRenderer(guiRenderer, mc, builder);
@@ -127,7 +129,7 @@ public class RenderUtils
         }
     }
 
-    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRenderer<?>> entries)
+    public static void dumpBuilderMap(Map<Class<? extends PictureInPictureRenderState>, PictureInPictureRendererPool<?>> entries)
     {
         System.out.print("DUMP SpecialGuiRenderers()\n");
 

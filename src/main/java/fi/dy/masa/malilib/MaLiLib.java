@@ -3,17 +3,14 @@ package fi.dy.masa.malilib;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import net.fabricmc.api.ModInitializer;
-
 import fi.dy.masa.malilib.event.InitializationHandler;
 import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.util.data.ModInfo;
 
-public class MaLiLib implements ModInitializer
+public class MaLiLib
 {
     public static final Logger LOGGER = LogManager.getLogger(MaLiLibReference.MOD_ID);
 
-    @Override
     public void onInitialize()
     {
         MaLiLibFabricData.onInitialize();
