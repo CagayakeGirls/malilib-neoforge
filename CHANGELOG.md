@@ -1,2 +1,3 @@
 ## Changelog
-- Fixed an issue where the game crashed because `i18nLang` was using the wrong ClassLoader, preventing it from reading language files.
+- sync upstream
+- update NeoForge `26.1.2.66-beta` -> `26.1.2.76`
