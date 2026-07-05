@@ -11,7 +11,7 @@ version-type = "beta"
 platformId-curseforge = "910766"
 platformId-modrinth = "SKI34J7B"
 
-architectury-loom = "1.14-SNAPSHOT"
+architectury-loom = "1.17-SNAPSHOT"
 modpublisher = "2.+"
 
 [plugins]
