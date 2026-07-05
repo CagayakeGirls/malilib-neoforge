@@ -48,6 +48,7 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigOptionValues<FileWriteType> CONFIG_WRITE_METHOD = new ConfigOptionValues<>("configWriteMethod", FileWriteType.TEMP_AND_RENAME, FileWriteType.VALUES).apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES   = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_CONFIG_SWITCHER      = new ConfigBooleanHotkeyed   ("enableConfigSwitcher",    true, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_LARGE_BARREL_PREVIEW = new ConfigBooleanHotkeyed   ("enableLargeBarrelPreview",false, "").apply(GENERIC_KEY);
         public static final ConfigOptionList        KEYBOARD_TYPE               = new ConfigOptionList        ("keyboardType",      KeyboardType.QWERTY).apply(GENERIC_KEY);
         public static final ConfigHotkey            IGNORED_KEYS                = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
         public static final ConfigFloat             IN_GAME_MESSAGE_TIMEOUT     = new ConfigFloat             ("inGameMessageTimeout",    5.0f, 0.5f, 15.0f).apply(GENERIC_KEY);
@@ -55,13 +56,14 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigBoolean           REALMS_COMMON_CONFIG        = new ConfigBoolean           ("realmsCommonConfig",      true).apply(GENERIC_KEY);
         public static final ConfigOptionList        TRANSLATION_LANGUAGE        = new ConfigOptionList        ("translationLanguage",       new i18nConfig(LANG.orElseThrow())).apply(GENERIC_KEY);
         public static final ConfigOptionList        TRANSLATION_MODE            = new ConfigOptionList        ("translationMode",           i18nMode.FOLLOW_VANILLA).apply(GENERIC_KEY);
-        public static final ConfigBooleanHotkeyed   TRANSLATION_OVERRIDES       = new ConfigBooleanHotkeyed   ("translationOverrides",    false, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   TRANSLATION_OVERRIDES       = new ConfigBooleanHotkeyed   ("translationOverrides",    true, "").apply(GENERIC_KEY);
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ACTIONBAR_HUD_TICKS,
                 CONFIG_WRITE_METHOD,
                 ENABLE_ACTIONBAR_MESSAGES,
                 ENABLE_CONFIG_SWITCHER,
+                ENABLE_LARGE_BARREL_PREVIEW,
                 KEYBOARD_TYPE,
                 IGNORED_KEYS,
                 IN_GAME_MESSAGE_TIMEOUT,
