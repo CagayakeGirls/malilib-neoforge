@@ -1,6 +1,7 @@
 package fi.dy.masa.malilib;
 
 import fi.dy.masa.malilib.command.ClientCommandHandler;
+import fi.dy.masa.malilib.compat.carpet.CarpetCompat;
 import fi.dy.masa.malilib.config.ConfigManager;
 import fi.dy.masa.malilib.event.InputEventHandler;
 import fi.dy.masa.malilib.event.RenderEventHandler;
@@ -13,11 +14,9 @@ import fi.dy.masa.malilib.interfaces.IInitializationHandler;
 import fi.dy.masa.malilib.interfaces.IRenderer;
 import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.render.OnDemandRenderer;
-import fi.dy.masa.malilib.render.on_demand.BlockTargetingOverlayRenderer;
-import fi.dy.masa.malilib.render.on_demand.SelectionBoxRenderer;
-import fi.dy.masa.malilib.render.on_demand.SimpleBlockTargetingOverlayRenderer;
-import fi.dy.masa.malilib.render.on_demand.TextPlateRenderer;
+import fi.dy.masa.malilib.render.on_demand.*;
 import fi.dy.masa.malilib.test.command.TestCommand;
+import fi.dy.masa.malilib.test.data.TestDataSyncer;
 import fi.dy.masa.malilib.test.input.TestInputHandler;
 import fi.dy.masa.malilib.test.misc.TestSelector;
 import fi.dy.masa.malilib.test.render.TestRenderHandler;
@@ -52,6 +51,7 @@ public class MaLiLibInitHandler implements IInitializationHandler
 
             ClientCommandHandler.INSTANCE.registerCommand(new TestCommand());
             TickHandler.getInstance().registerClientTickHandler(TestSelector.INSTANCE);
+            TickHandler.getInstance().registerClientTickHandler(TestDataSyncer.INSTANCE);
 
 //            if (MaLiLibReference.EXPERIMENTAL_MODE)
 //            {
@@ -81,8 +81,12 @@ public class MaLiLibInitHandler implements IInitializationHandler
         OnDemandRenderer.getInstance().registerOnDemandRenderer(
                 MaLiLibReference.MOD_ID+"_selection_box", SelectionBoxRenderer.INSTANCE
         );
+        OnDemandRenderer.getInstance().registerOnDemandRenderer(
+                MaLiLibReference.MOD_ID+"_walls", WallOverlayRenderer.INSTANCE
+        );
         RenderEventHandler.getInstance().registerWorldLastRenderer(OnDemandRenderer.getInstance());
         TickHandler.getInstance().registerClientTickHandler(OnDemandRenderer.getInstance());
+        CarpetCompat.load();
     }
 
     private static class CallbackOpenConfigGui implements IHotkeyCallback

@@ -88,7 +88,7 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
     {
         if (this.syncer == null)
         {
-            this.syncer = TestDataSyncer.getInstance();
+            this.syncer = TestDataSyncer.INSTANCE;
         }
 
         return this.syncer;
@@ -487,8 +487,9 @@ public class TestInventoryOverlayHandler implements IInventoryOverlayHandler
 			// Refresh data
 			if (data.be() != null)
 			{
-				TestInventoryOverlayHandler.getInstance().requestBlockEntityAt(world, data.be().getBlockPos());
-				data = TestInventoryOverlayHandler.getInstance().getTargetInventoryFromBlock(data.be().getLevel(), data.be().getBlockPos(), data.be(), data.data());
+				BlockPos pos = data.be().getBlockPos();
+				TestInventoryOverlayHandler.getInstance().requestBlockEntityAt(world, pos);
+				data = TestInventoryOverlayHandler.getInstance().getTargetInventoryFromBlock(data.be().getLevel(), pos, data.be(), data.data());
 			}
 			else if (data.entity() != null)
 			{

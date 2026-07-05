@@ -2,10 +2,11 @@ package fi.dy.masa.malilib.render.on_demand.state;
 
 import javax.annotation.Nullable;
 
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+
 import fi.dy.masa.malilib.interfaces.IOnDemandRenderState;
 import fi.dy.masa.malilib.util.data.Color4f;
-import fi.dy.masa.malilib.util.position.BlockPos;
-import fi.dy.masa.malilib.util.position.Direction;
 import fi.dy.masa.malilib.util.position.PositionUtils;
 import fi.dy.masa.malilib.util.position.Vec3d;
 
@@ -20,14 +21,12 @@ public abstract class AbstractBlockTargetingOverlayRenderState implements IOnDem
 	protected Direction facing;
 	protected @Nullable PositionUtils.HitPart part;
 
-	public AbstractBlockTargetingOverlayRenderState(BlockPos pos,
-	                                                Vec3d camPos,
-	                                                Color4f sideColor,
-	                                                Color4f lineColor,
-	                                                float lineWidth,
-	                                                Direction side,
-	                                                Direction facing,
-	                                                @Nullable PositionUtils.HitPart part)
+	protected AbstractBlockTargetingOverlayRenderState(BlockPos pos,
+	                                                   Vec3d camPos,
+	                                                   Color4f sideColor, Color4f lineColor,
+	                                                   float lineWidth,
+	                                                   Direction side, Direction facing,
+	                                                   @Nullable PositionUtils.HitPart part)
 	{
 		this.pos = pos;
 		this.camPos = camPos;
