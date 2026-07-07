@@ -6,6 +6,7 @@ import net.minecraft.network.codec.StreamCodec;
 import io.netty.buffer.ByteBuf;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Vector3f;
+import org.jspecify.annotations.NonNull;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
@@ -14,7 +15,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 /**
  * Post-ReWrite code
  */
-public class Vec3f
+public record Vec3f(float x, float y, float z)
 {
     public static final Codec<Vec3f> FLOAT_CODEC = RecordCodecBuilder.create(
             inst -> inst.group(
@@ -53,35 +54,9 @@ public class Vec3f
     };
     public static final Vec3f ZERO = new Vec3f(0.0F, 0.0F, 0.0F);
 
-    public final float x;
-    public final float y;
-    public final float z;
-
     public Vec3f(double x, double y, double z)
     {
         this((float) x, (float) y, (float) z);
-    }
-
-    public Vec3f(float x, float y, float z)
-    {
-        this.x = x;
-        this.y = y;
-        this.z = z;
-    }
-
-    public float getX()
-    {
-        return this.x;
-    }
-
-    public float getY()
-    {
-        return this.y;
-    }
-
-    public float getZ()
-    {
-        return this.z;
     }
 
     public Vec3f normalize()
@@ -97,11 +72,22 @@ public class Vec3f
 
     public Vector3f toVector()
     {
-        return new Vector3f(this.getX(), this.getY(), this.getZ());
+        return new Vector3f(this.x(), this.y(), this.z());
     }
 
     @Override
-    public String toString()
+    public boolean equals(Object obj)
+    {
+        if (this == obj) { return true; }
+        if (obj == null) { return false; }
+        if (getClass() != obj.getClass()) { return false; }
+
+        Vec3f other = (Vec3f) obj;
+        return this.x == other.x && this.y == other.y && this.z == other.z;
+    }
+
+    @Override
+    public @NonNull String toString()
     {
         return "Vec3f{x=" + this.x + ", y=" + this.y + ", z=" + this.z + "}";
     }

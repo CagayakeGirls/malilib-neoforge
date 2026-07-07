@@ -1,5 +1,6 @@
 package fi.dy.masa.malilib.util.position;
 
+import java.util.Objects;
 import javax.annotation.Nullable;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonPrimitive;
@@ -10,14 +11,18 @@ import org.jspecify.annotations.NonNull;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.Vec3i;
 import net.minecraft.nbt.IntArrayTag;
 import net.minecraft.network.codec.ByteBufCodecs;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 
 import fi.dy.masa.malilib.MaLiLib;
 
-public class IntBoundingBox
+public record IntBoundingBox(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
 {
     public static final IntBoundingBox ORIGIN = new IntBoundingBox(0, 0, 0, 0, 0, 0);
 
@@ -34,7 +39,7 @@ public class IntBoundingBox
     public static final StreamCodec<@NotNull ByteBuf, @NotNull IntBoundingBox> PACKET_CODEC = new StreamCodec<>()
     {
         @Override
-        public void encode(ByteBuf buf, IntBoundingBox value)
+        public void encode(@NonNull ByteBuf buf, IntBoundingBox value)
         {
             ByteBufCodecs.INT.encode(buf, value.minX);
             ByteBufCodecs.INT.encode(buf, value.minY);
@@ -45,7 +50,7 @@ public class IntBoundingBox
         }
 
         @Override
-        public IntBoundingBox decode(ByteBuf buf)
+        public @NonNull IntBoundingBox decode(@NonNull ByteBuf buf)
         {
             return new IntBoundingBox(
                     ByteBufCodecs.INT.decode(buf),
@@ -58,61 +63,24 @@ public class IntBoundingBox
         }
     };
 
-    public final int minX;
-    public final int minY;
-    public final int minZ;
-    public final int maxX;
-    public final int maxY;
-    public final int maxZ;
-
-    public IntBoundingBox(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
-    {
-        this.minX = minX;
-        this.minY = minY;
-        this.minZ = minZ;
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
-    }
-
-    public int getMinX()
-    {
-        return this.minX;
-    }
-
-    public int getMinY()
-    {
-        return this.minY;
-    }
-
-    public int getMinZ()
-    {
-        return this.minZ;
-    }
-
-    public int getMaxX()
-    {
-        return this.maxX;
-    }
-
-    public int getMaxY()
-    {
-        return this.maxY;
-    }
-
-    public int getMaxZ()
-    {
-        return this.maxZ;
-    }
-
     public boolean contains(Vec3i pos)
     {
-        return pos.getX() >= this.minX &&
+        return  pos.getX() >= this.minX &&
                 pos.getX() <= this.maxX &&
                 pos.getZ() >= this.minZ &&
                 pos.getZ() <= this.maxZ &&
                 pos.getY() >= this.minY &&
                 pos.getY() <= this.maxY;
+    }
+
+    public boolean contains(long pos)
+    {
+        int x = BlockPos.getX(pos);
+        int y = BlockPos.getY(pos);
+        int z = BlockPos.getZ(pos);
+
+        return  x >= this.minX && y >= this.minY && z >= this.minZ &&
+                x <= this.maxX && y <= this.maxY && z <= this.maxZ;
     }
 
     public boolean intersects(IntBoundingBox box)
@@ -127,32 +95,50 @@ public class IntBoundingBox
 
     public int getMinValueForAxis(Direction.Axis axis)
     {
-        switch (axis)
-        {
-            case X:
-                return this.minX;
-            case Y:
-                return this.minY;
-            case Z:
-                return this.minZ;
-        }
+	    return switch (axis)
+	    {
+		    case X -> this.minX;
+		    case Y -> this.minY;
+		    case Z -> this.minZ;
+	    };
 
-        return 0;
     }
 
     public int getMaxValueForAxis(Direction.Axis axis)
     {
-        switch (axis)
-        {
-            case X:
-                return this.maxX;
-            case Y:
-                return this.maxY;
-            case Z:
-                return this.maxZ;
-        }
+	    return switch (axis)
+	    {
+		    case X -> this.maxX;
+		    case Y -> this.maxY;
+		    case Z -> this.maxZ;
+	    };
 
-        return 0;
+    }
+
+    public IntBoundingBox expand(int amount)
+    {
+        return this.expand(amount, amount, amount);
+    }
+
+    public IntBoundingBox expand(int x, int y, int z)
+    {
+        return new IntBoundingBox(this.minX - x, this.minY - y, this.minZ - z,
+                                  this.maxX + x, this.maxY + y, this.maxZ + z);
+    }
+
+    public IntBoundingBox shrink(int x, int y, int z)
+    {
+        return this.expand(-x, -y, -z);
+    }
+
+    public BlockPos getMinCorner()
+    {
+        return new BlockPos(this.minX, this.minY, this.minZ);
+    }
+
+    public BlockPos getMaxCorner()
+    {
+        return new BlockPos(this.maxX, this.maxY, this.maxZ);
     }
 
     public BoundingBox toVanillaBox()
@@ -214,7 +200,7 @@ public class IntBoundingBox
             }
             catch (Exception e)
             {
-	            MaLiLib.LOGGER.warn("Failed to read an IntBoundingBox from JSON '{}'", arr);
+                MaLiLib.LOGGER.warn("Failed to read an IntBoundingBox from JSON '{}'", arr);
             }
         }
 
@@ -243,6 +229,16 @@ public class IntBoundingBox
                 Math.max(z1, z2));
     }
 
+    public static IntBoundingBox createForWorldBounds(@Nullable Level world)
+    {
+        int worldMinH = -30000000;
+        int worldMaxH = 30000000;
+        int worldMinY = world != null ? world.getMinY() : -64;
+        int worldMaxY = world != null ? world.getMaxY() : 319;
+
+        return new IntBoundingBox(worldMinH, worldMinY, worldMinH, worldMaxH, worldMaxY, worldMaxH);
+    }
+
     public static IntBoundingBox fromArray(int[] coords)
     {
         if (coords.length == 6)
@@ -258,11 +254,7 @@ public class IntBoundingBox
     @Override
     public boolean equals(Object otherObj)
     {
-        if (otherObj == this)
-        {
-            return true;
-        }
-
+        if (otherObj == this) { return true; }
         if (otherObj == null || this.getClass() != otherObj.getClass())
         {
             return false;
@@ -272,11 +264,17 @@ public class IntBoundingBox
         {
             IntBoundingBox other = (IntBoundingBox) otherObj;
 
-            return this.minX == other.minX && this.minY == other.minY && this.minZ == other.minZ &&
+            return  this.minX == other.minX && this.minY == other.minY && this.minZ == other.minZ &&
                     this.maxX == other.maxX && this.maxY == other.maxY && this.maxZ == other.maxZ;
         }
 
         return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return Objects.hash(this.minX, this.minY, this.minZ, this.maxX, this.maxY, this.maxZ);
     }
 
     @Override

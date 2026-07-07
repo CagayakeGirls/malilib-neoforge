@@ -24,7 +24,8 @@ public class MaLiLib
     {
         if (MaLiLibReference.DEBUG_MODE || MaLiLibConfigs.Debug.DEBUG_MESSAGES.getBooleanValue())
         {
-            LOGGER.info(key, args);
+            String message = "[DEBUG] "+key;
+            LOGGER.info(message, args);
         }
     }
 }

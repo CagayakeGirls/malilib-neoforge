@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 import javax.annotation.Nonnull;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.jetbrains.annotations.ApiStatus;
 import org.joml.Matrix4f;
+import org.jspecify.annotations.NonNull;
 
 import com.mojang.blaze3d.pipeline.RenderTarget;
 import net.minecraft.client.Camera;
@@ -70,31 +72,52 @@ public class TestRenderHandler implements IRenderer
     {
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
-            if (MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getBooleanValue() &&
-                MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getKeybind().isKeybindHeld())
-            {
-	            TestInventoryOverlayHandler.getInstance().getRenderContext(ctx, profiler);
-            }
+            Minecraft mc = Minecraft.getInstance();
 
-            if (ConfigTestEnum.TEST_TEXT_LINES.getBooleanValue())
+            if (mc.player != null)
             {
-                List<String> list = new ArrayList<>();
-                list.add("Test Line 1");
-                list.add("Test Line 2");
-                list.add("Test Line 3");
-                list.add("Test Line 4");
-                list.add("Test Line 5");
-                
-                if (TickUtils.getInstance().isValid())
+                if (MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getBooleanValue() &&
+                    MaLiLibConfigs.Test.TEST_INVENTORY_OVERLAY.getKeybind().isKeybindHeld())
                 {
-                    String result = getMeasuredTPS();
-                    list.addFirst(result);
-                    list.removeLast();
+                    TestInventoryOverlayHandler.getInstance().getRenderContext(ctx, profiler);
                 }
 
-                RenderUtils.renderText(ctx, 4, 4, MaLiLibConfigs.Test.TEST_CONFIG_FLOAT.getFloatValue(), 0xFFE0E0E0, 0xA0505050, HudAlignment.TOP_LEFT, true, false, true, list);
+                if (ConfigTestEnum.TEST_TEXT_LINES.getBooleanValue())
+                {
+                    List<String> list = getTestTextStrings();
+                    RenderUtils.renderText(ctx, 4, 4, MaLiLibConfigs.Test.TEST_CONFIG_FLOAT.getFloatValue(), 0xFFE0E0E0, 0xA0505050, HudAlignment.TOP_LEFT, true, false, true, list);
+                }
             }
         }
+    }
+
+    private static @NonNull List<String> getTestTextStrings()
+    {
+        List<String> list = new ArrayList<>();
+
+        list.add(
+                StringUtils.translate(
+                        "malilib.message.test_text.line.format_test",
+                        5, 25, 275686,
+                        5.237562732867557249862098375253F,
+                        25.8305702987592034547520957892058F,
+                        250.93287592837625876782019384230598F
+                ));
+        list.add(StringUtils.translate("malilib.message.test_text.line.1"));
+        list.add(StringUtils.translate("malilib.message.test_text.line.2"));
+        list.add(StringUtils.translate("malilib.message.test_text.line.3"));
+        list.add(StringUtils.translate("malilib.message.test_text.line.4"));
+        list.add(StringUtils.translate("malilib.message.test_text.line.5"));
+//        list.add("Test Line 5");
+
+        if (TickUtils.getInstance().isValid())
+        {
+            String result = getMeasuredTPS();
+            list.addFirst(result);
+            list.removeLast();
+        }
+
+        return list;
     }
 
     private static @Nonnull String getMeasuredTPS()
@@ -117,42 +140,30 @@ public class TestRenderHandler implements IRenderer
         else if (mspt <= 50) { preMspt = GuiBase.TXT_GOLD; }
         else                 { preMspt = GuiBase.TXT_RED; }
 
-        return isEstimated ?
-               String.format("Server TPS: %s%.1f%s (MSPT [est]: %s%.1f%s) (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
-                             preTps, clampedTps, rst, preMspt, mspt, rst,
-                             GuiBase.TXT_AQUA, tickRate, rst,
-                             avgMspt, avgTps, actualTps,
-                             sprintStr) :
-               String.format("Server TPS: %s%.1f%s MSPT: %s%.1f%s (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
-                             preTps, clampedTps, rst, preMspt, mspt, rst,
-                             GuiBase.TXT_AQUA, tickRate, rst,
-                             avgMspt, avgTps, actualTps,
-                             sprintStr)
-                ;
-    }
+        return isEstimated
+               ? StringUtils.translate("malilib.message.test_text.line.tps_est",
+                                       preTps, clampedTps, rst, preMspt, mspt, rst,
+                                       GuiBase.TXT_AQUA, tickRate, rst,
+                                       avgMspt, avgTps, actualTps,
+                                       sprintStr)
+               : StringUtils.translate("malilib.message.test_text.line.tps",
+                                       preTps, clampedTps, rst, preMspt, mspt, rst,
+                                       GuiBase.TXT_AQUA, tickRate, rst,
+                                       avgMspt, avgTps, actualTps,
+                                       sprintStr)
+               ;
 
-//    @Override
-//    public void onRenderWorldPostDebugRender(MatrixStack matrices, Frustum frustum, VertexConsumerProvider.Immediate immediate, Vec3d camera, Profiler profiler)
-//    {
-//        if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
-//        {
-//            MinecraftClient mc = MinecraftClient.getInstance();
-//
-//            profiler.push(MaLiLibReference.MOD_ID + "_test_walls");
-//
-//            if (ConfigTestEnum.TEST_WALLS_HOTKEY.getBooleanValue())
-//            {
-//                if (TestWalls.INSTANCE.needsUpdate(mc.getCameraEntity(), mc))
-//                {
-//                    TestWalls.INSTANCE.update(camera, mc.getCameraEntity(), mc);
-//                }
-//
-//                TestWalls.INSTANCE.draw(camera, posMatrix, projMatrix, mc, profiler);
-//            }
-//
-//            profiler.pop();
-//        }
-//    }
+//               ? String.format("Server TPS: %s%.1f%s (MSPT [est]: %s%.1f%s) (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
+//                               preTps, clampedTps, rst, preMspt, mspt, rst,
+//                               GuiBase.TXT_AQUA, tickRate, rst,
+//                               avgMspt, avgTps, actualTps,
+//                               sprintStr)
+//               : String.format("Server TPS: %s%.1f%s MSPT: %s%.1f%s (R: %s%.1f%s, avMS: %.2f, avTPS: %.2f, [actTPS: %.2f]) %s",
+//                               preTps, clampedTps, rst, preMspt, mspt, rst,
+//                               GuiBase.TXT_AQUA, tickRate, rst,
+//                               avgMspt, avgTps, actualTps,
+//                               sprintStr)
+    }
 
     @Override
     public void onRenderWorldPreWeather(RenderTarget fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, RenderBuffers buffers, ProfilerFiller profiler)
@@ -180,6 +191,8 @@ public class TestRenderHandler implements IRenderer
     @Override
     public void onRenderWorldLastAdvanced(RenderTarget fb, Matrix4f posMatrix, Matrix4f projMatrix, Frustum frustum, Camera camera, RenderBuffers buffers, ProfilerFiller profiler)
     {
+        boolean result = false;
+
         if (MaLiLibConfigs.Test.TEST_CONFIG_BOOLEAN.getBooleanValue())
         {
             Minecraft mc = Minecraft.getInstance();
@@ -206,6 +219,18 @@ public class TestRenderHandler implements IRenderer
                     }
 
                     TestRenderWalls.INSTANCE.render(camera, posMatrix, projMatrix, mc, profiler);
+                }
+
+                if (ConfigTestEnum.TEST_TEXT_PLATE.getBooleanValue())
+                {
+                    TestTextPlateRenderer.INSTANCE.update(mc);
+                }
+
+                if (ConfigTestEnum.TEST_TEXT_PLATE.getBooleanValue() &&
+                    TestTextPlateRenderer.INSTANCE.shouldRender())
+                {
+                    profiler.popPush(MaLiLibReference.MOD_ID + "_test_text_plate");
+                    TestTextPlateRenderer.INSTANCE.render(camera.position(), mc, profiler);
                 }
 
                 profiler.pop();
@@ -295,7 +320,7 @@ public class TestRenderHandler implements IRenderer
 
                 if (player != null)
                 {
-                    Pair<Entity, CompoundData> pair = TestDataSyncer.getInstance().requestEntity(world, player.getId());
+                    Pair<Entity, CompoundData> pair = TestDataSyncer.INSTANCE.requestEntity(world, player.getId());
                     PlayerEnderChestContainer inv;
 
                     if (pair != null && pair.getRight() != null && pair.getRight().contains(NbtKeys.ENDER_ITEMS, Constants.NBT.TAG_LIST))

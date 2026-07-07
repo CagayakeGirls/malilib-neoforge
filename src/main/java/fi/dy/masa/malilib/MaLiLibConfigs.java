@@ -3,6 +3,7 @@ package fi.dy.masa.malilib;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,14 +18,19 @@ import fi.dy.masa.malilib.config.options.*;
 import fi.dy.masa.malilib.config.options.table.ConfigTable;
 import fi.dy.masa.malilib.config.options.table.Label;
 import fi.dy.masa.malilib.config.options.table.TableRow;
+import fi.dy.masa.malilib.config.value.FileWriteType;
 import fi.dy.masa.malilib.hotkeys.IHotkey;
+import fi.dy.masa.malilib.registry.Registry;
 import fi.dy.masa.malilib.test.config.ConfigTestEnum;
 import fi.dy.masa.malilib.test.config.ConfigTestLockedList;
 import fi.dy.masa.malilib.test.config.ConfigTestOptList;
 import fi.dy.masa.malilib.test.config.TestHotkeys;
+import fi.dy.masa.malilib.test.config.value.TestOptions;
 import fi.dy.masa.malilib.util.FileUtils;
-import fi.dy.masa.malilib.util.JsonUtils;
 import fi.dy.masa.malilib.util.data.Color4f;
+import fi.dy.masa.malilib.util.data.json.JsonUtils;
+import fi.dy.masa.malilib.util.i18n.*;
+import fi.dy.masa.malilib.util.input.KeyboardType;
 import fi.dy.masa.malilib.util.time.DurationFormat;
 import fi.dy.masa.malilib.util.time.TimeFormat;
 
@@ -33,33 +39,47 @@ import static fi.dy.masa.malilib.config.options.table.type.EntryTypes.*;
 public class MaLiLibConfigs implements IConfigHandler
 {
     private static final String CONFIG_FILE_NAME = MaLiLibReference.MOD_ID + ".json";
+    public static final Optional<i18nManager> LANG = Optional.ofNullable(i18nManager.create(MaLiLibReference.MOD_ID));
 
-    private static final String GENERIC_KEY = MaLiLibReference.MOD_ID+".config.generic";
+	private static final String GENERIC_KEY = MaLiLibReference.MOD_ID+".config.generic";
     public static class Generic
     {
-        public static final ConfigHotkey            IGNORED_KEYS                = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
-        public static final ConfigHotkey            OPEN_GUI_CONFIGS            = new ConfigHotkey            ("openGuiConfigs",   "A,C").apply(GENERIC_KEY);
-        public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES   = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
         public static final ConfigInteger           ACTIONBAR_HUD_TICKS         = new ConfigInteger           ("actionbarHudTicks",       60, 1, 240).apply(GENERIC_KEY);
-        public static final ConfigFloat             IN_GAME_MESSAGE_TIMEOUT     = new ConfigFloat             ("inGameMessageTimeout",    5.0f, 0.5f, 15.0f).apply(GENERIC_KEY);
+        public static final ConfigOptionValues<FileWriteType> CONFIG_WRITE_METHOD = new ConfigOptionValues<>("configWriteMethod", FileWriteType.TEMP_AND_RENAME, FileWriteType.VALUES).apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES   = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_CONFIG_SWITCHER      = new ConfigBooleanHotkeyed   ("enableConfigSwitcher",    true, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_LARGE_BARREL_PREVIEW = new ConfigBooleanHotkeyed   ("enableLargeBarrelPreview",false, "").apply(GENERIC_KEY);
+        public static final ConfigOptionList        KEYBOARD_TYPE               = new ConfigOptionList        ("keyboardType",      KeyboardType.QWERTY).apply(GENERIC_KEY);
+        public static final ConfigHotkey            IGNORED_KEYS                = new ConfigHotkey            ("ignoredKeys",      "").apply(GENERIC_KEY);
+        public static final ConfigFloat             IN_GAME_MESSAGE_TIMEOUT     = new ConfigFloat             ("inGameMessageTimeout",    5.0f, 0.5f, 15.0f).apply(GENERIC_KEY);
+        public static final ConfigHotkey            OPEN_GUI_CONFIGS            = new ConfigHotkey            ("openGuiConfigs",   "A,C").apply(GENERIC_KEY);
         public static final ConfigBoolean           REALMS_COMMON_CONFIG        = new ConfigBoolean           ("realmsCommonConfig",      true).apply(GENERIC_KEY);
+        public static final ConfigOptionList        TRANSLATION_LANGUAGE        = new ConfigOptionList        ("translationLanguage",       new i18nConfig(LANG.orElseThrow())).apply(GENERIC_KEY);
+        public static final ConfigOptionList        TRANSLATION_MODE            = new ConfigOptionList        ("translationMode",           i18nMode.FOLLOW_VANILLA).apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   TRANSLATION_OVERRIDES       = new ConfigBooleanHotkeyed   ("translationOverrides",    false, "").apply(GENERIC_KEY);
 
-        public static final ImmutableList<IConfigValue> OPTIONS = ImmutableList.of(
-                IGNORED_KEYS,
-                OPEN_GUI_CONFIGS,
-                ENABLE_ACTIONBAR_MESSAGES,
+        public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 ACTIONBAR_HUD_TICKS,
-                IN_GAME_MESSAGE_TIMEOUT,
+                CONFIG_WRITE_METHOD,
+                ENABLE_ACTIONBAR_MESSAGES,
                 ENABLE_CONFIG_SWITCHER,
-                REALMS_COMMON_CONFIG
+                ENABLE_LARGE_BARREL_PREVIEW,
+                KEYBOARD_TYPE,
+                IGNORED_KEYS,
+                IN_GAME_MESSAGE_TIMEOUT,
+                OPEN_GUI_CONFIGS,
+                REALMS_COMMON_CONFIG,
+                TRANSLATION_LANGUAGE,
+                TRANSLATION_MODE,
+                TRANSLATION_OVERRIDES
         );
 
         // Can't add OPEN_GUI_CONFIGS here, because things will break
         public static final List<IHotkey> HOTKEY_LIST = ImmutableList.of(
-                OPEN_GUI_CONFIGS,
                 ENABLE_ACTIONBAR_MESSAGES,
-                ENABLE_CONFIG_SWITCHER
+                ENABLE_CONFIG_SWITCHER,
+                OPEN_GUI_CONFIGS,
+                TRANSLATION_OVERRIDES
         );
     }
 
@@ -100,6 +120,7 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigFloat             TEST_CONFIG_FLOAT               = new ConfigFloat("testFloat", 0.5f, 0.0f, 1.0f, true, "Test Float").apply(TEST_KEY);
         public static final ConfigInteger           TEST_CONFIG_INTEGER             = new ConfigInteger("testInteger", 5, 1, 10, "Test Integer").apply(TEST_KEY);
         public static final ConfigOptionList        TEST_CONFIG_OPTIONS_LIST        = new ConfigOptionList("testOptionList", ConfigTestOptList.TEST1, "Test Option List").apply(TEST_KEY);
+        public static final ConfigOptionValues<TestOptions> TEST_CONFIG_OPTION_VALUES = new ConfigOptionValues<>("testConfigOptionValues", TestOptions.TEST_OPT_1, TestOptions.VALUES, "Test Option Values").apply(TEST_KEY);
         public static final ConfigString            TEST_CONFIG_STRING              = new ConfigString("testString", "testString", "Test String").apply(TEST_KEY);
         public static final ConfigStringList        TEST_CONFIG_STRING_LIST         = new ConfigStringList("testStringList", ImmutableList.of("testString1", "testString2"), "Test String List").apply(TEST_KEY);
         public static final ConfigLockedList        TEST_CONFIG_LOCKED_LIST         = new ConfigLockedList("testLockedConfigList", ConfigTestLockedList.INSTANCE, "Test Locked List").apply(TEST_KEY);
@@ -170,6 +191,7 @@ public class MaLiLibConfigs implements IConfigHandler
                 TEST_CONFIG_FLOAT,
                 TEST_CONFIG_INTEGER,
                 TEST_CONFIG_OPTIONS_LIST,
+                TEST_CONFIG_OPTION_VALUES,
                 TEST_CONFIG_STRING,
                 TEST_CONFIG_STRING_LIST,
                 TEST_CONFIG_LOCKED_LIST,
@@ -215,11 +237,11 @@ public class MaLiLibConfigs implements IConfigHandler
 
     public static void loadFromFile()
     {
-        Path configFile = FileUtils.getConfigDirectoryAsPath().resolve(CONFIG_FILE_NAME);
+        Path configFile = FileUtils.getConfigDirectory().resolve(CONFIG_FILE_NAME);
 
         if (Files.exists(configFile) && Files.isReadable(configFile))
         {
-            JsonElement element = JsonUtils.parseJsonFileAsPath(configFile);
+            JsonElement element = JsonUtils.parseJsonFile(configFile);
 
             if (element != null && element.isJsonObject())
             {
@@ -240,29 +262,36 @@ public class MaLiLibConfigs implements IConfigHandler
                     ConfigUtils.readConfigBase(root, "Experimental", Experimental.OPTIONS);
                 }
 
-                //MaLiLib.debugLog("loadFromFile(): Successfully loaded config file '{}'.", configFile.toAbsolutePath());
+                if (MaLiLibReference.DEBUG_MODE)
+                {
+                    MaLiLib.LOGGER.warn("loadFromFile(): Successfully loaded config file '{}'.", configFile.toAbsolutePath());
+                }
             }
             else
             {
                 MaLiLib.LOGGER.error("loadFromFile(): Failed to parse config file '{}' as a JSON element.", configFile.toAbsolutePath());
             }
         }
-        /*
         else
         {
-            MaLiLib.LOGGER.error("loadFromFile(): Failed to load config file '{}'.", configFile.toAbsolutePath());
+            MaLiLib.LOGGER.error("loadFromFile(): Failed to load config file '{}'", configFile.toAbsolutePath());
         }
-         */
+
+        checkBaseLanguage();
     }
 
     public static void saveToFile()
     {
-        Path dir = FileUtils.getConfigDirectoryAsPath();
+        Path dir = FileUtils.getConfigDirectory();
 
         if (!Files.exists(dir))
         {
             FileUtils.createDirectoriesIfMissing(dir);
-            //MaLiLib.debugLog("saveToFile(): Creating directory '{}'.", dir.toAbsolutePath());
+
+            if (MaLiLibReference.DEBUG_MODE)
+            {
+                MaLiLib.LOGGER.warn("saveToFile(): Creating directory '{}'.", dir.toAbsolutePath());
+            }
         }
 
         if (Files.isDirectory(dir))
@@ -284,25 +313,24 @@ public class MaLiLibConfigs implements IConfigHandler
                 ConfigUtils.writeConfigBase(root, "Experimental", Experimental.OPTIONS);
             }
 
-            JsonUtils.writeJsonToFileAsPath(root, dir.resolve(CONFIG_FILE_NAME));
+            Path config = dir.resolve(CONFIG_FILE_NAME);
 
-            /*
-            if (JsonUtils.writeJsonToFileAsPath(root, config))
+            if (JsonUtils.writeJsonToFile(root, config))
             {
-                MaLiLib.debugLog("saveToFile(): Successfully saved config file '{}'.", config.toAbsolutePath());
+                if (MaLiLibReference.DEBUG_MODE)
+                {
+                    MaLiLib.LOGGER.warn("saveToFile(): Successfully saved config file '{}'.", config.toAbsolutePath());
+                }
             }
             else
             {
                 MaLiLib.LOGGER.error("saveToFile(): Failed to save config file '{}'.", config.toAbsolutePath());
             }
-             */
         }
-        /*
         else
         {
             MaLiLib.LOGGER.error("saveToFile(): Config Folder '{}' does not exist!", dir.toAbsolutePath());
         }
-         */
     }
 
     @Override
@@ -322,5 +350,85 @@ public class MaLiLibConfigs implements IConfigHandler
     public void save()
     {
         saveToFile();
+    }
+
+    @Override
+    public void onLanguageChanged(String newLang)
+    {
+        checkBaseLanguage();
+    }
+
+    public static void checkBaseLanguage()
+    {
+        i18nMode mode = (i18nMode) Generic.TRANSLATION_MODE.getOptionListValue();
+
+        if (mode == i18nMode.FOLLOW_MALILIB)
+        {
+            LANG.ifPresent(
+                    i18nManager ->
+                    {
+                        String baseKey = Registry.TRANSLATION_OVERRIDE_MANAGER.getBaseLanguageCode();
+
+                        // Try setting language if it doesn't match
+                        if (!i18nManager.getLang().getLangCode().equalsIgnoreCase(baseKey))
+                        {
+                            List<i18nOption> list = i18nManager.getLanguageOptions();
+                            boolean found = false;
+
+                            for (i18nOption entry : list)
+                            {
+                                if (entry.getKey().equalsIgnoreCase(baseKey))
+                                {
+                                    i18nManager.setLang(baseKey);
+                                    i18nConfig newConfig = new i18nConfig(i18nManager).fromString(baseKey);
+                                    Generic.TRANSLATION_LANGUAGE.setOptionListValue(newConfig);
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found)
+                            {
+                                i18nManager.resetLangToDefault();
+                                Generic.TRANSLATION_LANGUAGE.resetToDefault();
+                            }
+                        }
+                    }
+            );
+        }
+        else if (mode == i18nMode.FOLLOW_VANILLA)
+        {
+            LANG.ifPresent(
+                    i18nManager ->
+                    {
+                        String vanCode = Registry.TRANSLATION_OVERRIDE_MANAGER.getVanillaLanguageCode();
+
+                        // Try setting language if it doesn't match
+                        if (!i18nManager.getLang().getLangCode().equalsIgnoreCase(vanCode))
+                        {
+                            List<i18nOption> list = i18nManager.getLanguageOptions();
+                            boolean found = false;
+
+                            for (i18nOption entry : list)
+                            {
+                                if (entry.getKey().equalsIgnoreCase(vanCode))
+                                {
+                                    i18nManager.setLang(vanCode);
+                                    i18nConfig newConfig = new i18nConfig(i18nManager).fromString(vanCode);
+                                    Generic.TRANSLATION_LANGUAGE.setOptionListValue(newConfig);
+                                    found = true;
+                                    break;
+                                }
+                            }
+
+                            if (!found)
+                            {
+                                i18nManager.resetLangToDefault();
+                                Generic.TRANSLATION_LANGUAGE.resetToDefault();
+                            }
+                        }
+                    }
+            );
+        }
     }
 }

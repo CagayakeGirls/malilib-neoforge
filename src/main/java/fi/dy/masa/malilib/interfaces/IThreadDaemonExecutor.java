@@ -129,7 +129,7 @@ public interface IThreadDaemonExecutor<T extends IThreadTaskBase> extends Runnab
 					this.pause();
 				}
 
-				MaLiLib.debugLog("IThreadDaemonExecutor#Executor: sleeping: '{}' for [{}]", this.currentThreadName(), this.sleepTime());
+				MaLiLib.debugLog("IThreadDaemonExecutor#Executor: sleeping: '{}' for [{}]", this.currentThreadName(), millis);
 				Thread.sleep(millis);
 			}
 			catch (InterruptedException e)
@@ -138,7 +138,12 @@ public interface IThreadDaemonExecutor<T extends IThreadTaskBase> extends Runnab
 			}
 			finally
 			{
-				this.resume();
+				if (this.isPaused())
+				{
+					// This is required to avoid spin-lock.
+					MaLiLib.debugLog("IThreadDaemonExecutor#Executor: sleep ended: for '{}'", this.currentThreadName());
+					this.resume();
+				}
 			}
 		}
 	}

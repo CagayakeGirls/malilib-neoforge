@@ -8,7 +8,7 @@ import com.mojang.serialization.codecs.PrimitiveCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 /**
- * See {@link fi.dy.masa.malilib.util.position.ChunkSectionPos}
+ * See {@link fi.dy.masa.malilib.util.position.SubChunkPos}
  */
 public class SubChunkPos extends Vec3i
 {
