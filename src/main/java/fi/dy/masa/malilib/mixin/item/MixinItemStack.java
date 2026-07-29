@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 
-// TODO: Maybe need use NeoForge‘s RegisterTooltipAppendersEvent？
+// TODO: Maybe need use NeoForge‘s RegisterTooltipAppendersEvent?
 @Mixin(value = ItemStack.class, priority = 900)
 public abstract class MixinItemStack
 {
