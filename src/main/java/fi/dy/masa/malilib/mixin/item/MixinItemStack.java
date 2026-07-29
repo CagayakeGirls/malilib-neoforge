@@ -14,6 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.component.TooltipDisplay;
 
+// TODO: Maybe need use NeoForge‘s RegisterTooltipAppendersEvent？
 @Mixin(value = ItemStack.class, priority = 900)
 public abstract class MixinItemStack
 {
@@ -37,8 +38,9 @@ public abstract class MixinItemStack
         ((RenderEventHandler) RenderEventHandler.getInstance()).onRenderTooltipComponentInsertMiddle(context, (ItemStack) (Object) this, textConsumer);
     }
 
+    // fk u neoforge patch, see: https://github.com/neoforged/NeoForge/pull/3313/changes
     // This Goes before the Item durability, item id, and component count.
-    @Inject(method = "addDetailsToTooltip(Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;Ljava/util/function/Consumer;)V",
+    @Inject(method = "addDetailsToTooltipComponents(Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Lnet/minecraft/world/entity/player/Player;Lnet/minecraft/world/item/TooltipFlag;Ljava/util/function/Consumer;)V",
             at = @At(value = "INVOKE",
                      target = "Lnet/minecraft/world/item/ItemStack;addToTooltip(Lnet/minecraft/core/component/DataComponentType;Lnet/minecraft/world/item/Item$TooltipContext;Lnet/minecraft/world/item/component/TooltipDisplay;Ljava/util/function/Consumer;Lnet/minecraft/world/item/TooltipFlag;)V",
                      ordinal = 23,
