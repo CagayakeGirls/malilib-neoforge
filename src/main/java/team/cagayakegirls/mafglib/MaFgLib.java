@@ -2,7 +2,9 @@ package team.cagayakegirls.mafglib;
 
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.compat.modmenu.ModMenuImpl;
+import team.cagayakegirls.mafglib.network.FoxifiedPlayPayloadRegistry;
 import net.neoforged.api.distmarker.Dist;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
@@ -11,8 +13,9 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 public class MaFgLib {
     public static final String MOD_ID = "mafglib";
 
-    public MaFgLib(ModContainer modContainer) {
+    public MaFgLib(IEventBus modEventBus, ModContainer modContainer) {
         modContainer.registerExtensionPoint(IConfigScreenFactory.class, new ModMenuImpl().getModConfigScreenFactory());
+        FoxifiedPlayPayloadRegistry.registerEvents(modEventBus);
         new MaLiLib().onInitialize();
     }
 }

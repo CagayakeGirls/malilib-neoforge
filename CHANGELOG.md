@@ -1,3 +1,4 @@
 ## Changelog
-- fix MixinItemStack compat with neoforge `26.1.2.84` and above version
-- update NeoForge `26.1.2.77` -> `26.1.2.92`
+- Reworked the Network part, now it can run directly without relying on the Forgified Fabric API.
+- update NeoForge `26.1.2.92` -> `26.1.2.103`
+- sync upstream

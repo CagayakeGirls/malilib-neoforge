@@ -24,8 +24,6 @@ dependencies {
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
 //	implementation "org.jspecify:jspecify:1.0.0"
 
-	include(api(forgifiedFabricApi.module("fabric-api-base", project.fabric_api_version, true)))
-	include(api(forgifiedFabricApi.module("fabric-networking-api-v1", project.fabric_api_version, true)))
 	runtimeOnly("team.cagayakegirls.foxified:foxified-classtweaker:${project.foxified_classtweaker_version}")
 
 	include(implementation("me.fallenbreath:conditional-mixin-${loom.platform.get().id()}:${project.conditionalmixin_version}"))
