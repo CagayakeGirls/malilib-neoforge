@@ -47,6 +47,7 @@ public class MaLiLibConfigs implements IConfigHandler
         public static final ConfigInteger           ACTIONBAR_HUD_TICKS         = new ConfigInteger           ("actionbarHudTicks",       60, 1, 240).apply(GENERIC_KEY);
         public static final ConfigOptionValues<FileWriteType> CONFIG_WRITE_METHOD = new ConfigOptionValues<>("configWriteMethod", FileWriteType.TEMP_AND_RENAME, FileWriteType.VALUES).apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_ACTIONBAR_MESSAGES   = new ConfigBooleanHotkeyed   ("enableActionbarMessages", true, "").apply(GENERIC_KEY);
+        public static final ConfigBooleanHotkeyed   ENABLE_CHEST_DATA_TRACKER   = new ConfigBooleanHotkeyed   ("enableChestDataTracker",  false, "").apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_CONFIG_SWITCHER      = new ConfigBooleanHotkeyed   ("enableConfigSwitcher",    true, "").apply(GENERIC_KEY);
         public static final ConfigBooleanHotkeyed   ENABLE_LARGE_BARREL_PREVIEW = new ConfigBooleanHotkeyed   ("enableLargeBarrelPreview",false, "").apply(GENERIC_KEY);
         public static final ConfigOptionList        KEYBOARD_TYPE               = new ConfigOptionList        ("keyboardType",      KeyboardType.QWERTY).apply(GENERIC_KEY);
@@ -62,6 +63,7 @@ public class MaLiLibConfigs implements IConfigHandler
                 ACTIONBAR_HUD_TICKS,
                 CONFIG_WRITE_METHOD,
                 ENABLE_ACTIONBAR_MESSAGES,
+                ENABLE_CHEST_DATA_TRACKER,
                 ENABLE_CONFIG_SWITCHER,
                 ENABLE_LARGE_BARREL_PREVIEW,
                 KEYBOARD_TYPE,
@@ -112,10 +114,12 @@ public class MaLiLibConfigs implements IConfigHandler
     public static class Test
     {
         public static final ConfigBoolean           TEST_CONFIG_BOOLEAN             = new ConfigBoolean("testBoolean", false, "Test Boolean").apply(TEST_KEY);
+//        public static final TestConfig              TEST_CONFIG                     = new TestConfig("testConfig");
         public static final ConfigBooleanHotkeyed   TEST_CONFIG_BOOLEAN_HOTKEYED    = new ConfigBooleanHotkeyed("testBooleanHotkeyed", false, "A,K").apply(TEST_KEY);
         public static final ConfigColor             TEST_CONFIG_COLOR               = new ConfigColor("testColor", "0x3022FFFF", "Test Color").apply(TEST_KEY);
         public static final ConfigColorList         TEST_CONFIG_COLOR_LIST          = new ConfigColorList("testColorList", ImmutableList.of(new Color4f(0, 0, 0), new Color4f(255, 255, 255, 255)), "Test Color List").apply(TEST_KEY);
         public static final ConfigBlockState        TEST_CONFIG_BLOCK_STATE         = new ConfigBlockState("testBlockState", Blocks.OBSERVER.defaultBlockState(), "Test Block State").apply(TEST_KEY);
+        public static final ConfigBlockStateList    TEST_CONFIG_BLOCK_STATE_LIST    = new ConfigBlockStateList("testBlockStateList", ImmutableList.of(Blocks.STONE.defaultBlockState(), Blocks.BEEHIVE.defaultBlockState(), Blocks.COPPER_GOLEM_STATUE.weathering().exposed().defaultBlockState()), "Test Block State List").apply(TEST_KEY);
         public static final ConfigDouble            TEST_CONFIG_DOUBLE              = new ConfigDouble("testDouble", 0.5, 0, 1, true, "Test Double").apply(TEST_KEY);
         public static final ConfigFloat             TEST_CONFIG_FLOAT               = new ConfigFloat("testFloat", 0.5f, 0.0f, 1.0f, true, "Test Float").apply(TEST_KEY);
         public static final ConfigInteger           TEST_CONFIG_INTEGER             = new ConfigInteger("testInteger", 5, 1, 10, "Test Integer").apply(TEST_KEY);
@@ -183,10 +187,12 @@ public class MaLiLibConfigs implements IConfigHandler
 
         public static final ImmutableList<IConfigBase> OPTIONS = ImmutableList.of(
                 TEST_CONFIG_BOOLEAN,
+//                TEST_CONFIG,
                 TEST_CONFIG_BOOLEAN_HOTKEYED,
                 TEST_CONFIG_COLOR,
                 TEST_CONFIG_COLOR_LIST,
                 TEST_CONFIG_BLOCK_STATE,
+                TEST_CONFIG_BLOCK_STATE_LIST,
                 TEST_CONFIG_DOUBLE,
                 TEST_CONFIG_FLOAT,
                 TEST_CONFIG_INTEGER,
@@ -255,15 +261,12 @@ public class MaLiLibConfigs implements IConfigHandler
                     ConfigUtils.readConfigBase(root, "TestOptions", Test.OPTIONS);
                     ConfigUtils.readConfigBase(root, "TestHotkeys", TestHotkeys.HOTKEY_LIST);
                     ConfigUtils.readHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", ConfigTestEnum.VALUES);
-                }
 
-                if (MaLiLibReference.EXPERIMENTAL_MODE)
-                {
-                    ConfigUtils.readConfigBase(root, "Experimental", Experimental.OPTIONS);
-                }
+                    if (MaLiLibReference.EXPERIMENTAL_MODE)
+                    {
+                        ConfigUtils.readConfigBase(root, "Experimental", Experimental.OPTIONS);
+                    }
 
-                if (MaLiLibReference.DEBUG_MODE)
-                {
                     MaLiLib.LOGGER.warn("loadFromFile(): Successfully loaded config file '{}'.", configFile.toAbsolutePath());
                 }
             }
@@ -306,11 +309,11 @@ public class MaLiLibConfigs implements IConfigHandler
                 ConfigUtils.writeConfigBase(root, "TestOptions", Test.OPTIONS);
                 ConfigUtils.writeConfigBase(root, "TestHotkeys", TestHotkeys.HOTKEY_LIST);
                 ConfigUtils.writeHotkeyToggleOptions(root, "TestEnumHotkeys", "TestEnumToggles", ConfigTestEnum.VALUES);
-            }
 
-            if (MaLiLibReference.EXPERIMENTAL_MODE)
-            {
-                ConfigUtils.writeConfigBase(root, "Experimental", Experimental.OPTIONS);
+                if (MaLiLibReference.EXPERIMENTAL_MODE)
+                {
+                    ConfigUtils.writeConfigBase(root, "Experimental", Experimental.OPTIONS);
+                }
             }
 
             Path config = dir.resolve(CONFIG_FILE_NAME);

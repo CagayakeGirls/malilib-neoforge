@@ -7,9 +7,9 @@ import java.util.Optional;
 
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
+import fi.dy.masa.malilib.util.data.tag.util.SizeTrackerException;
 
-public class LongData extends BaseData
-        implements NumberData
+public class LongData extends BaseData implements NumberData
 {
     public static final String TAG_NAME = "TAG_Long";
 
@@ -46,20 +46,27 @@ public class LongData extends BaseData
     }
 
     @Override
+    public int sizeInBytes()
+    {
+        return Long.BYTES;
+    }
+
+    @Override
     public Optional<Number> asNumber()
     {
         return Optional.of(this.value);
     }
 
     @Override
-    public void write(DataOutput output) throws IOException
+    public void write(DataOutput output) throws IOException, SizeTrackerException
     {
         output.writeLong(this.value);
     }
 
-    public static LongData read(DataInput input, int depth, SizeTracker sizeTracker) throws IOException
+    public static LongData read(DataInput input, int depth, SizeTracker sizeTracker)
+            throws IOException, SizeTrackerException
     {
-        sizeTracker.increment(8);
+        sizeTracker.increment(Long.BYTES);
         return new LongData(input.readLong());
     }
 
