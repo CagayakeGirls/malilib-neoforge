@@ -24,10 +24,6 @@ dependencies {
 	implementation "com.google.code.findbugs:jsr305:3.0.2"
 //	implementation "org.jspecify:jspecify:1.0.0"
 
-	// Fabric API. This is technically optional, but you probably want it anyway.
-	//implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
-
-	include(api("team.cagayakegirls.foxified:foxified-networking-api:${project.networking_api_version}"))
 	runtimeOnly("team.cagayakegirls.foxified:foxified-classtweaker:${project.foxified_classtweaker_version}")
 
 	include(implementation("me.fallenbreath:conditional-mixin-${loom.platform.get().id()}:${project.conditionalmixin_version}"))
