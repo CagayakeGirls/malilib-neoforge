@@ -12,7 +12,7 @@ public class MaLiLibReference
 	public static final String MOD_NAME = "MaLiLib";
 	public static final String MOD_VERSION = StringUtils.getModVersionString(MOD_ID);
 	public static final String MC_VERSION = getMcVersion();
-	public static final String MOD_TYPE = "fabric";
+	public static final String MOD_TYPE = "neoforge";
 	public static final String MOD_STRING = MOD_ID+"-"+MOD_TYPE+"-"+MC_VERSION+"-"+MOD_VERSION;
 
 	public static final boolean LOCAL_DEBUG = false;                // Enforce DEBUG_MODE ON (Or use Property/Environment Variable)
