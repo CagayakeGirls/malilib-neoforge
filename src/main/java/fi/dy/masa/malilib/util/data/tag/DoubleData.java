@@ -2,14 +2,14 @@ package fi.dy.masa.malilib.util.data.tag;
 
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
+import fi.dy.masa.malilib.util.data.tag.util.SizeTrackerException;
 
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.Optional;
 
-public class DoubleData extends BaseData
-        implements NumberData
+public class DoubleData extends BaseData implements NumberData
 {
     public static final String TAG_NAME = "TAG_Double";
 
@@ -46,20 +46,27 @@ public class DoubleData extends BaseData
     }
 
     @Override
+    public int sizeInBytes()
+    {
+        return Double.BYTES;
+    }
+
+    @Override
     public Optional<Number> asNumber()
     {
         return Optional.of(this.value);
     }
 
     @Override
-    public void write(DataOutput output) throws IOException
+    public void write(DataOutput output) throws IOException, SizeTrackerException
     {
         output.writeDouble(this.value);
     }
 
-    public static DoubleData read(DataInput input, int depth, SizeTracker sizeTracker) throws IOException
+    public static DoubleData read(DataInput input, int depth, SizeTracker sizeTracker)
+            throws IOException, SizeTrackerException
     {
-        sizeTracker.increment(8);
+        sizeTracker.increment(Double.BYTES);
         return new DoubleData(input.readDouble());
     }
 

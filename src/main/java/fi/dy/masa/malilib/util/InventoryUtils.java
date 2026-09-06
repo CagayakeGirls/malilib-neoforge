@@ -8,10 +8,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-
-import fi.dy.masa.malilib.MaLiLibConfigs;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
 import org.apache.commons.lang3.math.Fraction;
+import org.apache.commons.lang3.tuple.Pair;
 
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
@@ -50,12 +49,15 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 
 import fi.dy.masa.malilib.MaLiLib;
+import fi.dy.masa.malilib.MaLiLibConfigs;
 import fi.dy.masa.malilib.compat.carpet.CarpetCompat;
 import fi.dy.masa.malilib.mixin.entity.IMixinPlayerEntity;
+import fi.dy.masa.malilib.mixin.menu.*;
 import fi.dy.masa.malilib.render.InventoryOverlay;
 import fi.dy.masa.malilib.render.InventoryOverlayType;
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.DataEntityUtils;
+import fi.dy.masa.malilib.util.data.ItemType;
 import fi.dy.masa.malilib.util.data.tag.BaseData;
 import fi.dy.masa.malilib.util.data.tag.CompoundData;
 import fi.dy.masa.malilib.util.data.tag.ListData;
@@ -66,7 +68,6 @@ import fi.dy.masa.malilib.util.nbt.NbtEntityUtils;
 import fi.dy.masa.malilib.util.nbt.NbtInventory;
 import fi.dy.masa.malilib.util.nbt.NbtKeys;
 import fi.dy.masa.malilib.util.nbt.NbtView;
-import org.apache.commons.lang3.tuple.Pair;
 
 public class InventoryUtils
 {
@@ -399,6 +400,8 @@ public class InventoryUtils
         // The method in World now checks that the caller is from the same thread...
         BlockEntity te = world.getChunkAt(pos).getBlockEntity(pos);
 
+		// Do not "unpack" a Loot Table.  C2ME problems strikes again.
+		if (te instanceof RandomizableContainer rc && rc.getLootTable() != null) { return NbtInventory.LOOTABLE_INVENTORY; }
         if (te instanceof Container inv)
         {
             BlockState state = world.getBlockState(pos);
@@ -1125,24 +1128,33 @@ public class InventoryUtils
 			slotCount = NbtInventory.MAX_SIZE;
 		}
 
+		final int origSize = slotCount;
+
+		if (data.contains(NbtKeys.LOOT_TABLE, Constants.NBT.TAG_COMPOUND)) { return NbtInventory.LOOTABLE_INVENTORY; }
 		if (data.contains(NbtKeys.ITEMS, Constants.NBT.TAG_LIST))
 		{
 			// Standard 'Items' tag for most Block Entities --
 			// -- Furnace, Brewing Stand, Shulker Box, Crafter, Barrel, Chest, Dispenser, Hopper, Bookshelf, Campfire
+			ListData list = data.getList(NbtKeys.ITEMS);
+
 			if (slotCount < 0)
 			{
 				// Uses slots
-				ListData list = data.getList(NbtKeys.ITEMS);
 				slotCount = list.size();
 			}
 
 			slotCount = NbtInventory.getAdjustedSize(slotCount);
 
-			NbtInventory nbtInv = NbtInventory.fromData(data, NbtKeys.ITEMS, false, registry);
+			NbtInventory nbtInv = NbtInventory.fromDataList(list, false, registry);
 
-			if (nbtInv == null || nbtInv.isEmpty())
+//			if (nbtInv == null) //  || (nbtInv.isEmpty() && origSize < 1)
+//			{
+//				return null;
+//			}
+
+			if (origSize > 0 && nbtInv.size() < origSize)
 			{
-				return null;
+				nbtInv = nbtInv.ensureSize(origSize).sorted();
 			}
 
 			return nbtInv.sorted().toInventory(slotCount);
@@ -1164,11 +1176,16 @@ public class InventoryUtils
 			slotCount = NbtInventory.getAdjustedSize(slotCount);
 
 			// "Inventory" tags might not include Slot ID's, but a Player will.
-			NbtInventory nbtInv = NbtInventory.fromData(data, NbtKeys.INVENTORY, noSlotId, registry);
+			NbtInventory nbtInv = NbtInventory.fromDataList(list, noSlotId, registry);
 
-			if (nbtInv == null || nbtInv.isEmpty())
+//			if (nbtInv == null)  //  || (nbtInv.isEmpty() && origSize < 1)
+//			{
+//				return null;
+//			}
+
+			if (origSize > 0 && nbtInv.size() < origSize)
 			{
-				return null;
+				nbtInv = nbtInv.ensureSize(origSize).sorted();
 			}
 
 			return nbtInv.sorted().toInventory(slotCount);
@@ -1187,9 +1204,14 @@ public class InventoryUtils
 			slotCount = NbtInventory.getAdjustedSize(slotCount);
 			NbtInventory nbtInv = NbtInventory.fromDataList(list, false, registry);
 
-			if (nbtInv == null || nbtInv.isEmpty())
+//			if (nbtInv == null) //  || (nbtInv.isEmpty() && origSize < 1)
+//			{
+//				return null;
+//			}
+
+			if (origSize > 0 && nbtInv.size() < origSize)
 			{
-				return null;
+				nbtInv = nbtInv.ensureSize(origSize).sorted();
 			}
 
 			return nbtInv.sorted().toInventory(Math.max(slotCount, NbtInventory.DEFAULT_SIZE));
@@ -2250,5 +2272,68 @@ public class InventoryUtils
 		}
 
 		return slot.getHand();
+	}
+
+	/**
+	 * Returns the Container object from any Compatible Menu Type.
+	 * @param menu -
+	 * @return -
+	 */
+	@Nullable
+	public static Container getMenuAsContainer(@Nonnull AbstractContainerMenu menu)
+	{
+		return switch (menu)
+		{
+			case ChestMenu cm -> cm.getContainer();
+			case DispenserMenu dm -> ((IMixinDispenserMenu) dm).malilib_getDispenser();
+			case CrafterMenu cm -> cm.getContainer();
+			case AbstractFurnaceMenu fm -> ((IMixinAbstractFurnaceMenu) fm).malilib_getContainer();
+			case BrewingStandMenu bm -> ((IMixinBrewingStandMenu) bm).malilib_getBrewingStand();
+			case HopperMenu hm -> ((IMixinHopperMenu) hm).malilib_getHopper();
+			case LecternMenu lm -> ((IMixinLecternMenu) lm).malilib_getLectern();
+			case ShulkerBoxMenu sbm -> ((IMixinShulkerBoxMenu) sbm).malilib_getContainer();
+			default -> null;
+		};
+	}
+
+	/**
+	 * Return an Item List from a slotted Menu Screen.<br>
+	 * This should Ignore the Player Inventory; by only checking the containerSize.
+	 * The First slot refers to the "top most" container on the screen; meaning it will be
+	 * the actual containerSize; because each "Slot" actually holds a copy of the entire Inventory; but
+	 * checking each slot by slot number; is the correct way to get a copy of the Container's inventory.
+	 * @param slots As obtained from an {@link AbstractContainerMenu}, synced by the Server.
+	 * @return Return a slotted {@link NonNullList} of items
+	 */
+	public static NonNullList<ItemStack> getItemsFromSlots(@Nonnull final NonNullList<Slot> slots)
+	{
+		final int containerSize = slots.getFirst().container.getContainerSize();
+
+		if (containerSize < 1 || containerSize > NbtInventory.MAX_SIZE)
+		{
+			return NonNullList.create();
+		}
+
+		NonNullList<ItemStack> list = NonNullList.withSize(containerSize, ItemStack.EMPTY);
+
+		for (int i = 0; i < containerSize; i++)
+		{
+			Slot slot = slots.get(i);
+
+			if (slot.getContainerSlot() == slot.index ||
+				slot.getContainerSlot() > containerSize)
+			{
+				if (slot.hasItem() && !slot.isFake())
+				{
+					list.set(i, slot.getItem().copy());
+				}
+				else
+				{
+					list.set(i, ItemStack.EMPTY);
+				}
+			}
+		}
+
+		return list;
 	}
 }
