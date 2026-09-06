@@ -6,7 +6,7 @@ range-neoforge = "[26.1,)"
 mod-link = "https://github.com/CagayakeGirls/malilib-neoforge"
 
 version-env = "client"
-version-type = "alpha"
+version-type = "beta"
 
 platformId-curseforge = "910766"
 platformId-modrinth = "SKI34J7B"

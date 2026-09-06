@@ -2,28 +2,27 @@ package fi.dy.masa.malilib.network;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import net.minecraft.client.Minecraft;
+import java.util.Objects;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.minecraft.client.multiplayer.ClientPacketListener;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.RegistryFriendlyByteBuf;
 import net.minecraft.network.codec.StreamCodec;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.common.ServerboundCustomPayloadPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
-import net.neoforged.neoforge.client.network.ClientPacketDistributor;
-import net.neoforged.neoforge.network.handling.IPayloadContext;
-import net.neoforged.neoforge.network.handling.IPayloadHandler;
-import net.neoforged.neoforge.network.registration.NetworkRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import fi.dy.masa.malilib.MaLiLib;
-import team.cagayakegirls.mafglib.network.FoxifiedPlayPayloadRegistry;
 
 /**
  * Interface for ClientPlayHandler, for downstream mods.
  * @param <T> (Payload)
  */
-public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends IPayloadHandler<@NotNull T>
+public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends ClientPlayNetworking.PlayPayloadHandler<@NotNull T>
 {
     int FROM_SERVER = 1;
     int TO_SERVER = 2;
@@ -58,7 +57,9 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     void reset(Identifier channel);
 
     /**
-     * Queue your Payload for registration with NeoForge.
+     * Register your Payload with Fabric API.
+     * See the fabric-networking-api-v1 Java Docs under PayloadTypeRegistry -> register()
+     * for more information on how to do this.
      * -
      * @param id (Your Payload Id<T>)
      * @param codec (Your Payload's CODEC)
@@ -68,40 +69,54 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     {
         if (!this.isPlayRegistered(this.getPayloadChannel()))
         {
-            if (FoxifiedPlayPayloadRegistry.registerPayload(id, codec, direction))
+            try
             {
-                this.setPlayRegistered(this.getPayloadChannel());
-                return;
+                switch (direction)
+                {
+                    case TO_SERVER, FROM_CLIENT -> PayloadTypeRegistry.serverboundPlay().register(id, codec);
+                    case FROM_SERVER, TO_CLIENT -> PayloadTypeRegistry.clientboundPlay().register(id, codec);
+                    default ->
+                    {
+                        PayloadTypeRegistry.clientboundPlay().register(id, codec);
+                        PayloadTypeRegistry.serverboundPlay().register(id, codec);
+                    }
+                }
+            }
+            catch (IllegalArgumentException e)
+            {
+                MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is is already registered", this.getPayloadChannel());
             }
 
-            MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is already registered", this.getPayloadChannel());
+            this.setPlayRegistered(this.getPayloadChannel());
+            return;
         }
-        else
-        {
-            MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is invalid, or it is already registered", this.getPayloadChannel());
-        }
+
+        MaLiLib.LOGGER.error("registerPlayPayload: channel ID [{}] is invalid, or it is already registered", this.getPayloadChannel());
     }
 
     /**
      * Register your Packet Receiver function.
      * You can use the HANDLER itself (Singleton method), or any other class that you choose.
+     * See the fabric-network-api-v1 Java Docs under ClientPlayNetworking.registerGlobalReceiver()
+     * for more information on how to do this.
+     * -
      * @param id (Your Payload Id<T>)
      * @param receiver (Your Packet Receiver // if null, uses this::receivePlayPayload)
      * @return (True / False)
      */
-    default boolean registerPlayReceiver(@Nonnull CustomPacketPayload.Type<@NotNull T> id, @Nullable IPayloadHandler<@NotNull T> receiver)
+    default boolean registerPlayReceiver(@Nonnull CustomPacketPayload.Type<@NotNull T> id, @Nullable ClientPlayNetworking.PlayPayloadHandler<@NotNull T> receiver)
     {
         if (this.isPlayRegistered(this.getPayloadChannel()))
         {
-            IPayloadHandler<T> actualReceiver = receiver != null ? receiver : this::receivePlayPayload;
-
-            if (FoxifiedPlayPayloadRegistry.registerClientHandler(id, actualReceiver))
+            try
             {
-                return true;
+                return ClientPlayNetworking.registerGlobalReceiver(id, Objects.requireNonNullElse(receiver, this::receivePlayPayload));
             }
-
-            MaLiLib.LOGGER.error("registerPlayReceiver: Channel ID [{}] is already registered, or is not clientbound", this.getPayloadChannel());
-            return false;
+            catch (IllegalArgumentException e)
+            {
+                MaLiLib.LOGGER.error("registerPlayReceiver: Channel ID [{}] payload has not been registered", this.getPayloadChannel());
+                return false;
+            }
         }
 
         MaLiLib.LOGGER.error("registerPlayReceiver: Channel ID [{}] is invalid, or not registered", this.getPayloadChannel());
@@ -111,27 +126,21 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     /**
      * Unregisters your Packet Receiver function.
      * You can use the HANDLER itself (Singleton method), or any other class that you choose.
-     * NeoForge payload registrations are permanent, so this removes the dynamic
-     * dispatch target while leaving the underlying receiver registered.
+     * See the fabric-network-api-v1 Java Docs under ClientPlayNetworking.unregisterGlobalReceiver()
+     * for more information on how to do this.
      */
     default void unregisterPlayReceiver()
     {
-        FoxifiedPlayPayloadRegistry.unregisterClientHandler(this.getPayloadChannel());
+        ClientPlayNetworking.unregisterGlobalReceiver(this.getPayloadChannel());
     }
 
     /**
      * Receive Payload by pointing static receive() method to this to convert Payload to its data decode() function.
      * -
      * @param payload (Payload to decode)
-     * @param ctx (NeoForge Context)
+     * @param ctx (Fabric Context)
      */
-    void receivePlayPayload(T payload, IPayloadContext ctx);
-
-    @Override
-    default void handle(T payload, IPayloadContext context)
-    {
-        this.receivePlayPayload(payload, context);
-    }
+    void receivePlayPayload(T payload, ClientPlayNetworking.Context ctx);
 
     /**
      * Receive Payload via the legacy "onCustomPayload" from a Network Handler Mixin interface.
@@ -173,7 +182,7 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     void encodeWithSplitter(FriendlyByteBuf buf, ClientPacketListener handler);
 
     /**
-     * Sends the Payload to the server using the NeoForge interface.
+     * Sends the Payload to the server using the Fabric-API interface.
      * -
      * @param payload (The Payload to send)
      * @return (true/false --> for error control)
@@ -182,17 +191,15 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     {
         if (payload.type().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            ClientPacketListener handler = Minecraft.getInstance().getConnection();
-
-            if (handler != null && NetworkRegistry.hasChannel(handler, payload.type().id()))
+            if (ClientPlayNetworking.canSend(payload.type()))
             {
-                ClientPacketDistributor.sendToServer(payload);
+                ClientPlayNetworking.send(payload);
                 return true;
             }
         }
         else
         {
-            MaLiLib.LOGGER.warn("sendPlayPayload: [NeoForge] error sending payload for channel: {}, check if channel is registered", payload.type().id().toString());
+            MaLiLib.LOGGER.warn("sendPlayPayload: [Fabric-API] error sending payload for channel: {}, check if channel is registered", payload.type().id().toString());
         }
 
         return false;
@@ -208,9 +215,11 @@ public interface IPluginClientPlayHandler<T extends CustomPacketPayload> extends
     {
         if (payload.type().id().equals(this.getPayloadChannel()) && this.isPlayRegistered(this.getPayloadChannel()))
         {
-            if (NetworkRegistry.hasChannel(handler, payload.type().id()))
+            Packet<?> packet = new ServerboundCustomPayloadPacket(payload);
+
+            if (handler.shouldHandleMessage(packet))
             {
-                handler.send(payload);
+                handler.send(packet);
                 return true;
             }
         }
