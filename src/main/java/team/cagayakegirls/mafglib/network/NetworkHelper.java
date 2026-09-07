@@ -12,13 +12,10 @@ import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.handling.IPayloadContext;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
+import org.jetbrains.annotations.ApiStatus;
 
-/**
- * Bridges initialization-time malilib registrations to NeoForge's payload
- * registration event. Payload handling itself uses NeoForge's native types.
- */
-public final class NetworkHelper
-{
+@ApiStatus.Experimental
+public final class NetworkHelper {
     private static final String NETWORK_VERSION = "1";
     private static final Map<Identifier, PendingPayload<?>> PAYLOADS = new LinkedHashMap<>();
     private static final Map<Identifier, IPayloadHandler<?>> CLIENT_HANDLERS = new LinkedHashMap<>();
