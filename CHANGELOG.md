@@ -1,3 +1,2 @@
 ## Changelog
-- sync upstream `26.2-0.29.6`
-- update NeoForge version `26.2.0.37-beta` -> `26.2.0.79`
+- update networking-api version (fix [ThinkingStudios/MaLiLib-Forge#84](https://github.com/ThinkingStudios/MaLiLib-Forge/issues/84))
