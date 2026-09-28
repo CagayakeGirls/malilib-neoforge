@@ -1,15 +1,13 @@
 package fi.dy.masa.malilib.compat.modmenu;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
-import com.terraformersmc.modmenu.api.ModMenuApi;
 import fi.dy.masa.malilib.MaLiLibConfigGui;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 
-public class ModMenuImpl implements ModMenuApi
+public class ModMenuImpl
 {
-    @Override
-    public ConfigScreenFactory<?> getModConfigScreenFactory()
+    public IConfigScreenFactory getModConfigScreenFactory()
     {
-        return (screen) -> {
+        return (modContainer, screen) -> {
             MaLiLibConfigGui gui = new MaLiLibConfigGui();
             gui.setParent(screen);
             return gui;

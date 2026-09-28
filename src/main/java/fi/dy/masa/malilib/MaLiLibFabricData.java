@@ -2,11 +2,9 @@ package fi.dy.masa.malilib;
 
 import java.util.HashMap;
 
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.metadata.ModMetadata;
-
 import fi.dy.masa.malilib.compat.iris.IrisCompat;
 import fi.dy.masa.malilib.compat.sodium.SodiumCompat;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 public class MaLiLibFabricData
 {
@@ -23,12 +21,12 @@ public class MaLiLibFabricData
 	{
 		final HashMap<String, String> map = new HashMap<>();
 
-		FabricLoader.getInstance().getAllMods()
+		ModPlatform.getAllMods()
 		            .stream().toList()
-		            .forEach(mc ->
+		            .forEach(modInfo ->
 		                     {
-			                     ModMetadata meta = mc.getMetadata();
-			                     map.put(meta.getId(), meta.getVersion().getFriendlyString());
+
+			                     map.put(modInfo.getModId(), modInfo.getVersion().toString());
 		                     }
 		            );
 
