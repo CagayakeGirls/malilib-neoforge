@@ -23,7 +23,7 @@ import fi.dy.masa.malilib.config.ConfigManager;
 public class MixinLanguage
 {
 	@ModifyArgs(
-			method = "loadFromJson(Ljava/io/InputStream;Ljava/util/function/BiConsumer;)V",
+			method = "loadFromJson(Ljava/io/InputStream;Ljava/util/function/BiConsumer;Ljava/util/function/BiConsumer;)V",
 			at = @At(
 					value = "INVOKE",
 					target = "Ljava/util/function/BiConsumer;accept(Ljava/lang/Object;Ljava/lang/Object;)V"

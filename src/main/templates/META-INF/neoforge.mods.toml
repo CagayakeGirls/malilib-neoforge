@@ -8,7 +8,7 @@ modId="${mod_id}"
 version="${mod_version}"
 displayName="${mod_name}"
 displayURL="${mod_link}"
-logoFile="icon.png"
+iconFile="icon.png"
 credits="masa"
 authors="TexTrue, CagayakeGirls"
 description='''
@@ -19,7 +19,7 @@ MaLiLib unofficial NeoForge port. Library mod for the NeoForge port of masa's mo
 modId="malilib"
 version="${mod_version}"
 displayName="MaLiLib Stub"
-logoFile="assets/malilib/icon.png"
+iconFile="assets/malilib/icon.png"
 credits="masa"
 authors="TexTrue, CagayakeGirls"
 description='''
