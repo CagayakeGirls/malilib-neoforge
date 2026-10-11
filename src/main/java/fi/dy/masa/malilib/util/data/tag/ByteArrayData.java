@@ -10,9 +10,9 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
+import fi.dy.masa.malilib.util.data.tag.util.SizeTrackerException;
 
-public class ByteArrayData extends BaseData
-        implements ArrayData
+public class ByteArrayData extends BaseData implements ArrayData
 {
     public static final String TAG_NAME = "TAG_ByteArray";
 
@@ -60,6 +60,12 @@ public class ByteArrayData extends BaseData
     public boolean isEmpty()
     {
         return this.value.length == 0;
+    }
+
+    @Override
+    public int sizeInBytes()
+    {
+        return Integer.BYTES + (Byte.BYTES * this.value.length);
     }
 
     @Override
@@ -133,16 +139,24 @@ public class ByteArrayData extends BaseData
     }
 
     @Override
-    public void write(DataOutput output) throws IOException
+    public void write(DataOutput output) throws IOException, SizeTrackerException
     {
         output.writeInt(this.value.length);
         output.write(this.value);
     }
 
-    public static ByteArrayData read(DataInput input, int depth, SizeTracker sizeTracker) throws IOException
+    public static ByteArrayData read(DataInput input, int depth, SizeTracker sizeTracker)
+            throws IOException, SizeTrackerException
     {
         int len = input.readInt();
-        sizeTracker.increment(len + 4);
+
+        if (len < 0)
+        {
+            throw new IOException("Invalid array length: " + len);
+        }
+
+        long bytesNeeded = ((long) len * Byte.BYTES) +  Byte.BYTES;
+        sizeTracker.increment(bytesNeeded);
 
         byte[] arr = new byte[len];
         input.readFully(arr);

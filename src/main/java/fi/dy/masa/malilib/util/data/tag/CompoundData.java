@@ -18,14 +18,13 @@ import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.util.data.Constants;
 import fi.dy.masa.malilib.util.data.tag.converter.DataConverterNbt;
 import fi.dy.masa.malilib.util.data.tag.util.DataOps;
+import fi.dy.masa.malilib.util.data.tag.util.DataTypeUtils;
 import fi.dy.masa.malilib.util.data.tag.util.SizeTracker;
-import fi.dy.masa.malilib.util.log.AnsiLogger;
+import fi.dy.masa.malilib.util.data.tag.util.SizeTrackerException;
 
-public class CompoundData extends BaseData
-        implements DataView
+public class CompoundData extends BaseData implements DataView
 {
-	private static final AnsiLogger LOGGER = new AnsiLogger(CompoundData.class, true, true);
-
+//	private static final AnsiLogger LOGGER = new AnsiLogger(CompoundData.class, true, true);
     public static final String TAG_NAME = "TAG_Compound";
     private static final Pattern SIMPLE_VALUE = Pattern.compile("[A-Za-z0-9._+-]+");
 
@@ -54,6 +53,21 @@ public class CompoundData extends BaseData
     public boolean isEmpty()
     {
         return this.values.isEmpty();
+    }
+
+    @Override
+    public int sizeInBytes()
+    {
+        long size = Byte.BYTES;
+
+        for (Map.Entry<String, BaseData> entry : this.values.entrySet())
+        {
+            size += Byte.BYTES;
+            size += Short.BYTES + DataTypeUtils.getUTFLength(entry.getKey());
+            size += entry.getValue().sizeInBytes();
+        }
+
+        return (int) Math.min(size, Integer.MAX_VALUE);
     }
 
     @Override
@@ -103,16 +117,17 @@ public class CompoundData extends BaseData
     public boolean containsList(String key, int listEntryType)
     {
         BaseData data = this.values.get(key);
+        if (data == null) { return false; }
 
 		if (data.getType() == Constants.NBT.TAG_LIST &&
 			data instanceof ListData listData)
 		{
-			LOGGER.debug("containsList: req [{}], has [{}]", listEntryType, listData.getContainedType());
+//			LOGGER.debug("containsList: req [{}], has [{}]", listEntryType, listData.getContainedType());
 			return listData.getContainedType() == listEntryType;
 		}
 		else
 		{
-			LOGGER.debug("containsList: req [{}], has: [NULL] (Type found: '{}')", listEntryType, data.getType());
+//			LOGGER.debug("containsList: req [{}], has: [NULL] (Type found: '{}')", listEntryType, data.getType());
 			return false;
 		}
     }
@@ -146,6 +161,12 @@ public class CompoundData extends BaseData
 
 		return Optional.empty();
 	}
+
+    @Override
+    public Optional<CompoundData> asCompound()
+    {
+        return Optional.of(this);
+    }
 
     @Override
     public boolean getBoolean(String key)
@@ -494,7 +515,7 @@ public class CompoundData extends BaseData
     }
 
     @Override
-    public void write(DataOutput output) throws IOException
+    public void write(DataOutput output) throws IOException, SizeTrackerException
     {
         for (Map.Entry<String, BaseData> entry : this.values.entrySet())
         {
@@ -504,7 +525,8 @@ public class CompoundData extends BaseData
         output.writeByte(Constants.NBT.TAG_END);
     }
 
-    public static CompoundData read(DataInput input, int depth, SizeTracker sizeTracker) throws IOException
+    public static CompoundData read(DataInput input, int depth, SizeTracker sizeTracker)
+            throws IOException, SizeTrackerException
     {
         if (depth > 512)
         {
@@ -516,7 +538,7 @@ public class CompoundData extends BaseData
         while (true)
         {
             int tagType = input.readByte();
-            sizeTracker.increment(1);
+            sizeTracker.increment(Byte.BYTES);
 
             if (tagType == Constants.NBT.TAG_END)
             {
@@ -524,19 +546,19 @@ public class CompoundData extends BaseData
             }
 
             String key = input.readUTF();
-            sizeTracker.increment(2 + key.length());
-	        BaseData data;
+            sizeTracker.increment(Short.BYTES + DataTypeUtils.getUTFLength(key));
+            BaseData data;
 
-	        try
-	        {
-		        data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
-	        }
+            try
+            {
+                data = BaseData.createTag(tagType, input, depth + 1, sizeTracker);
+            }
 
-	        catch (IOException e)
-	        {
-		        MaLiLib.LOGGER.warn("Failed to read data for compound member {}", key);
-		        throw e;
-	        }
+            catch (IOException e)
+            {
+                MaLiLib.LOGGER.warn("Failed to read data for compound member {}", key);
+                throw e;
+            }
 
             if (data == null)
             {
