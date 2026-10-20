@@ -12,7 +12,7 @@ platformId-curseforge = "910766"
 platformId-modrinth = "SKI34J7B"
 
 architectury-loom = "1.17-SNAPSHOT"
-modpublisher = "2.+"
+modpublisher = "2.2.4"
 
 [plugins]
 architectury-loom = { id = "dev.architectury.loom", version.ref = "architectury-loom" }

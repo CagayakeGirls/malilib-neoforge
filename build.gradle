@@ -27,7 +27,8 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	//implementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_api_version}"
 
-	include(api("team.cagayakegirls.foxified:foxified-networking-api:${project.networking_api_version}"))
+	include(api(forgifiedFabricApi.module("fabric-api-base", project.fabric_api_version, true)))
+	include(api(forgifiedFabricApi.module("fabric-networking-api-v1", project.fabric_api_version, true)))
 	runtimeOnly("team.cagayakegirls.foxified:foxified-classtweaker:${project.foxified_classtweaker_version}")
 
 	include(implementation("me.fallenbreath:conditional-mixin-${loom.platform.get().id()}:${project.conditionalmixin_version}"))
@@ -127,6 +128,7 @@ publishing {
 		maven {
 			url = "$projectDir/../../CommonMaven"
 		}
+
 		maven {
 			name = "KTTMaven"
 			url = "https://maven.kessokuteatime.work/releases"
@@ -155,7 +157,10 @@ publisher {
 	setLoaders(loom.platform.get().id())
 	setCurseEnvironment("${libs.versions.version.env.get()}")
 	setArtifact(jar)
-	addAdditionalFile(sourcesJar)
+	addAdditionalFile {
+		artifact sourcesJar
+		fileType "sources-jar"
+	}
 	curseDepends {
 		required("foxifiedclasstweaker")
 	}
