@@ -1,2 +1,2 @@
 ## Changelog
-- fix i18nLang issue
+- fix `MixinChestBlock_createMenu` issue
