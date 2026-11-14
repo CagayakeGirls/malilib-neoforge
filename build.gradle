@@ -33,7 +33,7 @@ dependencies {
 
 	include(implementation("me.fallenbreath:conditional-mixin-${loom.platform.get().id()}:${project.conditionalmixin_version}"))
 
-	compileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-fabric"
+	compileOnly "maven.modrinth:iris:${project.iris_version}+${project.iris_mc_version}-${loom.platform.get().id()}"
 //	runtimeOnly 'me.fallenbreath:mixin-auditor:0.2.0-u'
 }
 
