@@ -1,3 +1,2 @@
 ## Changelog
-- sync upstream `26.3-0.30.2`
-- update NeoForge version
+- try fix i18nManager detects en_us only ([#23](https://github.com/CagayakeGirls/malilib-neoforge/issues/23)).

@@ -1,9 +1,10 @@
 package fi.dy.masa.malilib.util.i18n;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.nio.file.*;
+import java.io.UncheckedIOException;
+import java.nio.file.DirectoryStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import javax.annotation.Nullable;
@@ -15,11 +16,13 @@ import net.minecraft.network.chat.Component;
 import fi.dy.masa.malilib.MaLiLib;
 import fi.dy.masa.malilib.MaLiLibReference;
 import net.minecraft.network.chat.HoverEvent;
+import team.cagayakegirls.mafglib.utils.ModPlatform;
 
 public class i18nManager
 {
 	public static final i18nFileFilter FILE_FILTER = new i18nFileFilter();
 	public static final String DEFAULT_LANG = "en_us";
+	private static final Pattern LANGUAGE_FILE = Pattern.compile("([a-z]{2,4}_[a-z]{2,4}|[a-z]{3,4})\\.json");
 	private final List<String> keys;
 	private final List<i18nOption> options;
 	private final i18nLang defaultLang;
@@ -62,6 +65,7 @@ public class i18nManager
 
 	private void readKeys()
 	{
+		/*
 		final String baseString = "/"+this.baseString;
 		URL resource = i18nManager.class.getResource(baseString);
 
@@ -118,6 +122,30 @@ public class i18nManager
 				MaLiLib.LOGGER.error("i18nOptionManager#readKeys({}): Could not find resource '{}'; Exception: {}", this.getModId(), this.baseString, e.getLocalizedMessage());
 			}
 		}
+		 */
+
+		// Temp fix translation issue, use FML to read lang file
+		final int fileNameStart = this.baseString.length() + 1;
+		Set<String> discoveredKeys = new LinkedHashSet<>();
+
+		try
+		{
+			ModPlatform.visitJarResources(this.baseString, DEFAULT_LANG + ".json", path ->
+			{
+				var matcher = LANGUAGE_FILE.matcher(path).region(fileNameStart, path.length());
+
+				if (matcher.matches())
+				{
+					discoveredKeys.add(matcher.group(1));
+				}
+			});
+		}
+		catch (UncheckedIOException e)
+		{
+			MaLiLib.LOGGER.error("i18nOptionManager#readKeys({}): Could not enumerate language resources in '{}'", this.getModId(), this.baseString, e);
+		}
+
+		this.keys.addAll(discoveredKeys);
 
 		if (this.keys.isEmpty())
 		{
